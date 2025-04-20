@@ -67,6 +67,7 @@ struct HomeView: View {
                 calculateTotalDebt()
             }) {
                 AddSleepRecordView()
+                    .environment(\.managedObjectContext, viewContext)
             }
         }
     }
@@ -447,7 +448,10 @@ struct HomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    showingAddSheet = true
+                    print("記録を追加ボタンがタップされました")
+                    DispatchQueue.main.async {
+                        showingAddSheet = true
+                    }
                 }) {
                     HStack {
                         Image(systemName: "plus")
@@ -512,7 +516,10 @@ struct HomeView: View {
                 .multilineTextAlignment(.center)
             
             Button(action: {
-                showingAddSheet = true
+                print("記録を追加するボタンがタップされました")
+                DispatchQueue.main.async {
+                    showingAddSheet = true
+                }
             }) {
                 Text("記録を追加する")
                     .font(Theme.Typography.bodyFont.bold())

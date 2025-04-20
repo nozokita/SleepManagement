@@ -25,176 +25,204 @@ struct AddSleepRecordView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // フォームカード
-                        VStack(spacing: 0) {
-                            // ヘッダー部分
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("睡眠記録の追加")
-                                    .font(Theme.Typography.headingFont)
+                        // ヘッダー部分
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("睡眠記録の追加")
+                                .font(Theme.Typography.headingFont)
+                                .foregroundColor(Theme.Colors.text)
+                            
+                            Text("睡眠の詳細を記録して、睡眠パターンを把握しましょう")
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(Theme.Colors.subtext)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(Theme.Colors.cardGradient)
+                        .cornerRadius(Theme.Layout.cardCornerRadius)
+                        .padding(.horizontal)
+                        
+                        // 睡眠時間セクション
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("睡眠時間")
+                                .font(.headline)
+                                .foregroundColor(Theme.Colors.text)
+                            
+                            VStack(spacing: 12) {
+                                DatePicker("開始時刻", selection: $startDate)
+                                    .onChange(of: startDate) { oldValue, newValue in
+                                        calculatePreview()
+                                    }
                                     .foregroundColor(Theme.Colors.text)
                                 
-                                Text("睡眠の詳細を記録して、睡眠パターンを把握しましょう")
-                                    .font(Theme.Typography.captionFont)
-                                    .foregroundColor(Theme.Colors.subtext)
+                                DatePicker("終了時刻", selection: $endDate)
+                                    .onChange(of: endDate) { oldValue, newValue in
+                                        calculatePreview()
+                                    }
+                                    .foregroundColor(Theme.Colors.text)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
-                            .background(Theme.Colors.cardGradient)
+                            .background(Theme.Colors.cardBackground)
+                            .cornerRadius(Theme.Layout.cardCornerRadius)
+                        }
+                        .padding(.horizontal)
+                        
+                        // 睡眠の質セクション
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("睡眠の質 (1〜5)")
+                                .font(.headline)
+                                .foregroundColor(Theme.Colors.text)
                             
-                            // フォーム部分
-                            Form {
-                                Section(header: Text("睡眠時間")) {
-                                    DatePicker("開始時刻", selection: $startDate)
-                                        .onChange(of: startDate) { oldValue, newValue in
-                                            calculatePreview()
-                                        }
-                                        .foregroundColor(Theme.Colors.text)
+                            VStack {
+                                HStack {
+                                    Text("1")
+                                        .font(Theme.Typography.captionFont)
+                                        .foregroundColor(Theme.Colors.subtext)
                                     
-                                    DatePicker("終了時刻", selection: $endDate)
-                                        .onChange(of: endDate) { oldValue, newValue in
-                                            calculatePreview()
-                                        }
-                                        .foregroundColor(Theme.Colors.text)
+                                    Spacer()
+                                    
+                                    Text("5")
+                                        .font(Theme.Typography.captionFont)
+                                        .foregroundColor(Theme.Colors.subtext)
                                 }
                                 
-                                Section(header: Text("睡眠の質 (1〜5)")) {
-                                    VStack {
-                                        HStack {
-                                            Text("1")
-                                                .font(Theme.Typography.captionFont)
+                                Slider(value: Binding(
+                                    get: { Double(quality) },
+                                    set: { quality = Int16($0) }
+                                ), in: 1...5, step: 1)
+                                .onChange(of: quality) { oldValue, newValue in
+                                    calculatePreview()
+                                }
+                                .accentColor(qualityColor)
+                                
+                                HStack {
+                                    Text("悪い")
+                                        .font(Theme.Typography.captionFont)
+                                        .foregroundColor(Theme.Colors.subtext)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(quality)")
+                                        .font(Theme.Typography.bodyFont.bold())
+                                        .foregroundColor(qualityColor)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 4)
+                                        .background(qualityColor.opacity(0.1))
+                                        .cornerRadius(12)
+                                    
+                                    Spacer()
+                                    
+                                    Text("良い")
+                                        .font(Theme.Typography.captionFont)
+                                        .foregroundColor(Theme.Colors.subtext)
+                                }
+                            }
+                            .padding()
+                            .background(Theme.Colors.cardBackground)
+                            .cornerRadius(Theme.Layout.cardCornerRadius)
+                        }
+                        .padding(.horizontal)
+                        
+                        // メモセクション
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("メモ (任意)")
+                                .font(.headline)
+                                .foregroundColor(Theme.Colors.text)
+                            
+                            TextEditor(text: $memo)
+                                .frame(minHeight: 60)
+                                .foregroundColor(Theme.Colors.text)
+                                .padding()
+                                .background(Theme.Colors.cardBackground)
+                                .cornerRadius(Theme.Layout.cardCornerRadius)
+                        }
+                        .padding(.horizontal)
+                        
+                        // スコアプレビュー
+                        if showPreview {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("スコアプレビュー")
+                                    .font(.headline)
+                                    .foregroundColor(Theme.Colors.primary)
+                                
+                                VStack(spacing: 16) {
+                                    HStack {
+                                        Spacer()
+                                        
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                // スコア背景の円
+                                                Circle()
+                                                    .fill(qualityColor.opacity(0.1))
+                                                    .frame(width: 150, height: 150)
+                                                
+                                                // スコアビュー
+                                                SleepScoreView(score: previewScore, size: 120)
+                                            }
+                                            .padding(.bottom, 8)
+                                            
+                                            Text("睡眠スコア")
+                                                .font(Theme.Typography.bodyFont)
                                                 .foregroundColor(Theme.Colors.subtext)
                                             
-                                            Spacer()
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "bed.double")
+                                                    .foregroundColor(Theme.Colors.primary)
+                                                
+                                                Text(formatDuration())
+                                                    .font(Theme.Typography.bodyFont.bold())
+                                                    .foregroundColor(Theme.Colors.text)
+                                            }
                                             
-                                            Text("5")
-                                                .font(Theme.Typography.captionFont)
-                                                .foregroundColor(Theme.Colors.subtext)
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "exclamationmark.triangle")
+                                                    .foregroundColor(debtColor)
+                                                
+                                                Text("睡眠負債: \(String(format: "%.1f時間", previewDebt))")
+                                                    .font(Theme.Typography.bodyFont.bold())
+                                                    .foregroundColor(debtColor)
+                                            }
                                         }
                                         
-                                        Slider(value: Binding(
-                                            get: { Double(quality) },
-                                            set: { quality = Int16($0) }
-                                        ), in: 1...5, step: 1)
-                                        .onChange(of: quality) { oldValue, newValue in
-                                            calculatePreview()
-                                        }
-                                        .accentColor(qualityColor)
-                                        
-                                        HStack {
-                                            Text("悪い")
-                                                .font(Theme.Typography.captionFont)
-                                                .foregroundColor(Theme.Colors.subtext)
-                                            
-                                            Spacer()
-                                            
-                                            Text("\(quality)")
-                                                .font(Theme.Typography.bodyFont.bold())
-                                                .foregroundColor(qualityColor)
-                                                .padding(.horizontal, 12)
-                                                .padding(.vertical, 4)
-                                                .background(qualityColor.opacity(0.1))
-                                                .cornerRadius(12)
-                                            
-                                            Spacer()
-                                            
-                                            Text("良い")
-                                                .font(Theme.Typography.captionFont)
-                                                .foregroundColor(Theme.Colors.subtext)
-                                        }
+                                        Spacer()
                                     }
                                     .padding(.vertical, 8)
-                                }
-                                
-                                Section(header: Text("メモ (任意)")) {
-                                    TextEditor(text: $memo)
-                                        .frame(minHeight: 100)
-                                        .foregroundColor(Theme.Colors.text)
-                                }
-                                
-                                if showPreview {
-                                    Section(header: Text("スコアプレビュー").foregroundColor(Theme.Colors.primary)) {
-                                        VStack(spacing: 16) {
-                                            HStack {
-                                                Spacer()
-                                                
-                                                VStack(spacing: 8) {
-                                                    ZStack {
-                                                        // スコア背景の円
-                                                        Circle()
-                                                            .fill(qualityColor.opacity(0.1))
-                                                            .frame(width: 150, height: 150)
-                                                        
-                                                        // スコアビュー
-                                                        SleepScoreView(score: previewScore, size: 120)
-                                                    }
-                                                    .padding(.bottom, 8)
-                                                    
-                                                    Text("睡眠スコア")
-                                                        .font(Theme.Typography.bodyFont)
-                                                        .foregroundColor(Theme.Colors.subtext)
-                                                    
-                                                    HStack(spacing: 6) {
-                                                        Image(systemName: "bed.double")
-                                                            .foregroundColor(Theme.Colors.primary)
-                                                        
-                                                        Text(formatDuration())
-                                                            .font(Theme.Typography.bodyFont.bold())
-                                                            .foregroundColor(Theme.Colors.text)
-                                                    }
-                                                    
-                                                    HStack(spacing: 6) {
-                                                        Image(systemName: "exclamationmark.triangle")
-                                                            .foregroundColor(debtColor)
-                                                        
-                                                        Text("睡眠負債: \(String(format: "%.1f時間", previewDebt))")
-                                                            .font(Theme.Typography.bodyFont.bold())
-                                                            .foregroundColor(debtColor)
-                                                    }
-                                                }
-                                                
-                                                Spacer()
-                                            }
-                                            .padding(.vertical, 8)
+                                    
+                                    // 睡眠分析結果
+                                    if previewScore > 0 {
+                                        VStack(alignment: .leading, spacing: 12) {
+                                            Text("睡眠分析")
+                                                .font(Theme.Typography.subheadingFont)
+                                                .foregroundColor(Theme.Colors.text)
                                             
-                                            // 睡眠分析結果
-                                            if previewScore > 0 {
-                                                VStack(alignment: .leading, spacing: 12) {
-                                                    Text("睡眠分析")
-                                                        .font(Theme.Typography.subheadingFont)
-                                                        .foregroundColor(Theme.Colors.text)
-                                                    
-                                                    analysisRow(
-                                                        icon: "moon.stars",
-                                                        color: qualityColor,
-                                                        title: "睡眠の質",
-                                                        message: qualityMessage
-                                                    )
-                                                    
-                                                    analysisRow(
-                                                        icon: "clock",
-                                                        color: durationColor,
-                                                        title: "睡眠時間",
-                                                        message: durationMessage
-                                                    )
-                                                }
-                                                .padding()
-                                                .background(Color.gray.opacity(0.05))
-                                                .cornerRadius(12)
-                                            }
+                                            analysisRow(
+                                                icon: "moon.stars",
+                                                color: qualityColor,
+                                                title: "睡眠の質",
+                                                message: qualityMessage
+                                            )
+                                            
+                                            analysisRow(
+                                                icon: "clock",
+                                                color: durationColor,
+                                                title: "睡眠時間",
+                                                message: durationMessage
+                                            )
                                         }
+                                        .padding()
+                                        .background(Color.gray.opacity(0.05))
+                                        .cornerRadius(12)
                                     }
                                 }
+                                .padding()
+                                .background(Theme.Colors.cardBackground)
+                                .cornerRadius(Theme.Layout.cardCornerRadius)
                             }
-                            .scrollContentBackground(.hidden)
+                            .padding(.horizontal)
                         }
-                        .background(Theme.Colors.cardBackground)
-                        .cornerRadius(Theme.Layout.cardCornerRadius)
-                        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-                        .padding(.horizontal)
-                        .offset(y: animateCard ? 0 : 50)
-                        .opacity(animateCard ? 1 : 0)
                     }
                     .padding(.vertical)
+                    .offset(y: animateCard ? 0 : 50)
+                    .opacity(animateCard ? 1 : 0)
                 }
             }
             .navigationTitle("睡眠記録の追加")
