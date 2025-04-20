@@ -38,6 +38,11 @@ class SleepManager: ObservableObject {
         do {
             let records = try context.fetch(fetchRequest)
             
+            // 記録が一件もない場合は負債0を返す
+            if records.isEmpty {
+                return 0
+            }
+            
             var dailyRecords: [Date: [SleepRecord]] = [:]
             var totalDebt: Double = 0
             
@@ -52,16 +57,19 @@ class SleepManager: ObservableObject {
                 dailyRecords[dateKey]?.append(record)
             }
             
-            // 日ごとの睡眠負債を計算
+            // 日ごとの睡眠負債を計算（記録がある日のみ）
             for day in 0..<days {
                 if let date = calendar.date(byAdding: .day, value: -day, to: calendar.startOfDay(for: now)) {
-                    let dailySleepHours = dailyRecords[date]?.reduce(0.0) { sum, record in
-                        guard let startAt = record.startAt, let endAt = record.endAt else { return sum }
-                        return sum + (endAt.timeIntervalSince(startAt) / 3600)
-                    } ?? 0.0
-                    
-                    let dailyDebt = calculateDailyDebt(sleepHours: dailySleepHours)
-                    totalDebt += dailyDebt
+                    // 記録がある日のみ負債を計算
+                    if let dailyRecords = dailyRecords[date], !dailyRecords.isEmpty {
+                        let dailySleepHours = dailyRecords.reduce(0.0) { sum, record in
+                            guard let startAt = record.startAt, let endAt = record.endAt else { return sum }
+                            return sum + (endAt.timeIntervalSince(startAt) / 3600)
+                        }
+                        
+                        let dailyDebt = calculateDailyDebt(sleepHours: dailySleepHours)
+                        totalDebt += dailyDebt
+                    }
                 }
             }
             

@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct SleepRecordDetailView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    
     let record: SleepRecord
+    @State private var showingEditSheet = false
     
     var body: some View {
         ScrollView {
@@ -65,6 +68,28 @@ struct SleepRecordDetailView: View {
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                 }
                 
+                // 編集ボタン
+                Button(action: {
+                    showingEditSheet = true
+                }) {
+                    HStack {
+                        Image(systemName: "pencil")
+                            .font(.headline)
+                        
+                        Text("記録を編集")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 20)
+                    .frame(maxWidth: .infinity)
+                    .background(Theme.Colors.primaryGradient)
+                    .cornerRadius(12)
+                    .shadow(color: Theme.Colors.primary.opacity(0.4), radius: 5, x: 0, y: 3)
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                
                 Spacer()
             }
             .padding()
@@ -72,6 +97,10 @@ struct SleepRecordDetailView: View {
         .background(Theme.Colors.background.ignoresSafeArea())
         .navigationTitle("睡眠詳細")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingEditSheet) {
+            EditSleepRecordView(record: record)
+                .environment(\.managedObjectContext, viewContext)
+        }
     }
     
     private func detailRow(title: String, value: String, icon: String, color: Color = Theme.Colors.text) -> some View {
@@ -108,6 +137,7 @@ private struct SleepRecordDetailPreview: PreviewProvider {
         
         return NavigationView {
             SleepRecordDetailView(record: record)
+                .environment(\.managedObjectContext, context)
         }
     }
 } 
