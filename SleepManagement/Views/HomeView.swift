@@ -32,18 +32,28 @@ struct HomeView: View {
                     
                     // メインコンテンツ（サイズ拡大）
                     ScrollView {
-                        VStack(spacing: 16) {
-                            // 睡眠サマリーカード
-                            sleepSummaryCard
-                            
-                            // 睡眠負債カード
-                            sleepDebtCard
-                            
-                            // 最近の睡眠記録
-                            recentSleepRecordsSection
+                        if selectedTab == 0 {
+                            // ホームタブのコンテンツ
+                            VStack(spacing: 16) {
+                                // 睡眠サマリーカード
+                                sleepSummaryCard
+                                
+                                // 睡眠負債カード
+                                sleepDebtCard
+                                
+                                // AI診断・アドバイスセクション
+                                aiAdviceSection
+                                
+                                // 最近の睡眠記録
+                                recentSleepRecordsSection
+                            }
+                            .padding(.top, 8)
+                            .padding(.bottom, 80) // FABのスペース確保
+                        } else {
+                            // 開発中のタブ（統計と記録）
+                            developingTabView(tabName: tabs[selectedTab])
+                                .padding(.bottom, 80) // FABのスペース確保
                         }
-                        .padding(.top, 8)
-                        .padding(.bottom, 80) // FABのスペース確保
                     }
                     .refreshable {
                         refreshData()
@@ -346,6 +356,60 @@ struct HomeView: View {
         .transition(.opacity.combined(with: .move(edge: .bottom)))
     }
     
+    // AI診断・アドバイスセクション
+    private var aiAdviceSection: some View {
+        VStack(spacing: 0) {
+            // カードヘッダー
+            HStack {
+                Label("AI診断・アドバイス", systemImage: "brain")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                
+                Spacer()
+                
+                Text("開発中")
+                    .font(Theme.Typography.captionFont.bold())
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Theme.Colors.info.opacity(0.2))
+                    .foregroundColor(Theme.Colors.info)
+                    .cornerRadius(8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Theme.Colors.cardGradient)
+            
+            Divider()
+            
+            VStack(spacing: 20) {
+                Image(systemName: "brain.head.profile")
+                    .font(.system(size: 40))
+                    .foregroundColor(Theme.Colors.info)
+                
+                Text("AIによる睡眠分析・アドバイス")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                
+                Text("あなたの睡眠データをAIが分析し、パーソナライズされたアドバイスを提供します。")
+                    .font(Theme.Typography.bodyFont)
+                    .foregroundColor(Theme.Colors.subtext)
+                    .multilineTextAlignment(.center)
+                
+                Text("近日公開予定")
+                    .font(Theme.Typography.captionFont)
+                    .foregroundColor(Theme.Colors.primary)
+                    .padding(.top, 8)
+            }
+            .padding(24)
+        }
+        .background(Theme.Colors.cardBackground)
+        .cornerRadius(Theme.Layout.cardCornerRadius)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
+    }
+    
     // 最近の睡眠記録セクション
     private var recentSleepRecordsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -641,6 +705,52 @@ struct HomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             refreshing = false
         }
+    }
+    
+    // 開発中のタブビュー
+    private func developingTabView(tabName: String) -> some View {
+        VStack(spacing: 24) {
+            Spacer()
+                .frame(height: 40)
+            
+            Image(systemName: tabName == "統計" ? "chart.bar.xaxis" : "list.bullet.clipboard")
+                .font(.system(size: 60))
+                .foregroundColor(Theme.Colors.primary.opacity(0.6))
+            
+            Text(tabName + "機能")
+                .font(Theme.Typography.headingFont)
+                .foregroundColor(Theme.Colors.text)
+            
+            Text("この機能は現在開発中です")
+                .font(Theme.Typography.subheadingFont)
+                .foregroundColor(Theme.Colors.subtext)
+            
+            Text("今後のアップデートをお楽しみに")
+                .font(Theme.Typography.bodyFont)
+                .foregroundColor(Theme.Colors.subtext)
+                .padding(.top, 8)
+            
+            HStack {
+                Spacer()
+                
+                Text("開発中")
+                    .font(Theme.Typography.captionFont.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Theme.Colors.info.opacity(0.2))
+                    .foregroundColor(Theme.Colors.info)
+                    .cornerRadius(20)
+                
+                Spacer()
+            }
+            .padding(.top, 16)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
     }
 }
 
