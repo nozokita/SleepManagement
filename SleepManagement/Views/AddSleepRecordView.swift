@@ -272,11 +272,11 @@ struct AddSleepRecordView: View {
     
     private var durationMessage: String {
         let duration = endDate.timeIntervalSince(startDate) / 3600
-        if duration < 6 {
+        if duration < 5 {
             return "睡眠時間が短すぎます。最低でも7時間は睡眠を取りましょう。"
-        } else if duration < 7 {
+        } else if duration < 6 {
             return "睡眠時間がやや不足しています。"
-        } else if duration < 9 {
+        } else if duration < 8 {
             return "理想的な睡眠時間です。"
         } else {
             return "睡眠時間が長すぎるかもしれません。質の高い睡眠を心がけましょう。"

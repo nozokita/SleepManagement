@@ -5,8 +5,8 @@ import UserNotifications
 class SleepManager: ObservableObject {
     static let shared = SleepManager()
     
-    // 推奨睡眠時間（デフォルト8時間）
-    var recommendedSleepHours: Double = 8.0
+    // 推奨睡眠時間（デフォルト7時間）
+    var recommendedSleepHours: Double = 7.0
     
     // スライディングウィンドウの日数
     let debtWindowDays = 10
@@ -75,7 +75,7 @@ class SleepManager: ObservableObject {
     
     // 仮眠が必要かどうかの判断
     func needsNap(debt: Double) -> Bool {
-        // 睡眠負債が6時間（推奨睡眠時間の75%）を超えたら仮眠を推奨
+        // 睡眠負債が5.25時間（推奨睡眠時間の75%）を超えたら仮眠を推奨
         return debt > (recommendedSleepHours * 0.75)
     }
     
