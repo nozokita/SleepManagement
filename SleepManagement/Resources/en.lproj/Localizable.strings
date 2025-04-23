@@ -1,0 +1,98 @@
+/* 
+  Localizable.strings
+  SleepManagement
+
+  English localization
+*/
+
+// App Name
+"app_name" = "DreamLog";
+
+// Home Screen
+"home_tab" = "Home";
+"stats_tab" = "Stats";
+"records_tab" = "Records";
+"home_title" = "Sleep Management";
+"home_subtitle" = "Optimize your sleep";
+"add_record" = "Add Record";
+"settings" = "Settings";
+"language" = "Language";
+"switch_language" = "Switch to Japanese";
+
+// Sleep Summary
+"sleep_summary" = "Sleep Summary";
+"records" = "records";
+"avg_duration" = "Avg Sleep Time";
+"avg_score" = "Avg Sleep Score";
+"longest_sleep" = "Longest Sleep";
+"avg_bedtime" = "Avg Bedtime";
+"points" = "points";
+"last_sleep" = "Last Sleep";
+"sleep_score" = "Sleep Score";
+
+// Sleep Debt
+"sleep_debt" = "Sleep Debt";
+"current_debt" = "Current Sleep Debt";
+"hours" = "hours";
+"danger" = "Danger";
+"warning" = "Warning";
+"good" = "Good";
+"debt_high_message" = "Your sleep debt exceeds 2 hours. Try to increase your sleep time to reduce debt.";
+"debt_medium_message" = "You have a mild sleep debt. It is recommended to go to bed a little earlier tonight.";
+"debt_low_message" = "Currently, you have almost no sleep debt. You are maintaining a good sleep cycle.";
+
+// Recent Records
+"recent_records" = "Recent Sleep Records";
+"view_all" = "View all";
+"no_records" = "No Sleep Records";
+"add_first_record" = "Add your first sleep record using the + button below";
+"add_record_button" = "Add a Record";
+
+// Sleep Input
+"sleep_recording" = "Sleep Recording";
+"checking_device" = "Checking device...";
+"watch_integration" = "Apple Watch Integration";
+"in_development" = "In Development";
+"watch_description" = "Automatically collect sleep data from your Apple Watch for more accurate sleep analysis.";
+"manual_record" = "Record sleep manually";
+"record_sleep_time" = "Record Sleep Time";
+"record_sleep_instruction" = "Record your bedtime and wake-up time to track your sleep status";
+"sleep_time" = "Sleep Time";
+"bedtime" = "Bedtime";
+"wake_time" = "Wake Time";
+"sleep_quality" = "Sleep Quality (1-5)";
+"bad" = "Bad";
+"good_quality" = "Good";
+"memo_optional" = "Memo (Optional)";
+"sleep_duration" = "Sleep Duration: ";
+"watch_required" = "* Apple Watch is required for accurate sleep data";
+"save_record" = "Save Sleep Record";
+"cancel" = "Cancel";
+"date" = "Date";
+"sleep_input_title" = "Sleep Input";
+"sleep_record_instruction" = "Record Your Sleep";
+"sleep_input_description" = "Track your sleep patterns by recording when you go to bed and when you wake up.";
+"input_mode" = "Input Mode";
+"total_duration" = "Total Duration";
+"deep_sleep" = "Deep Sleep";
+"heart_rate" = "Heart Rate";
+"use_this_data" = "Use This Data";
+"requesting_watch_data" = "Requesting data from Apple Watch...";
+"open_watch_app" = "Please make sure your Apple Watch is nearby and unlocked.";
+"watch_not_paired" = "Apple Watch Not Connected";
+"use_manual_input" = "No Apple Watch detected. Please use manual input instead.";
+"switch_to_manual" = "Switch to Manual Input";
+"save" = "Save";
+"poor" = "Poor";
+"excellent" = "Excellent";
+"minutes" = " min";
+
+// AI Advice
+"ai_advice" = "AI Advice";
+"ai_analysis" = "AI Sleep Analysis & Advice";
+"ai_description" = "AI analyzes your sleep data and offers personalized advice.";
+"coming_soon" = "Coming Soon";
+
+// Developing Features
+"developing_feature" = "This feature is currently in development";
+"stay_tuned" = "Look forward to future updates"; 

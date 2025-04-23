@@ -1,12 +1,41 @@
 import Foundation
 import WatchConnectivity
 
+// Apple Watchから受信する健康データの構造体
+struct WatchHealthData {
+    let sleepTime: Date
+    let wakeTime: Date
+    let deepSleepDuration: TimeInterval
+    let avgHeartRate: Double
+    let quality: Double
+    
+    // 総睡眠時間を計算
+    var totalDuration: TimeInterval {
+        return wakeTime.timeIntervalSince(sleepTime)
+    }
+    
+    // フォーマット済みの睡眠時間
+    var durationFormatted: String {
+        let hours = Int(totalDuration / 3600)
+        let minutes = Int((totalDuration.truncatingRemainder(dividingBy: 3600)) / 60)
+        return "\(hours)時間\(minutes)分"
+    }
+    
+    // フォーマット済みの深い睡眠時間
+    var deepSleepFormatted: String {
+        let hours = Int(deepSleepDuration / 3600)
+        let minutes = Int((deepSleepDuration.truncatingRemainder(dividingBy: 3600)) / 60)
+        return "\(hours)時間\(minutes)分"
+    }
+}
+
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
     
     private let session = WCSession.default
     @Published var isWatchAvailable = false
     @Published var isCheckingAvailability = true
+    @Published var lastReceivedHealthData: WatchHealthData?
     
     private override init() {
         super.init()
@@ -54,6 +83,29 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             session.sendMessage(message, replyHandler: replyHandler) { error in
                 print("Watch通信エラー: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    // 睡眠データのリクエスト（デモ用にシミュレーションデータを作成）
+    func requestSleepData() {
+        // 実際のWatchアプリ連携では、Watchにメッセージを送信して睡眠データを要求
+        // 現時点ではデモデータを生成
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            // デモ用の睡眠データを作成
+            let now = Date()
+            let sleepTime = Calendar.current.date(byAdding: .hour, value: -8, to: now)!
+            let deepSleepDuration: TimeInterval = 2 * 3600 // 2時間
+            
+            let demoData = WatchHealthData(
+                sleepTime: sleepTime,
+                wakeTime: now,
+                deepSleepDuration: deepSleepDuration,
+                avgHeartRate: 58.0,
+                quality: 4.0
+            )
+            
+            self.lastReceivedHealthData = demoData
         }
     }
 }

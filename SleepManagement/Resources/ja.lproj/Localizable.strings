@@ -1,0 +1,98 @@
+/* 
+  Localizable.strings
+  SleepManagement
+
+  Japanese localization
+*/
+
+// App Name
+"app_name" = "眠りログ";
+
+// Home Screen
+"home_tab" = "ホーム";
+"stats_tab" = "統計";
+"records_tab" = "記録";
+"home_title" = "睡眠管理";
+"home_subtitle" = "あなたの睡眠を最適化";
+"add_record" = "記録を追加";
+"settings" = "設定";
+"language" = "言語";
+"switch_language" = "英語に切り替え";
+
+// Sleep Summary
+"sleep_summary" = "睡眠サマリー";
+"records" = "件の記録";
+"avg_duration" = "平均睡眠時間";
+"avg_score" = "平均睡眠スコア";
+"longest_sleep" = "最長睡眠";
+"avg_bedtime" = "平均就寝時間";
+"points" = "点";
+"last_sleep" = "最終睡眠";
+"sleep_score" = "睡眠スコア";
+
+// Sleep Debt
+"sleep_debt" = "睡眠負債";
+"current_debt" = "現在の睡眠負債";
+"hours" = "時間";
+"danger" = "危険";
+"warning" = "注意";
+"good" = "良好";
+"debt_high_message" = "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。";
+"debt_medium_message" = "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。";
+"debt_low_message" = "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。";
+
+// Recent Records
+"recent_records" = "最近の睡眠記録";
+"view_all" = "すべて見る";
+"no_records" = "睡眠記録がありません";
+"add_first_record" = "右下の+ボタンから最初の睡眠記録を追加しましょう";
+"add_record_button" = "記録を追加する";
+
+// Sleep Input
+"sleep_recording" = "睡眠記録";
+"checking_device" = "デバイス確認中...";
+"watch_integration" = "Apple Watch連携";
+"in_development" = "開発中";
+"watch_description" = "Apple Watchの睡眠データを自動で取得し、より正確な睡眠分析を提供します。";
+"manual_record" = "手動で睡眠を記録する";
+"record_sleep_time" = "睡眠時間を記録";
+"record_sleep_instruction" = "就寝時間と起床時間を記録して、睡眠状態を把握しましょう";
+"sleep_time" = "就寝時間";
+"bedtime" = "就寝時間";
+"wake_time" = "起床時間";
+"sleep_quality" = "睡眠の質 (1〜5)";
+"bad" = "悪い";
+"good_quality" = "良い";
+"memo_optional" = "メモ (任意)";
+"sleep_duration" = "睡眠時間: ";
+"watch_required" = "※正確な睡眠データにはApple Watchが必要です";
+"save_record" = "睡眠記録を保存";
+"cancel" = "キャンセル";
+"date" = "日付";
+"sleep_input_title" = "睡眠入力";
+"sleep_record_instruction" = "睡眠を記録する";
+"sleep_input_description" = "就寝時間と起床時間を記録して、睡眠パターンを追跡しましょう。";
+"input_mode" = "入力モード";
+"total_duration" = "総睡眠時間";
+"deep_sleep" = "深い睡眠";
+"heart_rate" = "心拍数";
+"use_this_data" = "このデータを使用";
+"requesting_watch_data" = "Apple Watchからデータを取得中...";
+"open_watch_app" = "Apple Watchが近くにあり、ロックが解除されていることを確認してください。";
+"watch_not_paired" = "Apple Watchが接続されていません";
+"use_manual_input" = "Apple Watchが見つかりません。手動入力をご利用ください。";
+"switch_to_manual" = "手動入力に切り替え";
+"save" = "保存";
+"poor" = "悪い";
+"excellent" = "とても良い";
+"minutes" = "分";
+
+// AI Advice
+"ai_advice" = "AI診断・アドバイス";
+"ai_analysis" = "AIによる睡眠分析・アドバイス";
+"ai_description" = "あなたの睡眠データをAIが分析し、パーソナライズされたアドバイスを提供します。";
+"coming_soon" = "近日公開予定";
+
+// Developing Features
+"developing_feature" = "この機能は現在開発中です";
+"stay_tuned" = "今後のアップデートをお楽しみに"; 

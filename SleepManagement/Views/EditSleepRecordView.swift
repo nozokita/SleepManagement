@@ -384,4 +384,5 @@ struct EditSleepRecordView: View {
     
     return EditSleepRecordView(record: record)
         .environment(\.managedObjectContext, context)
+        .environmentObject(LocalizationManager.shared)
 } 

@@ -366,4 +366,5 @@ struct AddSleepRecordView: View {
 #Preview {
     AddSleepRecordView()
         .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+        .environmentObject(LocalizationManager.shared)
 } 

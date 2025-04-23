@@ -3,6 +3,7 @@ import CoreData
 
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject private var localizationManager: LocalizationManager
     @FetchRequest(fetchRequest: SleepRecord.allRecordsFetchRequest()) private var sleepRecords: FetchedResults<SleepRecord>
     
     @StateObject private var sleepManager = SleepManager.shared
@@ -16,7 +17,9 @@ struct HomeView: View {
     @State private var refreshing: Bool = false
     
     // タブアイテム
-    private let tabs = ["ホーム", "統計", "記録"]
+    private var tabs: [String] {
+        return ["home_tab", "stats_tab", "records_tab"].map { $0.localized }
+    }
     
     var body: some View {
         NavigationView {
@@ -99,16 +102,33 @@ struct HomeView: View {
             VStack(spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("睡眠管理")
+                        Text(localizationManager.localizedAppName)
                             .font(Theme.Typography.headingFont)
                             .foregroundColor(.white)
                         
-                        Text("あなたの睡眠を最適化")
+                        Text("home_subtitle".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(.white.opacity(0.8))
                     }
                     
                     Spacer()
+                    
+                    // 言語切り替えボタン
+                    Button(action: {
+                        localizationManager.toggleLanguage()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "globe")
+                                .font(.body)
+                            Text("switch_language".localized)
+                                .font(.caption)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(20)
+                    }
                     
                     // 設定ボタン
                     Button(action: {
@@ -132,7 +152,7 @@ struct HomeView: View {
                                 .foregroundColor(.white)
                             
                             VStack(alignment: .leading, spacing: 1) {
-                                Text("最終睡眠")
+                                Text("last_sleep".localized)
                                     .font(.caption)
                                     .foregroundColor(.white.opacity(0.8))
                                 
@@ -152,11 +172,11 @@ struct HomeView: View {
                                 .foregroundColor(.white)
                             
                             VStack(alignment: .leading, spacing: 1) {
-                                Text("睡眠スコア")
+                                Text("sleep_score".localized)
                                     .font(.caption)
                                     .foregroundColor(.white.opacity(0.8))
                                 
-                                Text("\(Int(latestRecord.score))点")
+                                Text("\(Int(latestRecord.score))" + "points".localized)
                                     .font(.subheadline.bold())
                                     .foregroundColor(.white)
                             }
@@ -213,13 +233,13 @@ struct HomeView: View {
         VStack(spacing: 0) {
             // カードヘッダー
             HStack {
-                Label("睡眠サマリー", systemImage: "bed.double")
+                Label("sleep_summary".localized, systemImage: "bed.double")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
                 Spacer()
                 
-                Text("\(sleepRecords.count)件の記録")
+                Text("\(sleepRecords.count)" + "records".localized)
                     .font(Theme.Typography.captionFont)
                     .foregroundColor(Theme.Colors.subtext)
             }
@@ -234,7 +254,7 @@ struct HomeView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     // 平均睡眠時間
                     statView(
-                        title: "平均睡眠時間",
+                        title: "avg_duration".localized,
                         value: averageSleepDurationText,
                         icon: "clock",
                         color: Theme.Colors.primary
@@ -242,15 +262,15 @@ struct HomeView: View {
                     
                     // 平均睡眠スコア
                     statView(
-                        title: "平均睡眠スコア",
-                        value: "\(Int(averageSleepScore))点",
+                        title: "avg_score".localized,
+                        value: "\(Int(averageSleepScore))" + "points".localized,
                         icon: "star",
                         color: sleepScoreColor
                     )
                     
                     // 最長睡眠時間
                     statView(
-                        title: "最長睡眠",
+                        title: "longest_sleep".localized,
                         value: longestSleepText,
                         icon: "arrow.up",
                         color: Theme.Colors.success
@@ -258,7 +278,7 @@ struct HomeView: View {
                     
                     // 平均就寝時間
                     statView(
-                        title: "平均就寝時間",
+                        title: "avg_bedtime".localized,
                         value: averageBedTimeText,
                         icon: "moon",
                         color: Theme.Colors.secondary
@@ -283,13 +303,13 @@ struct HomeView: View {
         VStack(spacing: 0) {
             // カードヘッダー
             HStack {
-                Label("睡眠負債", systemImage: "exclamationmark.triangle")
+                Label("sleep_debt".localized, systemImage: "exclamationmark.triangle")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
                 Spacer()
                 
-                Text(totalDebt > 2 ? "危険" : (totalDebt > 1 ? "注意" : "良好"))
+                Text(totalDebt > 2 ? "danger".localized : (totalDebt > 1 ? "warning".localized : "good".localized))
                     .font(Theme.Typography.captionFont.bold())
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -307,13 +327,13 @@ struct HomeView: View {
                 // 睡眠負債ゲージ
                 VStack(spacing: 8) {
                     HStack {
-                        Text("現在の睡眠負債")
+                        Text("current_debt".localized)
                             .font(Theme.Typography.bodyFont)
                             .foregroundColor(Theme.Colors.text)
                         
                         Spacer()
                         
-                        Text(String(format: "%.1f時間", totalDebt))
+                        Text(String(format: "%.1f", totalDebt) + "hours".localized)
                             .font(Theme.Typography.headingFont)
                             .foregroundColor(debtStatusColor)
                     }
@@ -368,13 +388,13 @@ struct HomeView: View {
         VStack(spacing: 0) {
             // カードヘッダー
             HStack {
-                Label("AI診断・アドバイス", systemImage: "brain")
+                Label("ai_advice".localized, systemImage: "brain")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
                 Spacer()
                 
-                Text("開発中")
+                Text("in_development".localized)
                     .font(Theme.Typography.captionFont.bold())
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -393,16 +413,16 @@ struct HomeView: View {
                     .font(.system(size: 40))
                     .foregroundColor(Theme.Colors.info)
                 
-                Text("AIによる睡眠分析・アドバイス")
+                Text("ai_analysis".localized)
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
-                Text("あなたの睡眠データをAIが分析し、パーソナライズされたアドバイスを提供します。")
+                Text("ai_description".localized)
                     .font(Theme.Typography.bodyFont)
                     .foregroundColor(Theme.Colors.subtext)
                     .multilineTextAlignment(.center)
                 
-                Text("近日公開予定")
+                Text("coming_soon".localized)
                     .font(Theme.Typography.captionFont)
                     .foregroundColor(Theme.Colors.primary)
                     .padding(.top, 8)
@@ -421,7 +441,7 @@ struct HomeView: View {
     private var recentSleepRecordsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("最近の睡眠記録")
+                Text("recent_records".localized)
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
@@ -429,7 +449,7 @@ struct HomeView: View {
                 
                 NavigationLink(destination: Text("睡眠記録一覧")) {
                     HStack(spacing: 4) {
-                        Text("すべて見る")
+                        Text("view_all".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.primary)
                         
@@ -529,7 +549,7 @@ struct HomeView: View {
                         Image(systemName: "plus")
                             .font(.headline)
                         
-                        Text("記録を追加")
+                        Text("add_record".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -578,11 +598,11 @@ struct HomeView: View {
                 .font(.system(size: 40))
                 .foregroundColor(Theme.Colors.primary.opacity(0.8))
             
-            Text("睡眠記録がありません")
+            Text("no_records".localized)
                 .font(Theme.Typography.subheadingFont)
                 .foregroundColor(Theme.Colors.text)
             
-            Text("右下の+ボタンから\n最初の睡眠記録を追加しましょう")
+            Text("add_first_record".localized)
                 .font(Theme.Typography.bodyFont)
                 .foregroundColor(Theme.Colors.subtext)
                 .multilineTextAlignment(.center)
@@ -594,7 +614,7 @@ struct HomeView: View {
                     showingSleepInputSheet = true
                 }
             }) {
-                Text("記録を追加する")
+                Text("add_record_button".localized)
                     .font(Theme.Typography.bodyFont.bold())
                     .foregroundColor(.white)
                     .padding(.vertical, 10)
@@ -726,15 +746,15 @@ struct HomeView: View {
                 .font(.system(size: 60))
                 .foregroundColor(Theme.Colors.primary.opacity(0.6))
             
-            Text(tabName + "機能")
+            Text(tabName)
                 .font(Theme.Typography.headingFont)
                 .foregroundColor(Theme.Colors.text)
             
-            Text("この機能は現在開発中です")
+            Text("developing_feature".localized)
                 .font(Theme.Typography.subheadingFont)
                 .foregroundColor(Theme.Colors.subtext)
             
-            Text("今後のアップデートをお楽しみに")
+            Text("stay_tuned".localized)
                 .font(Theme.Typography.bodyFont)
                 .foregroundColor(Theme.Colors.subtext)
                 .padding(.top, 8)
@@ -742,7 +762,7 @@ struct HomeView: View {
             HStack {
                 Spacer()
                 
-                Text("開発中")
+                Text("in_development".localized)
                     .font(Theme.Typography.captionFont.bold())
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -766,4 +786,5 @@ struct HomeView: View {
 #Preview {
     HomeView()
         .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+        .environmentObject(LocalizationManager.shared)
 } 

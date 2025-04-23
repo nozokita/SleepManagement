@@ -82,4 +82,5 @@ struct SleepDebtView: View {
     }
     .padding()
     .background(Theme.Colors.background)
+    .environmentObject(LocalizationManager.shared)
 } 

@@ -11,11 +11,16 @@ import CoreData
 @main
 struct SleepManagementApp: App {
     let persistenceController = PersistenceController.shared
+    @StateObject private var localizationManager = LocalizationManager.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(localizationManager)
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
+                    // 言語変更通知を受け取った時の処理（必要に応じて）
+                }
         }
     }
 }
