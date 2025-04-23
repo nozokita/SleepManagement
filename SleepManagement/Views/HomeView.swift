@@ -7,6 +7,7 @@ struct HomeView: View {
     
     @StateObject private var sleepManager = SleepManager.shared
     @State private var showingAddSheet = false
+    @State private var showingSleepInputSheet = false
     @State private var totalDebt: Double = 0
     
     // アニメーション用の状態
@@ -77,6 +78,12 @@ struct HomeView: View {
                 calculateTotalDebt()
             }) {
                 AddSleepRecordView()
+                    .environment(\.managedObjectContext, viewContext)
+            }
+            .sheet(isPresented: $showingSleepInputSheet, onDismiss: {
+                calculateTotalDebt()
+            }) {
+                SleepInputView()
                     .environment(\.managedObjectContext, viewContext)
             }
         }
@@ -514,7 +521,8 @@ struct HomeView: View {
                 Button(action: {
                     print("記録を追加ボタンがタップされました")
                     DispatchQueue.main.async {
-                        showingAddSheet = true
+                        // 睡眠入力画面を表示
+                        showingSleepInputSheet = true
                     }
                 }) {
                     HStack {
@@ -582,7 +590,8 @@ struct HomeView: View {
             Button(action: {
                 print("記録を追加するボタンがタップされました")
                 DispatchQueue.main.async {
-                    showingAddSheet = true
+                    // 睡眠入力画面を表示
+                    showingSleepInputSheet = true
                 }
             }) {
                 Text("記録を追加する")
