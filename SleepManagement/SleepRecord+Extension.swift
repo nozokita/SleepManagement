@@ -1,6 +1,30 @@
 import Foundation
 import CoreData
 
+// 睡眠タイプの列挙型
+enum SleepRecordType: Int16, CaseIterable {
+    case normalSleep = 0
+    case nap = 1
+    
+    var displayName: String {
+        switch self {
+        case .normalSleep:
+            return "normal_sleep".localized
+        case .nap:
+            return "nap".localized
+        }
+    }
+    
+    var iconName: String {
+        switch self {
+        case .normalSleep:
+            return "moon.stars"
+        case .nap:
+            return "cup.and.saucer"
+        }
+    }
+}
+
 extension SleepRecord {
     // fetchRequestが重複しているので、カスタム名に変更
     static func createFetchRequest() -> NSFetchRequest<SleepRecord> {
@@ -10,6 +34,16 @@ extension SleepRecord {
     // 全ての睡眠記録を取得（新しい順）
     static func allRecordsFetchRequest() -> NSFetchRequest<SleepRecord> {
         let request: NSFetchRequest<SleepRecord> = createFetchRequest()
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: false)
+        ]
+        return request
+    }
+    
+    // 特定の睡眠タイプの記録を取得
+    static func recordsWithType(_ type: SleepRecordType) -> NSFetchRequest<SleepRecord> {
+        let request: NSFetchRequest<SleepRecord> = createFetchRequest()
+        request.predicate = NSPredicate(format: "sleepType == %d", type.rawValue)
         request.sortDescriptors = [
             NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: false)
         ]
@@ -67,5 +101,17 @@ extension SleepRecord {
         formatter.timeStyle = .short
         formatter.locale = Locale(identifier: "ja_JP")
         return formatter.string(from: endAt)
+    }
+    
+    // 睡眠タイプ（表示用）
+    var sleepTypeText: String {
+        let type = SleepRecordType(rawValue: sleepType) ?? .normalSleep
+        return type.displayName
+    }
+    
+    // 睡眠タイプのアイコン名
+    var sleepTypeIconName: String {
+        let type = SleepRecordType(rawValue: sleepType) ?? .normalSleep
+        return type.iconName
     }
 } 

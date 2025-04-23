@@ -111,7 +111,7 @@ class SleepManager: ObservableObject {
     }
     
     // 新しい睡眠記録を追加
-    func addSleepRecord(context: NSManagedObjectContext, startAt: Date, endAt: Date, quality: Int16, memo: String? = nil) -> SleepRecord {
+    func addSleepRecord(context: NSManagedObjectContext, startAt: Date, endAt: Date, quality: Int16, sleepType: SleepRecordType = .normalSleep, memo: String? = nil) -> SleepRecord {
         let record = SleepRecord(context: context)
         record.id = UUID()
         record.startAt = startAt
@@ -119,6 +119,7 @@ class SleepManager: ObservableObject {
         record.quality = quality
         record.memo = memo
         record.createdAt = Date()
+        record.sleepType = sleepType.rawValue
         
         // スコアと負債の計算
         let durationHours = endAt.timeIntervalSince(startAt) / 3600

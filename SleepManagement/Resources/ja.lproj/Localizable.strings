@@ -86,6 +86,9 @@
 "poor" = "悪い";
 "excellent" = "とても良い";
 "minutes" = "分";
+"sleep_type" = "睡眠タイプ";
+"normal_sleep" = "通常睡眠";
+"nap" = "仮眠";
 
 // AI Advice
 "ai_advice" = "AI診断・アドバイス";

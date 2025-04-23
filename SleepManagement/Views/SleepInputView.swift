@@ -15,6 +15,7 @@ struct SleepInputView: View {
     @State private var wakeTime = Date()
     @State private var quality: Double = 3
     @State private var sleepMode: SleepMode = .manual
+    @State private var selectedSleepType: SleepRecordType = .normalSleep
     
     // アラート表示用
     @State private var showingAlert = false
@@ -189,6 +190,45 @@ struct SleepInputView: View {
                 )
                 .padding(.horizontal, 2)
                 .padding(.bottom, 8) // 入力モードと同じ8ピクセルに変更
+                
+                // 睡眠タイプセクション
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("sleep_type".localized)
+                        .font(Theme.Typography.subheadingFont)
+                        .foregroundColor(Theme.Colors.text)
+                    
+                    HStack(spacing: 12) {
+                        ForEach(SleepRecordType.allCases, id: \.self) { type in
+                            Button(action: {
+                                selectedSleepType = type
+                            }) {
+                                HStack {
+                                    Image(systemName: type.iconName)
+                                        .foregroundColor(selectedSleepType == type ? .white : Theme.Colors.primary)
+                                    
+                                    Text(type.displayName)
+                                        .font(Theme.Typography.bodyFont)
+                                        .foregroundColor(selectedSleepType == type ? .white : Theme.Colors.primary)
+                                }
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(selectedSleepType == type ? Theme.Colors.primary : Theme.Colors.primary.opacity(0.1))
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(8)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white.opacity(0.5))
+                )
+                .padding(.horizontal, 2)
+                .padding(.bottom, 8)
                 
                 // セクション区切り（空のスペース）
                 // Spacerを削除（入力モードと日付の間にはSpacerがないため）
@@ -442,6 +482,7 @@ struct SleepInputView: View {
             startAt: sleepTime,
             endAt: wakeTime,
             quality: Int16(quality),
+            sleepType: selectedSleepType,
             memo: nil
         )
         

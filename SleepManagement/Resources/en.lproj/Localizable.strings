@@ -86,6 +86,9 @@
 "poor" = "Poor";
 "excellent" = "Excellent";
 "minutes" = " min";
+"sleep_type" = "Sleep Type";
+"normal_sleep" = "Normal Sleep";
+"nap" = "Nap";
 
 // AI Advice
 "ai_advice" = "AI Advice";
