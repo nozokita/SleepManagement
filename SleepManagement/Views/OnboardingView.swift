@@ -31,13 +31,13 @@ struct OnboardingView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                if isHealthAuthorized {
-                    NavigationLink(destination: HomeView()) {
-                        Text("はじめる")
+                if isHealthAuthorized && isWatchConnected {
+                    NavigationLink(destination: SettingsView()) {
+                        Text("理想睡眠時間を設定する")
                             .font(.headline)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.orange)
+                            .background(Color.purple)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
