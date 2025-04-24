@@ -16,6 +16,14 @@ struct SleepInputView: View {
     @State private var quality: Double = 3
     @State private var sleepMode: SleepMode = .manual
     @State private var selectedSleepType: SleepRecordType = .normalSleep
+    @State private var showDatePicker: Bool = false
+    
+    // 画面表示用プロパティ
+    private var selectedDateText: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: selectedDate)
+    }
     
     // アラート表示用
     @State private var showingAlert = false
@@ -117,6 +125,26 @@ struct SleepInputView: View {
                 )
             }
         }
+        // カレンダーをシートで表示
+        .sheet(isPresented: $showDatePicker) {
+            NavigationView {
+                VStack {
+                    DatePicker("", selection: $selectedDate, displayedComponents: .date)
+                        .datePickerStyle(GraphicalDatePickerStyle())
+                        .labelsHidden()
+                        .padding()
+                }
+                .navigationTitle("date".localized)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("OK") { showDatePicker = false }
+                    }
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { showDatePicker = false }
+                    }
+                }
+            }
+        }
     }
     
     // ヘッダー
@@ -160,28 +188,25 @@ struct SleepInputView: View {
         ScrollView {
             VStack(spacing: 16) {
                 // 日付選択
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("date".localized)
                         .font(Theme.Typography.subheadingFont)
-                        .fontWeight(.medium)
                         .foregroundColor(Theme.Colors.text)
-                    
-                    ZStack {
-                        // カレンダー内のDatePicker
-                        DatePicker("", selection: $selectedDate, displayedComponents: .date)
-                            .datePickerStyle(GraphicalDatePickerStyle())
-                            .labelsHidden() // ラベルを非表示
-                            .frame(height: 270)
-                            .scaleEffect(0.9)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Theme.Colors.cardBackground)
-                                    .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-                            )
+                    Button(action: {
+                        showDatePicker = true
+                    }) {
+                        HStack {
+                            Text(selectedDateText)
+                                .font(Theme.Typography.bodyFont)
+                                .foregroundColor(Theme.Colors.primary)
+                            Spacer()
+                            Image(systemName: "calendar")
+                                .foregroundColor(Theme.Colors.primary)
+                        }
+                        .padding(8)
+                        .background(Theme.Colors.cardBackground)
+                        .cornerRadius(Theme.Layout.cardCornerRadius)
                     }
-                    .frame(height: 260)
                 }
                 .padding(12)
                 .background(
@@ -189,7 +214,7 @@ struct SleepInputView: View {
                         .fill(Color.white.opacity(0.5))
                 )
                 .padding(.horizontal, 2)
-                .padding(.bottom, 8) // 入力モードと同じ8ピクセルに変更
+                .padding(.bottom, 8)
                 
                 // 睡眠タイプセクション
                 VStack(alignment: .leading, spacing: 10) {
@@ -220,6 +245,7 @@ struct SleepInputView: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
+                    .frame(maxWidth: .infinity)
                     .padding(8)
                 }
                 .padding(12)
@@ -227,6 +253,7 @@ struct SleepInputView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white.opacity(0.5))
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 2)
                 .padding(.bottom, 8)
                 
