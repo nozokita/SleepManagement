@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" launchScreen="YES" useSafeAreas="YES">
+    <dependencies>
+        <deployment identifier="default"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18122"/>
+        <capability name="Safe areas" minToolsVersion="9.0"/>
+    </dependencies>
     <scenes>
         <!--View Controller-->  
         <scene sceneID="1">  
