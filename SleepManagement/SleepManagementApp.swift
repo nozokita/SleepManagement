@@ -13,16 +13,28 @@ class AppState: ObservableObject {
     @Published var hasCompletedOnboarding: Bool {
         didSet {
             UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+            print("AppState: オンボーディング完了状態を変更: \(hasCompletedOnboarding)")
         }
     }
     
     init() {
         // UserDefaultsから初期化
+        // デバッグ用：オンボーディング状態をリセットする場合はコメントを外す
+        UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+        
         self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        print("AppState: 初期化 - オンボーディング完了状態: \(hasCompletedOnboarding)")
     }
     
     func completeOnboarding() {
         hasCompletedOnboarding = true
+        print("AppState: オンボーディング完了メソッド呼び出し")
+    }
+    
+    // 開発用：オンボーディングをリセット
+    func resetOnboarding() {
+        hasCompletedOnboarding = false
+        print("AppState: オンボーディング状態をリセット")
     }
 }
 
@@ -34,9 +46,15 @@ struct SleepManagementApp: App {
     // アプリの状態を管理
     @StateObject private var appState = AppState()
     
+    // 開発用：強制的にオンボーディングを表示するフラグ
+    private let forceOnboarding = true
+    
     var body: some Scene {
         WindowGroup {
-            if !appState.hasCompletedOnboarding {
+            // デバッグ情報を表示
+            let _ = print("SleepManagementApp: オンボーディング表示条件: \(!appState.hasCompletedOnboarding || forceOnboarding)")
+            
+            if !appState.hasCompletedOnboarding || forceOnboarding {
                 // 初回起動時のオンボーディングフロー
                 OnboardingNavigationView()
                     .environmentObject(appState)
