@@ -157,14 +157,25 @@ struct OnboardingView: View {
         .onAppear {
             updateStatuses()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            print("アプリがアクティブになりました - HealthKit状態を更新")
+            updateStatuses()
+        }
     }
 
     private func updateStatuses() {
+        print("HealthKit ステータス更新開始")
+        
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+        
         hkSleepStatus = healthStore.authorizationStatus(for: sleepType)
         hkHeartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        print("HealthKit Sleep状態: \(hkSleepStatus.rawValue) - \(statusText(for: hkSleepStatus))")
+        print("HealthKit HeartRate状態: \(hkHeartRateStatus.rawValue) - \(statusText(for: hkHeartRateStatus))")
+        
         isHealthAuthorized = (hkSleepStatus == .sharingAuthorized && hkHeartRateStatus == .sharingAuthorized)
+        print("HealthKit 許可状態: \(isHealthAuthorized)")
         
         let manager = WatchConnectivityManager.shared
         manager.checkWatchAvailability()
@@ -176,6 +187,11 @@ struct OnboardingView: View {
         case .notDetermined: return "未確認"
         case .sharingAuthorized: return "許可済み"
         case .sharingDenied: return "拒否済み"
+        #if targetEnvironment(simulator)
+            if status == .notDetermined {
+                return "シミュレータ環境・未確認"
+            }
+        #endif
         @unknown default: return "不明"
         }
     }
@@ -190,31 +206,50 @@ struct OnboardingView: View {
     }
 
     private func requestHealthKit() {
+        print("HealthKit 許可リクエスト開始")
+        
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
         let respiratoryType = HKQuantityType.quantityType(forIdentifier: .respiratoryRate)!
-        let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
         
         let sleepStatus = healthStore.authorizationStatus(for: sleepType)
         let heartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        print("リクエスト前の状態 - Sleep: \(sleepStatus.rawValue), HeartRate: \(heartRateStatus.rawValue)")
         
         if sleepStatus == .sharingDenied || heartRateStatus == .sharingDenied {
+            print("HealthKit 拒否済み - 設定アプリへ誘導")
             self.showHealthDeniedAlert = true
             return
         }
         
-        healthStore.requestAuthorization(toShare: [], read: readTypes) { success, error in
+        if (sleepStatus == .sharingAuthorized && heartRateStatus == .sharingAuthorized) {
+            print("HealthKit 既に許可済み")
+            self.isHealthAuthorized = true
+            updateStatuses()
+            return
+        }
+        
+        let shareTypes: Set<HKSampleType> = [sleepType]
+        let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
+        
+        print("HealthKit 許可リクエスト実行: 読み取り:\(readTypes.count)項目, 書き込み:\(shareTypes.count)項目")
+        
+        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
             print("HealthKit authorization result: success=\(success), error=\(String(describing: error))")
             DispatchQueue.main.async {
                 if success {
+                    print("HealthKit 許可成功")
                     self.isHealthAuthorized = true
                     self.hkSleepStatus = self.healthStore.authorizationStatus(for: sleepType)
                     self.hkHeartRateStatus = self.healthStore.authorizationStatus(for: heartRateType)
+                    print("許可後の状態 - Sleep: \(self.hkSleepStatus.rawValue), HeartRate: \(self.hkHeartRateStatus.rawValue)")
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        print("遅延後の状態更新実行")
                         self.updateStatuses()
                     }
                 } else {
+                    print("HealthKit 許可失敗: \(String(describing: error))")
                     self.showHealthDeniedAlert = true
                 }
             }
