@@ -15,7 +15,8 @@ struct SleepManagementApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // デバッグ用: OnboardingView をルートに設定してステータス表示を有効化
+            OnboardingView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(localizationManager)
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
