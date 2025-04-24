@@ -40,8 +40,23 @@ struct OnboardingView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                 
-                Text("HealthKit SleepAnalysis: \(statusText(for: hkSleepStatus))")
-                Text("HealthKit HeartRate: \(statusText(for: hkHeartRateStatus))")
+                HStack {
+                    Text("睡眠データ:")
+                    Spacer()
+                    Text(statusText(for: hkSleepStatus))
+                        .foregroundColor(statusColor(for: hkSleepStatus))
+                        .fontWeight(.bold)
+                }
+                .padding(.horizontal)
+                
+                HStack {
+                    Text("心拍数データ:")
+                    Spacer()
+                    Text(statusText(for: hkHeartRateStatus))
+                        .foregroundColor(statusColor(for: hkHeartRateStatus))
+                        .fontWeight(.bold)
+                }
+                .padding(.horizontal)
                 
                 Button("ステータス更新") {
                     isCheckingStatuses = true
@@ -50,6 +65,9 @@ struct OnboardingView: View {
                         isCheckingStatuses = false
                     }
                 }
+                .font(.footnote)
+                .padding(.vertical, 8)
+                .foregroundColor(.blue)
                 
                 Button(action: requestHealthKit) {
                     Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
@@ -130,6 +148,8 @@ struct OnboardingView: View {
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
         hkSleepStatus = healthStore.authorizationStatus(for: sleepType)
         hkHeartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        isHealthAuthorized = (hkSleepStatus == .sharingAuthorized && hkHeartRateStatus == .sharingAuthorized)
+        
         let manager = WatchConnectivityManager.shared
         manager.checkWatchAvailability()
         isWatchConnected = manager.isWatchAvailable
@@ -144,6 +164,15 @@ struct OnboardingView: View {
         }
     }
 
+    private func statusColor(for status: HKAuthorizationStatus) -> Color {
+        switch status {
+        case .notDetermined: return .gray
+        case .sharingAuthorized: return .green
+        case .sharingDenied: return .red
+        @unknown default: return .orange
+        }
+    }
+
     private func requestHealthKit() {
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
@@ -155,6 +184,10 @@ struct OnboardingView: View {
                     self.isHealthAuthorized = true
                     self.hkSleepStatus = self.healthStore.authorizationStatus(for: sleepType)
                     self.hkHeartRateStatus = self.healthStore.authorizationStatus(for: heartRateType)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.updateStatuses()
+                    }
                 } else {
                     self.showHealthDeniedAlert = true
                 }
