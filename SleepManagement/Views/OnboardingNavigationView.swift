@@ -18,13 +18,16 @@ struct OnboardingNavigationView: View {
                     OnboardingView(onComplete: { 
                         currentStep = .idealSleepTime 
                     })
+                    .navigationTitle("ヘルスと接続設定")
                 case .idealSleepTime:
                     SettingsView(onComplete: {
                         // 全てのオンボーディングステップが完了
                         appState.completeOnboarding()
                     })
+                    .navigationTitle("睡眠時間設定")
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

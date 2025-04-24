@@ -55,26 +55,35 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     }
     
     func checkWatchAvailability() {
+        print("WatchConnectivity - チェック開始")
+        
         // WatchConnectivityが使えるかどうか
         guard WCSession.isSupported() else {
+            print("WatchConnectivity - isSupported: false")
             self.isWatchAvailable = false
             return
         }
+        print("WatchConnectivity - isSupported: true")
         
         // Watchがペアリングされているか
         guard session.isPaired else {
+            print("WatchConnectivity - isPaired: false")
             self.isWatchAvailable = false
             return
         }
+        print("WatchConnectivity - isPaired: true")
         
         // Watchにアプリがインストールされているか
         guard session.isWatchAppInstalled else {
+            print("WatchConnectivity - isWatchAppInstalled: false")
             self.isWatchAvailable = false
             return
         }
+        print("WatchConnectivity - isWatchAppInstalled: true")
         
         // すべての条件を満たしている場合
         self.isWatchAvailable = true
+        print("WatchConnectivity - すべての条件を満たしています。isWatchAvailable: true")
     }
     
     // メッセージ送信（将来的な実装用）
@@ -113,10 +122,19 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 // WatchConnectivityのデリゲート
 extension WatchConnectivityManager: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        print("WCSession activation state: \(activationState.rawValue)")
         if let error = error {
             print("WCSession activation failed with error: \(error.localizedDescription)")
             self.isWatchAvailable = false
         } else {
+            // デバッグ情報
+            print("WCSession activated - sessionState:")
+            print("  isPaired: \(session.isPaired)")
+            print("  isWatchAppInstalled: \(session.isWatchAppInstalled)")
+            print("  isComplicationEnabled: \(session.isComplicationEnabled)")
+            print("  isReachable: \(session.isReachable)")
+            print("  activationState: \(session.activationState.rawValue)")
+            
             checkWatchAvailability()
         }
     }

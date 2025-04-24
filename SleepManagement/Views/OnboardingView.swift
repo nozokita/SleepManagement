@@ -12,6 +12,8 @@ struct OnboardingView: View {
     @State private var hkSleepStatus: HKAuthorizationStatus = .notDetermined
     @State private var hkHeartRateStatus: HKAuthorizationStatus = .notDetermined
     @State private var isCheckingStatuses = false
+    @State private var watchErrorMessage: String? = nil
+    @State private var showWatchError = false
     var onComplete: (() -> Void)? = nil
 
     var body: some View {
@@ -19,39 +21,81 @@ struct OnboardingView: View {
             if isCheckingStatuses {
                 Text("ステータスを取得中...")
             }
-            Text("HealthKit SleepAnalysis: \(statusText(for: hkSleepStatus))")
-            Text("HealthKit HeartRate: \(statusText(for: hkHeartRateStatus))")
-            Text("Apple Watch 接続: \(isCheckingStatuses ? "…" : (isWatchConnected ? "接続済み" : "未接続"))")
-            Button("ステータス更新") {
-                isCheckingStatuses = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    updateStatuses()
-                    isCheckingStatuses = false
+            Text("ヘルスケア接続設定")
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.top)
+            
+            Text("アプリの機能を最大限に活用するため、HealthKitへのアクセスを許可してください。また、Apple Watchをお持ちの場合は接続設定も行えます。")
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .padding()
+                .foregroundColor(.secondary)
+            
+            Divider()
+            
+            Group {
+                Text("必須設定")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                
+                Text("HealthKit SleepAnalysis: \(statusText(for: hkSleepStatus))")
+                Text("HealthKit HeartRate: \(statusText(for: hkHeartRateStatus))")
+                
+                Button("ステータス更新") {
+                    isCheckingStatuses = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        updateStatuses()
+                        isCheckingStatuses = false
+                    }
+                }
+                
+                Button(action: requestHealthKit) {
+                    Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(isHealthAuthorized ? Color.green : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
             }
-            Button(action: requestHealthKit) {
-                Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(isHealthAuthorized ? Color.green : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            
+            Divider()
+            
+            Group {
+                Text("オプション設定")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                
+                Text("Apple Watch 接続: \(isCheckingStatuses ? "…" : (isWatchConnected ? "接続済み" : "未接続"))")
+                
+                if let errorMsg = watchErrorMessage {
+                    Text(errorMsg)
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                
+                Button(action: checkWatch) {
+                    Text(isWatchConnected ? "Watch が接続されています" : "Watch を検出する")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(isWatchConnected ? Color.green : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
-            Button(action: checkWatch) {
-                Text(isWatchConnected ? "Watch が接続されています" : "Watch を検出する")
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(isWatchConnected ? Color.green : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            if isHealthAuthorized && isWatchConnected {
+            
+            if isHealthAuthorized {
                 Button(action: {
                     if let onComplete = onComplete {
                         onComplete()
                     }
                 }) {
-                    Text("理想睡眠時間を設定する")
+                    Text("次へ進む")
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -59,6 +103,7 @@ struct OnboardingView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
+                .padding(.top)
             }
         }
         .padding()
@@ -72,6 +117,11 @@ struct OnboardingView: View {
             Button("キャンセル", role: .cancel) {}
         } message: {
             Text("睡眠データの取得には HealthKit のアクセスが必要です。設定アプリで許可してください。")
+        }
+        .alert("Apple Watch 接続エラー", isPresented: $showWatchError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。")
         }
     }
 
@@ -117,6 +167,21 @@ struct OnboardingView: View {
         manager.checkWatchAvailability()
         DispatchQueue.main.async {
             self.isWatchConnected = manager.isWatchAvailable
+           
+            if !manager.isWatchAvailable {
+                if !WCSession.isSupported() {
+                    self.watchErrorMessage = "このデバイスはWatchConnectivityをサポートしていません。"
+                } else if !WCSession.default.isPaired {
+                    self.watchErrorMessage = "Apple Watchがペアリングされていません。"
+                    self.showWatchError = true
+                } else if !WCSession.default.isWatchAppInstalled {
+                    self.watchErrorMessage = "Watchアプリがインストールされていません。"
+                } else {
+                    self.watchErrorMessage = "不明なエラーが発生しました。"
+                }
+            } else {
+                self.watchErrorMessage = nil
+            }
         }
     }
 }
