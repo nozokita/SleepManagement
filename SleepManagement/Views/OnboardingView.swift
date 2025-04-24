@@ -12,54 +12,57 @@ struct OnboardingView: View {
     @State private var hkSleepStatus: HKAuthorizationStatus = .notDetermined
     @State private var hkHeartRateStatus: HKAuthorizationStatus = .notDetermined
     @State private var isCheckingStatuses = false
+    var onComplete: (() -> Void)? = nil
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                if isCheckingStatuses {
-                    Text("ステータスを取得中...")
-                }
-                Text("HealthKit SleepAnalysis: \(statusText(for: hkSleepStatus))")
-                Text("HealthKit HeartRate: \(statusText(for: hkHeartRateStatus))")
-                Text("Apple Watch 接続: \(isCheckingStatuses ? "…" : (isWatchConnected ? "接続済み" : "未接続"))")
-                Button("ステータス更新") {
-                    isCheckingStatuses = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        updateStatuses()
-                        isCheckingStatuses = false
-                    }
-                }
-                Button(action: requestHealthKit) {
-                    Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(isHealthAuthorized ? Color.green : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                Button(action: checkWatch) {
-                    Text(isWatchConnected ? "Watch が接続されています" : "Watch を検出する")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(isWatchConnected ? Color.green : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                if isHealthAuthorized && isWatchConnected {
-                    NavigationLink(destination: SettingsView()) {
-                        Text("理想睡眠時間を設定する")
-                            .font(.headline)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.purple)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+        VStack(spacing: 20) {
+            if isCheckingStatuses {
+                Text("ステータスを取得中...")
+            }
+            Text("HealthKit SleepAnalysis: \(statusText(for: hkSleepStatus))")
+            Text("HealthKit HeartRate: \(statusText(for: hkHeartRateStatus))")
+            Text("Apple Watch 接続: \(isCheckingStatuses ? "…" : (isWatchConnected ? "接続済み" : "未接続"))")
+            Button("ステータス更新") {
+                isCheckingStatuses = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    updateStatuses()
+                    isCheckingStatuses = false
                 }
             }
-            .padding()
-            .navigationTitle("オンボーディング")
+            Button(action: requestHealthKit) {
+                Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(isHealthAuthorized ? Color.green : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            Button(action: checkWatch) {
+                Text(isWatchConnected ? "Watch が接続されています" : "Watch を検出する")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(isWatchConnected ? Color.green : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            if isHealthAuthorized && isWatchConnected {
+                Button(action: {
+                    if let onComplete = onComplete {
+                        onComplete()
+                    }
+                }) {
+                    Text("理想睡眠時間を設定する")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.purple)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+            }
         }
+        .padding()
+        .navigationTitle("オンボーディング")
         .alert("HealthKit アクセスが拒否されました", isPresented: $showHealthDeniedAlert) {
             Button("設定を開く") {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -121,5 +124,6 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
+            .previewLayout(.sizeThatFits)
     }
 } 

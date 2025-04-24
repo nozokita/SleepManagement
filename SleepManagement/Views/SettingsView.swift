@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject var settings = SettingsManager.shared
     @State private var navigateHome = false
+    var onComplete: (() -> Void)? = nil
 
     var body: some View {
         NavigationView {
@@ -20,15 +21,21 @@ struct SettingsView: View {
                     Section {
                         Button(action: {
                             settings.save()
-                            navigateHome = true
+                            if let onComplete = onComplete {
+                                onComplete()
+                            } else {
+                                navigateHome = true
+                            }
                         }) {
                             Text("保存")
                                 .frame(maxWidth: .infinity)
                         }
                     }
                 }
-                NavigationLink(destination: HomeView(), isActive: $navigateHome) {
-                    EmptyView()
+                if onComplete == nil {
+                    NavigationLink(destination: HomeView(), isActive: $navigateHome) {
+                        EmptyView()
+                    }
                 }
             }
             .navigationTitle("設定")
@@ -39,5 +46,6 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+            .previewLayout(.sizeThatFits)
     }
 } 
