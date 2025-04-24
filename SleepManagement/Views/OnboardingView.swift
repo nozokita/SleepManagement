@@ -5,7 +5,7 @@ import UIKit
 
 struct OnboardingView: View {
     @Environment(\.openURL) private var openURL
-    private let healthStore = HKHealthStore()
+    private static let healthStore = HKHealthStore()
     @State private var isHealthAuthorized = false
     @State private var isWatchConnected = false
     @State private var showHealthDeniedAlert = false
@@ -14,7 +14,12 @@ struct OnboardingView: View {
     @State private var isCheckingStatuses = false
     @State private var watchErrorMessage: String? = nil
     @State private var showWatchError = false
+    @State private var healthKitError: String? = nil
     var onComplete: (() -> Void)? = nil
+
+    private static let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+    private static let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+    private static let respiratoryType = HKQuantityType.quantityType(forIdentifier: .respiratoryRate)!
 
     var body: some View {
         VStack(spacing: 20) {
@@ -57,6 +62,13 @@ struct OnboardingView: View {
                         .fontWeight(.bold)
                 }
                 .padding(.horizontal)
+                
+                if let error = healthKitError {
+                    Text(error)
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                }
                 
                 Button("ステータス更新") {
                     isCheckingStatuses = true
@@ -155,6 +167,7 @@ struct OnboardingView: View {
             Text("Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。")
         }
         .onAppear {
+            print("OnboardingView表示 - HealthKit状態を更新")
             updateStatuses()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
@@ -164,18 +177,31 @@ struct OnboardingView: View {
     }
 
     private func updateStatuses() {
+        healthKitError = nil
         print("HealthKit ステータス更新開始")
         
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+        guard HKHealthStore.isHealthDataAvailable() else {
+            print("HealthKitが利用できません")
+            healthKitError = "このデバイスではHealthKitが利用できません"
+            return
+        }
         
-        hkSleepStatus = healthStore.authorizationStatus(for: sleepType)
-        hkHeartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        hkSleepStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.sleepType)
+        hkHeartRateStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.heartRateType)
         print("HealthKit Sleep状態: \(hkSleepStatus.rawValue) - \(statusText(for: hkSleepStatus))")
         print("HealthKit HeartRate状態: \(hkHeartRateStatus.rawValue) - \(statusText(for: hkHeartRateStatus))")
         
+        print("HealthKit Sleep状態 Raw: \(hkSleepStatus)")
+        print("HealthKit HeartRate状態 Raw: \(hkHeartRateStatus)")
+        
         isHealthAuthorized = (hkSleepStatus == .sharingAuthorized && hkHeartRateStatus == .sharingAuthorized)
         print("HealthKit 許可状態: \(isHealthAuthorized)")
+        
+        #if targetEnvironment(simulator)
+        if hkSleepStatus == .notDetermined && hkHeartRateStatus == .notDetermined {
+            healthKitError = "シミュレータ環境では完全な動作保証ができません"
+        }
+        #endif
         
         let manager = WatchConnectivityManager.shared
         manager.checkWatchAvailability()
@@ -206,14 +232,17 @@ struct OnboardingView: View {
     }
 
     private func requestHealthKit() {
+        healthKitError = nil
         print("HealthKit 許可リクエスト開始")
         
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-        let respiratoryType = HKQuantityType.quantityType(forIdentifier: .respiratoryRate)!
+        guard HKHealthStore.isHealthDataAvailable() else {
+            print("HealthKitが利用できません")
+            healthKitError = "このデバイスではHealthKitが利用できません"
+            return
+        }
         
-        let sleepStatus = healthStore.authorizationStatus(for: sleepType)
-        let heartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        let sleepStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.sleepType)
+        let heartRateStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.heartRateType)
         print("リクエスト前の状態 - Sleep: \(sleepStatus.rawValue), HeartRate: \(heartRateStatus.rawValue)")
         
         if sleepStatus == .sharingDenied || heartRateStatus == .sharingDenied {
@@ -229,28 +258,37 @@ struct OnboardingView: View {
             return
         }
         
-        let shareTypes: Set<HKSampleType> = [sleepType]
-        let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
+        let shareTypes: Set<HKSampleType> = [OnboardingView.sleepType]
+        let readTypes: Set<HKObjectType> = [
+            OnboardingView.sleepType,
+            OnboardingView.heartRateType,
+            OnboardingView.respiratoryType
+        ]
         
         print("HealthKit 許可リクエスト実行: 読み取り:\(readTypes.count)項目, 書き込み:\(shareTypes.count)項目")
         
-        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
-            print("HealthKit authorization result: success=\(success), error=\(String(describing: error))")
-            DispatchQueue.main.async {
-                if success {
-                    print("HealthKit 許可成功")
-                    self.isHealthAuthorized = true
-                    self.hkSleepStatus = self.healthStore.authorizationStatus(for: sleepType)
-                    self.hkHeartRateStatus = self.healthStore.authorizationStatus(for: heartRateType)
-                    print("許可後の状態 - Sleep: \(self.hkSleepStatus.rawValue), HeartRate: \(self.hkHeartRateStatus.rawValue)")
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        print("遅延後の状態更新実行")
-                        self.updateStatuses()
+        DispatchQueue.main.async {
+            OnboardingView.healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
+                print("HealthKit authorization result: success=\(success), error=\(String(describing: error))")
+                DispatchQueue.main.async {
+                    if success {
+                        print("HealthKit 許可成功")
+                        self.isHealthAuthorized = true
+                        self.hkSleepStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.sleepType)
+                        self.hkHeartRateStatus = OnboardingView.healthStore.authorizationStatus(for: OnboardingView.heartRateType)
+                        print("許可後の状態 - Sleep: \(self.hkSleepStatus.rawValue), HeartRate: \(self.hkHeartRateStatus.rawValue)")
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            print("遅延後の状態更新実行")
+                            self.updateStatuses()
+                        }
+                    } else {
+                        print("HealthKit 許可失敗: \(String(describing: error))")
+                        if let error = error {
+                            self.healthKitError = "エラー: \(error.localizedDescription)"
+                        }
+                        self.showHealthDeniedAlert = true
                     }
-                } else {
-                    print("HealthKit 許可失敗: \(String(describing: error))")
-                    self.showHealthDeniedAlert = true
                 }
             }
         }
