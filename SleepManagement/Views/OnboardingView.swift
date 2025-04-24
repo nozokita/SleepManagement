@@ -69,6 +69,17 @@ struct OnboardingView: View {
                 .padding(.vertical, 8)
                 .foregroundColor(.blue)
                 
+                if hkSleepStatus == .sharingDenied || hkHeartRateStatus == .sharingDenied {
+                    Button("設定アプリでHealthKitを許可する") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            openURL(url)
+                        }
+                    }
+                    .font(.footnote)
+                    .foregroundColor(.red)
+                    .padding(.vertical, 4)
+                }
+                
                 Button(action: requestHealthKit) {
                     Text(isHealthAuthorized ? "HealthKit 許可済み" : "HealthKit を許可する")
                         .padding()
@@ -77,6 +88,8 @@ struct OnboardingView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
+                .disabled(hkSleepStatus == .sharingDenied || hkHeartRateStatus == .sharingDenied)
+                .opacity(hkSleepStatus == .sharingDenied || hkHeartRateStatus == .sharingDenied ? 0.6 : 1.0)
             }
             
             Divider()
@@ -134,12 +147,15 @@ struct OnboardingView: View {
             }
             Button("キャンセル", role: .cancel) {}
         } message: {
-            Text("睡眠データの取得には HealthKit のアクセスが必要です。設定アプリで許可してください。")
+            Text("睡眠データの取得には HealthKit のアクセスが必要です。\n\n設定アプリを開き、「プライバシーとセキュリティ」→「健康」で、このアプリに対して「睡眠」と「心拍数」の項目を「許可」に設定してください。")
         }
         .alert("Apple Watch 接続エラー", isPresented: $showWatchError) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。")
+        }
+        .onAppear {
+            updateStatuses()
         }
     }
 
@@ -178,7 +194,17 @@ struct OnboardingView: View {
         let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
         let respiratoryType = HKQuantityType.quantityType(forIdentifier: .respiratoryRate)!
         let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
+        
+        let sleepStatus = healthStore.authorizationStatus(for: sleepType)
+        let heartRateStatus = healthStore.authorizationStatus(for: heartRateType)
+        
+        if sleepStatus == .sharingDenied || heartRateStatus == .sharingDenied {
+            self.showHealthDeniedAlert = true
+            return
+        }
+        
         healthStore.requestAuthorization(toShare: [], read: readTypes) { success, error in
+            print("HealthKit authorization result: success=\(success), error=\(String(describing: error))")
             DispatchQueue.main.async {
                 if success {
                     self.isHealthAuthorized = true
