@@ -6,6 +6,7 @@ struct OnboardingNavigationView: View {
     @EnvironmentObject var localizationManager: LocalizationManager
     @State private var currentStep: OnboardingStep = .healthAndWatchSettings
     @State private var navigateToDashboard = false
+    @State private var refreshView = false // 言語変更時の再描画用
     
     enum OnboardingStep {
         case healthAndWatchSettings
@@ -61,6 +62,7 @@ struct OnboardingNavigationView: View {
                                 currentStep = .idealSleepTimeSettings
                             }
                         })
+                        .environmentObject(localizationManager)
                         
                     case .idealSleepTimeSettings:
                         SettingsView(onComplete: {
@@ -72,6 +74,7 @@ struct OnboardingNavigationView: View {
                             print("ダッシュボードへ遷移準備")
                             navigateToDashboard = true
                         })
+                        .environmentObject(localizationManager)
                     }
                 }
             }
@@ -87,7 +90,13 @@ struct OnboardingNavigationView: View {
         .animation(.easeInOut, value: currentStep)
         .onAppear {
             print("OnboardingNavigationView表示: ステップ = \(currentStep)")
+            print("OnboardingNavigationView表示 - 現在の言語: \(localizationManager.currentLanguage)")
         }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
+            print("OnboardingNavigationView - 言語変更通知を受信: \(localizationManager.currentLanguage)")
+            refreshView.toggle() // 強制的に再描画
+        }
+        .id(refreshView) // 言語変更時に強制的に再描画
     }
 }
 

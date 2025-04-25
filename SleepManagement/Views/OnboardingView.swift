@@ -5,6 +5,7 @@ import UIKit
 
 struct OnboardingView: View {
     @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var localizationManager: LocalizationManager
     private static let healthStore = HKHealthStore()
     @State private var isHealthAuthorized = false
     @State private var isWatchConnected = false
@@ -15,6 +16,7 @@ struct OnboardingView: View {
     @State private var watchErrorMessage: String? = nil
     @State private var showWatchError = false
     @State private var healthKitError: String? = nil
+    @State private var refreshView = false // 言語変更時の再描画用
     var onComplete: (() -> Void)? = nil
 
     private static let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
@@ -147,7 +149,9 @@ struct OnboardingView: View {
         }
         .alert(LocalizedStringKey("onboarding.alert.healthDenied.title"), isPresented: $showHealthDeniedAlert) {
             Button(LocalizedStringKey("onboarding.alert.openSettingsButton")) {
-                if let url = URL(string: UIApplication.openSettingsURLString) {
+                if let healthURL = URL(string: UIApplication.openSettingsURLString + "Privacy&path=HEALTH") {
+                    openURL(healthURL)
+                } else if let url = URL(string: UIApplication.openSettingsURLString) {
                     openURL(url)
                 }
             }
@@ -162,12 +166,18 @@ struct OnboardingView: View {
         }
         .onAppear {
             print("OnboardingView表示 - HealthKit状態を更新")
+            print("OnboardingView表示 - 現在の言語: \(localizationManager.currentLanguage)")
             updateStatuses()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             print("アプリがアクティブになりました - HealthKit状態を更新")
             updateStatuses()
         }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
+            print("OnboardingView - 言語変更通知を受信: \(localizationManager.currentLanguage)")
+            refreshView.toggle() // 強制的に再描画
+        }
+        .id(refreshView) // 言語変更時に強制的に再描画
     }
 
     private func updateStatuses() {
