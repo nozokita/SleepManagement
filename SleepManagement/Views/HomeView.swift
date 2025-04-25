@@ -63,7 +63,7 @@ struct HomeView: View {
                         }
                     } else if selectedTab == 1 {
                         // 統計タブ - 睡眠ダッシュボード
-                        SleepManagement.SleepDashboardView()
+                        SleepDashboardView()
                             .environmentObject(localizationManager)
                             .environment(\.managedObjectContext, viewContext)
                     } else {
