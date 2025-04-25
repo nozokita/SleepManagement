@@ -111,7 +111,7 @@ struct SettingsView: View {
                     Picker("", selection: $settings.birthYear) {
                         Text("10代").tag(2005)
                         Text("20代").tag(1995)
-                        Text("30代").tag(1985)
+                        Text(localizationManager.currentLanguage == "ja" ? "30代" : "30s").tag(1985)
                         Text("40代").tag(1975)
                         Text("50代").tag(1965)
                         Text("60代以上").tag(1955)
@@ -130,7 +130,8 @@ struct SettingsView: View {
                 SettingsRow(icon: "moon.stars", title: "settings.sleep.ideal".localized) {
                     Picker("", selection: $settings.idealSleepDuration) {
                         ForEach([5, 6, 7, 8, 9, 10], id: \.self) { hour in
-                            Text("\(hour)時間").tag(TimeInterval(hour * 3600))
+                            Text(localizationManager.currentLanguage == "ja" ? "\(hour)時間" : "\(hour) hours")
+                                .tag(TimeInterval(hour * 3600))
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
