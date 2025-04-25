@@ -91,21 +91,56 @@ class SleepManager: ObservableObject {
     func scheduleNapNotification() {
         let content = UNMutableNotificationContent()
         content.title = "睡眠負債が蓄積されています"
-        content.body = "今から15分のパワーナップをどうぞ"
-        content.sound = .default
+        content.body = "健康を維持するために20〜30分の仮眠をおすすめします。"
+        content.sound = UNNotificationSound.default
         
-        // 現在の時刻から30分後に通知
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 30 * 60, repeats: false)
-        
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
-            content: content,
-            trigger: trigger
-        )
+        // 現在の時間から1時間後に通知
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3600, repeats: false)
+        let request = UNNotificationRequest(identifier: "napReminder", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("通知の登録に失敗しました: \(error)")
+                print("仮眠通知のスケジュールに失敗しました: \(error)")
+            }
+        }
+    }
+    
+    func scheduleSleepReminder(at time: Date) {
+        let content = UNMutableNotificationContent()
+        content.title = "就寝時間です"
+        content.body = "質の良い睡眠のために、そろそろ就寝準備を始めましょう。"
+        content.sound = UNNotificationSound.default
+        
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.hour, .minute], from: time)
+        components.second = 0
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(identifier: "sleepReminder", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("就寝通知のスケジュールに失敗しました: \(error)")
+            }
+        }
+    }
+    
+    func scheduleMorningSummary(at time: Date) {
+        let content = UNMutableNotificationContent()
+        content.title = "睡眠サマリー"
+        content.body = "昨夜の睡眠状態を確認しましょう。アプリを開いて詳細をご覧ください。"
+        content.sound = UNNotificationSound.default
+        
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.hour, .minute], from: time)
+        components.second = 0
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(identifier: "morningSummary", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("朝のサマリー通知のスケジュールに失敗しました: \(error)")
             }
         }
     }
@@ -154,6 +189,132 @@ class SleepManager: ObservableObject {
             } else if let error = error {
                 print("通知許可エラー: \(error)")
             }
+        }
+    }
+    
+    // MARK: - チャートデータ取得
+    
+    /// 過去7日間の睡眠データを取得
+    func getWeeklyChartData(context: NSManagedObjectContext) -> [SleepChartData] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: today)!
+        
+        return getChartData(context: context, from: sevenDaysAgo, to: calendar.date(byAdding: .day, value: 1, to: today)!)
+    }
+    
+    /// 過去30日間の睡眠データを取得
+    func getMonthlyChartData(context: NSManagedObjectContext) -> [SleepChartData] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let thirtyDaysAgo = calendar.date(byAdding: .day, value: -29, to: today)!
+        
+        return getChartData(context: context, from: thirtyDaysAgo, to: calendar.date(byAdding: .day, value: 1, to: today)!)
+    }
+    
+    /// 指定期間の睡眠チャートデータを取得
+    private func getChartData(context: NSManagedObjectContext, from: Date, to: Date) -> [SleepChartData] {
+        let calendar = Calendar.current
+        let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "startAt >= %@ AND startAt < %@", from as NSDate, to as NSDate)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: true)]
+        
+        do {
+            let records = try context.fetch(fetchRequest)
+            
+            // 日ごとにレコードをグループ化
+            var dailyRecords: [Date: [SleepRecord]] = [:]
+            for record in records {
+                guard let startAt = record.startAt else { continue }
+                let dateKey = calendar.startOfDay(for: startAt)
+                if dailyRecords[dateKey] == nil {
+                    dailyRecords[dateKey] = []
+                }
+                dailyRecords[dateKey]?.append(record)
+            }
+            
+            // 各日のデータを集計
+            var chartData: [SleepChartData] = []
+            
+            // 日付の範囲内の各日を処理
+            var currentDate = from
+            while currentDate < to {
+                if let dayRecords = dailyRecords[currentDate], !dayRecords.isEmpty {
+                    // その日の合計睡眠時間を計算
+                    let totalDuration = dayRecords.reduce(0.0) { sum, record in
+                        guard let startAt = record.startAt, let endAt = record.endAt else { return sum }
+                        return sum + endAt.timeIntervalSince(startAt)
+                    }
+                    
+                    // その日の平均スコアを計算
+                    let averageScore = dayRecords.reduce(0.0) { sum, record in
+                        return sum + record.score
+                    } / Double(dayRecords.count)
+                    
+                    let data = SleepChartData(
+                        date: currentDate,
+                        duration: totalDuration,
+                        score: averageScore
+                    )
+                    chartData.append(data)
+                } else {
+                    // データがない日はゼロデータを追加
+                    let data = SleepChartData(
+                        date: currentDate,
+                        duration: 0,
+                        score: 0
+                    )
+                    chartData.append(data)
+                }
+                
+                // 次の日に進む
+                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+            }
+            
+            return chartData
+            
+        } catch {
+            print("チャートデータの取得に失敗しました: \(error)")
+            return []
+        }
+    }
+    
+    /// 睡眠負債の推移データを取得
+    func getSleepDebtTrend(context: NSManagedObjectContext, days: Int = 30) -> [Date: Double] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let startDate = calendar.date(byAdding: .day, value: -(days-1), to: today)!
+        
+        let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "startAt >= %@", startDate as NSDate)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: true)]
+        
+        do {
+            let records = try context.fetch(fetchRequest)
+            var debtTrend: [Date: Double] = [:]
+            
+            // 各日のベースとなる0データを設定
+            var currentDate = startDate
+            while currentDate <= today {
+                debtTrend[currentDate] = 0.0
+                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+            }
+            
+            // 記録がある日の負債を計算
+            for record in records {
+                guard let startAt = record.startAt else { continue }
+                let dateKey = calendar.startOfDay(for: startAt)
+                
+                if let existingDebt = debtTrend[dateKey] {
+                    debtTrend[dateKey] = existingDebt + (record.debt > 0 ? record.debt : 0)
+                }
+            }
+            
+            return debtTrend
+            
+        } catch {
+            print("睡眠負債トレンドの取得に失敗しました: \(error)")
+            return [:]
         }
     }
 } 

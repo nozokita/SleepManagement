@@ -37,9 +37,9 @@ struct HomeView: View {
                     customTabView
                     
                     // メインコンテンツ（サイズ拡大）
-                    ScrollView {
-                        if selectedTab == 0 {
-                            // ホームタブのコンテンツ
+                    if selectedTab == 0 {
+                        // ホームタブのコンテンツ
+                        ScrollView {
                             VStack(spacing: 16) {
                                 // 睡眠サマリーカード
                                 sleepSummaryCard
@@ -55,14 +55,21 @@ struct HomeView: View {
                             }
                             .padding(.top, 8)
                             .padding(.bottom, 80) // FABのスペース確保
-                        } else {
-                            // 開発中のタブ（統計と記録）
+                        }
+                        .refreshable {
+                            refreshData()
+                        }
+                    } else if selectedTab == 1 {
+                        // 統計タブ - 睡眠ダッシュボード
+                        SleepDashboardView()
+                            .environmentObject(localizationManager)
+                            .environment(\.managedObjectContext, viewContext)
+                    } else {
+                        // 睡眠記録タブ（開発中）
+                        ScrollView {
                             developingTabView(tabName: tabs[selectedTab])
                                 .padding(.bottom, 80) // FABのスペース確保
                         }
-                    }
-                    .refreshable {
-                        refreshData()
                     }
                 }
                 

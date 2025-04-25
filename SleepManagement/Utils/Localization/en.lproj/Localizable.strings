@@ -1,0 +1,25 @@
+// Dashboard Screen
+"dashboard_title" = "Sleep Analytics";
+"week_period" = "Weekly";
+"month_period" = "Monthly";
+"data_overview" = "Data Overview";
+"days_of_data" = " days of data";
+"avg_sleep_duration" = "Avg. Sleep Duration";
+"avg_sleep_score" = "Avg. Sleep Score";
+"longest_sleep_day" = "Longest Sleep";
+"shortest_sleep_day" = "Shortest Sleep";
+"sleep_pattern" = "Sleep Pattern";
+"hours" = "Hours";
+"goal" = "Goal";
+"sleep_duration" = "Sleep Duration";
+"recommended" = "Recommended";
+"sleep_quality" = "Sleep Quality";
+"score_points" = "Points";
+"excellent" = "Excellent";
+"good" = "Good";
+"fair" = "Fair";
+"needs_improvement" = "Needs Improvement";
+"sleep_debt_trend" = "Sleep Debt Trend";
+"sleep_debt_explanation" = "Sleep debt is calculated from the difference between ideal sleep hours and actual sleep hours. Long-term sleep deprivation can negatively impact your health.";
+"no_data_available" = "No Data Available";
+"add_sleep_records" = "Add sleep records to see charts"; 
