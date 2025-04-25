@@ -178,4 +178,21 @@
 "settings.data.reset.confirm.button" = "Reset";
 "settings.close" = "Close";
 "settings.save" = "Save";
-"settings.save.home" = "Save & Go Home"; 
+"settings.save.home" = "Save & Go Home";
+
+// Dashboard View
+"dashboard_title" = "Sleep Dashboard";
+"sleep_pattern" = "Sleep Pattern";
+"data_overview" = "Data Overview";
+"week_period" = "Week";
+"month_period" = "Month";
+"days_of_data" = " days of data";
+"shortest_sleep_day" = "Shortest Sleep Day";
+"goal" = "Goal";
+"recommended" = "Recommended";
+"fair" = "Fair";
+"needs_improvement" = "Needs Improvement";
+"score_points" = " points";
+"no_data_available" = "No Data Available";
+"add_sleep_records" = "Add sleep records to see your data";
+"sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt."; 

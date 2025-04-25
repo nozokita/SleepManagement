@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD6D2F8C2DBB735F001241BF /* SleepChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */; };
+		BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */; };
 		BD9334632DBB047D00E49855 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD93344C2DBB047D00E49855 /* WatchConnectivityManager.swift */; };
 		BD9334642DBB047D00E49855 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334502DBB047D00E49855 /* HomeView.swift */; };
 		BD9334652DBB047D00E49855 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334582DBB047D00E49855 /* ContentView.swift */; };
@@ -35,6 +37,8 @@
 
 /* Begin PBXFileReference section */
 		BD54711E2DB4D7A7006389E5 /* SleepManagement.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepManagement.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepChartData.swift; sourceTree = "<group>"; };
+		BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepDashboardView.swift; sourceTree = "<group>"; };
 		BD9334402DBB047D00E49855 /* SleepDebtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepDebtView.swift; sourceTree = "<group>"; };
 		BD9334412DBB047D00E49855 /* SleepRecordCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepRecordCard.swift; sourceTree = "<group>"; };
 		BD9334422DBB047D00E49855 /* SleepScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScoreView.swift; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 		BD9334452DBB047D00E49855 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */,
 				BD9334442DBB047D00E49855 /* UserSettings.swift */,
 			);
 			path = Models;
@@ -130,6 +135,7 @@
 		BD9334562DBB047D00E49855 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */,
 				BD93344E2DBB047D00E49855 /* AddSleepRecordView.swift */,
 				BD93344F2DBB047D00E49855 /* EditSleepRecordView.swift */,
 				BD9334502DBB047D00E49855 /* HomeView.swift */,
@@ -242,6 +248,7 @@
 				BD9334632DBB047D00E49855 /* WatchConnectivityManager.swift in Sources */,
 				BD9334642DBB047D00E49855 /* HomeView.swift in Sources */,
 				BD9334652DBB047D00E49855 /* ContentView.swift in Sources */,
+				BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */,
 				BD9334662DBB047D00E49855 /* OnboardingNavigationView.swift in Sources */,
 				BD9334672DBB047D00E49855 /* Theme.swift in Sources */,
 				BD9334682DBB047D00E49855 /* SleepRecord+Extension.swift in Sources */,
@@ -249,6 +256,7 @@
 				BD93346A2DBB047D00E49855 /* SettingsManager.swift in Sources */,
 				BD93346B2DBB047D00E49855 /* AddSleepRecordView.swift in Sources */,
 				BD93346C2DBB047D00E49855 /* SleepScoreView.swift in Sources */,
+				BD6D2F8C2DBB735F001241BF /* SleepChartData.swift in Sources */,
 				BD93346D2DBB047D00E49855 /* SleepInputView.swift in Sources */,
 				BD93346E2DBB047D00E49855 /* EditSleepRecordView.swift in Sources */,
 				BD93346F2DBB047D00E49855 /* SleepRecordDetailView.swift in Sources */,

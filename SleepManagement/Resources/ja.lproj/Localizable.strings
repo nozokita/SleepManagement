@@ -178,4 +178,21 @@
 "settings.data.reset.confirm.button" = "リセットする";
 "settings.close" = "閉じる";
 "settings.save" = "保存";
-"settings.save.home" = "保存してホームへ"; 
+"settings.save.home" = "保存してホームへ";
+
+// Dashboard View
+"dashboard_title" = "睡眠ダッシュボード";
+"sleep_pattern" = "睡眠パターン";
+"data_overview" = "データ概要";
+"week_period" = "週間";
+"month_period" = "月間";
+"days_of_data" = "日分のデータ";
+"shortest_sleep_day" = "最短睡眠日";
+"goal" = "目標";
+"recommended" = "推奨睡眠時間";
+"fair" = "普通";
+"needs_improvement" = "改善が必要";
+"score_points" = "点数";
+"no_data_available" = "データがありません";
+"add_sleep_records" = "睡眠記録を追加してください";
+"sleep_debt_explanation" = "睡眠負債は、理想的な睡眠時間に対して不足している睡眠時間の累積です。定期的に十分な睡眠をとることで解消できます。"; 
