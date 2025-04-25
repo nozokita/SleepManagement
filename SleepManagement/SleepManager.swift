@@ -2,9 +2,6 @@ import Foundation
 import CoreData
 import UserNotifications
 
-// SleepChartDataモデルのインポートを追加
-@_implementationOnly import SleepChartData
-
 class SleepManager: ObservableObject {
     static let shared = SleepManager()
     
