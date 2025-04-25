@@ -98,4 +98,46 @@
 
 // Developing Features
 "developing_feature" = "This feature is currently in development";
-"stay_tuned" = "Look forward to future updates"; 
+"stay_tuned" = "Look forward to future updates";
+
+// Common
+"common.okButton" = "OK";
+"common.cancelButton" = "Cancel";
+"common.error.unknown" = "An unknown error occurred.";
+"common.error.format" = "Error: %@";
+
+// Onboarding
+"onboarding.welcomeTitle" = "Welcome!";
+"onboarding.welcomeMessage" = "Settings can be changed later. Let's start the app first!";
+"onboarding.requiredSettingsTitle" = "Required Settings";
+"onboarding.sleepDataLabel" = "Sleep Data";
+"onboarding.heartRateLabel" = "Heart Rate";
+"onboarding.status.notDetermined" = "Not Determined";
+"onboarding.status.authorized" = "Authorized";
+"onboarding.status.denied" = "Denied";
+"onboarding.status.simulatorNotDetermined" = "Simulator / Not Determined";
+"onboarding.status.unknown" = "Unknown";
+"onboarding.updateStatusButton" = "Update Status";
+"onboarding.healthKitButton.authorized" = "Authorized";
+"onboarding.healthKitButton.request" = "Authorize HealthKit";
+"onboarding.optionalSettingsTitle" = "Optional Settings";
+"onboarding.watchConnectionLabel" = "Apple Watch Connection";
+"onboarding.watchStatus.connected" = "Connected";
+"onboarding.watchStatus.notConnected" = "Not Connected";
+"onboarding.watchButton.connected" = "Watch Connected";
+"onboarding.watchButton.detect" = "Detect Watch";
+"onboarding.skipButton" = "Skip";
+"onboarding.nextButton" = "Next";
+"onboarding.navigationTitle" = "Onboarding";
+"onboarding.alert.healthDenied.title" = "HealthKit Access Denied";
+"onboarding.alert.openSettingsButton" = "Open Settings";
+"onboarding.alert.healthDenied.message" = "Access to HealthKit is required to retrieve sleep data.\n\nPlease open the Settings app, go to Privacy & Security > Health, and set 'Sleep' and 'Heart Rate' permissions for this app to 'Allow'.";
+"onboarding.alert.watchError.title" = "Apple Watch Connection Error";
+"onboarding.alert.watchError.message" = "There is a problem connecting to Apple Watch. Please ensure your iPhone and Watch are paired correctly. WatchConnectivity may not function correctly in the simulator environment.";
+"onboarding.error.healthKitUnavailable" = "HealthKit is not available on this device";
+"onboarding.error.simulatorLimitation" = "Full functionality cannot be guaranteed in the simulator environment";
+"onboarding.error.watchConnectivityUnsupported" = "This device does not support WatchConnectivity.";
+"onboarding.error.watchNotPaired" = "Apple Watch is not paired.";
+"onboarding.error.watchAppNotInstalled" = "Watch app is not installed.";
+"onboarding.step.deviceSettings" = "Device Settings";
+"onboarding.step.sleepSettings" = "Sleep Settings"; 

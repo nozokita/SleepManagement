@@ -27,11 +27,11 @@ struct OnboardingView: View {
                 VStack(spacing: 32) {
                     // ヘッダー
                     VStack(spacing: 16) {
-                        Text("ようこそ！")
+                        Text("onboarding.welcomeTitle")
                             .font(.largeTitle)
                             .fontWeight(.heavy)
                         
-                        Text("設定はあとで変更できます。まずはアプリを始めましょう！")
+                        Text("onboarding.welcomeMessage")
                             .font(.body)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -41,13 +41,13 @@ struct OnboardingView: View {
 
                     // 必須設定カード
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("必須設定")
+                        Text("onboarding.requiredSettingsTitle")
                             .font(.headline)
                             .padding(.bottom, 4)
                         
                         VStack(spacing: 16) {
                             HStack {
-                                Label("睡眠データ", systemImage: "moon.zzz.fill")
+                                Label("onboarding.sleepDataLabel", systemImage: "moon.zzz.fill")
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Text(statusText(for: hkSleepStatus))
@@ -56,7 +56,7 @@ struct OnboardingView: View {
                             }
                             
                             HStack {
-                                Label("心拍数", systemImage: "heart.fill")
+                                Label("onboarding.heartRateLabel", systemImage: "heart.fill")
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Text(statusText(for: hkHeartRateStatus))
@@ -66,14 +66,14 @@ struct OnboardingView: View {
                         }
                         
                         HStack {
-                            Button("ステータス更新") { 
+                            Button(LocalizedStringKey("onboarding.updateStatusButton")) { 
                                 updateStatuses() 
                             }
                             .buttonStyle(.bordered)
                             
                             Spacer()
                             
-                            Button(isHealthAuthorized ? "許可済み" : "HealthKit を許可する") {
+                            Button(isHealthAuthorized ? LocalizedStringKey("onboarding.healthKitButton.authorized") : LocalizedStringKey("onboarding.healthKitButton.request")) {
                                 requestHealthKit()
                             }
                             .buttonStyle(.borderedProminent)
@@ -90,20 +90,20 @@ struct OnboardingView: View {
 
                     // オプション設定カード
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("オプション設定")
+                        Text("onboarding.optionalSettingsTitle")
                             .font(.headline)
                             .padding(.bottom, 4)
                         
                         HStack {
-                            Label("Apple Watch 接続", systemImage: "applewatch")
+                            Label("onboarding.watchConnectionLabel", systemImage: "applewatch")
                                 .foregroundColor(.primary)
                             Spacer()
-                            Text(isWatchConnected ? "接続済み" : "未接続")
+                            Text(isWatchConnected ? LocalizedStringKey("onboarding.watchStatus.connected") : LocalizedStringKey("onboarding.watchStatus.notConnected"))
                                 .foregroundColor(isWatchConnected ? .green : .primary)
                                 .fontWeight(isWatchConnected ? .bold : .regular)
                         }
                         
-                        Button(isWatchConnected ? "Watch 接続済み" : "Watch を検出する") {
+                        Button(isWatchConnected ? LocalizedStringKey("onboarding.watchButton.connected") : LocalizedStringKey("onboarding.watchButton.detect")) {
                             checkWatch()
                         }
                         .buttonStyle(.bordered)
@@ -119,7 +119,7 @@ struct OnboardingView: View {
 
                     // アクションボタン
                     VStack {
-                        Button("次へ進む") { 
+                        Button(LocalizedStringKey("onboarding.nextButton")) { 
                             onComplete?() 
                         }
                         .buttonStyle(.borderedProminent)
@@ -127,7 +127,7 @@ struct OnboardingView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         
-                        Button("スキップ") { 
+                        Button(LocalizedStringKey("onboarding.skipButton")) { 
                             onComplete?() 
                         }
                         .font(.subheadline)
@@ -138,27 +138,27 @@ struct OnboardingView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
             }
-            .navigationTitle("オンボーディング")
+            .navigationTitle(LocalizedStringKey("onboarding.navigationTitle"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("スキップ") { onComplete?() }
+                    Button(LocalizedStringKey("onboarding.skipButton")) { onComplete?() }
                 }
             }
         }
-        .alert("HealthKit アクセスが拒否されました", isPresented: $showHealthDeniedAlert) {
-            Button("設定を開く") {
+        .alert(LocalizedStringKey("onboarding.alert.healthDenied.title"), isPresented: $showHealthDeniedAlert) {
+            Button(LocalizedStringKey("onboarding.alert.openSettingsButton")) {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     openURL(url)
                 }
             }
-            Button("キャンセル", role: .cancel) {}
+            Button(LocalizedStringKey("common.cancelButton"), role: .cancel) {}
         } message: {
-            Text("睡眠データの取得には HealthKit のアクセスが必要です。\n\n設定アプリを開き、「プライバシーとセキュリティ」→「健康」で、このアプリに対して「睡眠」と「心拍数」の項目を「許可」に設定してください。")
+            Text("onboarding.alert.healthDenied.message")
         }
-        .alert("Apple Watch 接続エラー", isPresented: $showWatchError) {
-            Button("OK", role: .cancel) {}
+        .alert(LocalizedStringKey("onboarding.alert.watchError.title"), isPresented: $showWatchError) {
+            Button(LocalizedStringKey("common.okButton"), role: .cancel) {}
         } message: {
-            Text("Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。")
+            Text(watchErrorMessage ?? "common.error.unknown")
         }
         .onAppear {
             print("OnboardingView表示 - HealthKit状態を更新")
@@ -176,7 +176,7 @@ struct OnboardingView: View {
         
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKitが利用できません")
-            healthKitError = "このデバイスではHealthKitが利用できません"
+            healthKitError = NSLocalizedString("onboarding.error.healthKitUnavailable", comment: "Error message when HealthKit is not available")
             return
         }
         
@@ -193,7 +193,7 @@ struct OnboardingView: View {
         
         #if targetEnvironment(simulator)
         if hkSleepStatus == .notDetermined && hkHeartRateStatus == .notDetermined {
-            healthKitError = "シミュレータ環境では完全な動作保証ができません"
+            healthKitError = NSLocalizedString("onboarding.error.simulatorLimitation", comment: "Error message for simulator limitations")
         }
         #endif
         
@@ -202,17 +202,17 @@ struct OnboardingView: View {
         isWatchConnected = manager.isWatchAvailable
     }
 
-    private func statusText(for status: HKAuthorizationStatus) -> String {
+    private func statusText(for status: HKAuthorizationStatus) -> LocalizedStringKey {
         switch status {
-        case .notDetermined: return "未確認"
-        case .sharingAuthorized: return "許可済み"
-        case .sharingDenied: return "拒否済み"
+        case .notDetermined: return "onboarding.status.notDetermined"
+        case .sharingAuthorized: return "onboarding.status.authorized"
+        case .sharingDenied: return "onboarding.status.denied"
         #if targetEnvironment(simulator)
             if status == .notDetermined {
-                return "シミュレータ環境・未確認"
+                return "onboarding.status.simulatorNotDetermined"
             }
         #endif
-        @unknown default: return "不明"
+        @unknown default: return "onboarding.status.unknown"
         }
     }
 
@@ -231,7 +231,7 @@ struct OnboardingView: View {
         
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKitが利用できません")
-            healthKitError = "このデバイスではHealthKitが利用できません"
+            healthKitError = NSLocalizedString("onboarding.error.healthKitUnavailable", comment: "Error message when HealthKit is not available")
             return
         }
         
@@ -279,7 +279,7 @@ struct OnboardingView: View {
                     } else {
                         print("HealthKit 許可失敗: \(String(describing: error))")
                         if let error = error {
-                            self.healthKitError = "エラー: \(error.localizedDescription)"
+                            self.healthKitError = String(format: NSLocalizedString("common.error.format", comment: "Generic error format"), error.localizedDescription)
                         }
                         self.showHealthDeniedAlert = true
                     }
@@ -296,14 +296,16 @@ struct OnboardingView: View {
            
             if !manager.isWatchAvailable {
                 if !WCSession.isSupported() {
-                    self.watchErrorMessage = "このデバイスはWatchConnectivityをサポートしていません。"
+                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchConnectivityUnsupported", comment: "Error message for watch connectivity unsupported")
                 } else if !WCSession.default.isPaired {
-                    self.watchErrorMessage = "Apple Watchがペアリングされていません。"
+                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchNotPaired", comment: "Error message for watch not paired")
                     self.showWatchError = true
                 } else if !WCSession.default.isWatchAppInstalled {
-                    self.watchErrorMessage = "Watchアプリがインストールされていません。"
+                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchAppNotInstalled", comment: "Error message for watch app not installed")
+                    self.showWatchError = true // Show alert here as well
                 } else {
-                    self.watchErrorMessage = "不明なエラーが発生しました。"
+                    self.watchErrorMessage = NSLocalizedString("common.error.unknown", comment: "Generic unknown error message")
+                    self.showWatchError = true // Show alert for unknown errors too
                 }
             } else {
                 self.watchErrorMessage = nil
@@ -315,6 +317,7 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
+            .environmentObject(LocalizationManager.shared) // Add LocalizationManager for preview
             .previewLayout(.sizeThatFits)
     }
 } 

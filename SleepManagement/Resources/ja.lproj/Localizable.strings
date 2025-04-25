@@ -98,4 +98,46 @@
 
 // Developing Features
 "developing_feature" = "この機能は現在開発中です";
-"stay_tuned" = "今後のアップデートをお楽しみに"; 
+"stay_tuned" = "今後のアップデートをお楽しみに";
+
+// Common
+"common.okButton" = "OK";
+"common.cancelButton" = "キャンセル";
+"common.error.unknown" = "不明なエラーが発生しました。";
+"common.error.format" = "エラー: %@";
+
+// Onboarding
+"onboarding.welcomeTitle" = "ようこそ！";
+"onboarding.welcomeMessage" = "設定はあとで変更できます。まずはアプリを始めましょう！";
+"onboarding.requiredSettingsTitle" = "必須設定";
+"onboarding.sleepDataLabel" = "睡眠データ";
+"onboarding.heartRateLabel" = "心拍数";
+"onboarding.status.notDetermined" = "未確認";
+"onboarding.status.authorized" = "許可済み";
+"onboarding.status.denied" = "拒否済み";
+"onboarding.status.simulatorNotDetermined" = "シミュレータ / 未確認";
+"onboarding.status.unknown" = "不明";
+"onboarding.updateStatusButton" = "ステータス更新";
+"onboarding.healthKitButton.authorized" = "許可済み";
+"onboarding.healthKitButton.request" = "HealthKit を許可する";
+"onboarding.optionalSettingsTitle" = "オプション設定";
+"onboarding.watchConnectionLabel" = "Apple Watch 接続";
+"onboarding.watchStatus.connected" = "接続済み";
+"onboarding.watchStatus.notConnected" = "未接続";
+"onboarding.watchButton.connected" = "Watch 接続済み";
+"onboarding.watchButton.detect" = "Watch を検出する";
+"onboarding.skipButton" = "スキップ";
+"onboarding.nextButton" = "次へ進む";
+"onboarding.navigationTitle" = "オンボーディング";
+"onboarding.alert.healthDenied.title" = "HealthKit アクセスが拒否されました";
+"onboarding.alert.openSettingsButton" = "設定を開く";
+"onboarding.alert.healthDenied.message" = "睡眠データの取得には HealthKit のアクセスが必要です。\n\n設定アプリを開き、「プライバシーとセキュリティ」→「健康」で、このアプリに対して「睡眠」と「心拍数」の項目を「許可」に設定してください。";
+"onboarding.alert.watchError.title" = "Apple Watch 接続エラー";
+"onboarding.alert.watchError.message" = "Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。";
+"onboarding.error.healthKitUnavailable" = "このデバイスではHealthKitが利用できません";
+"onboarding.error.simulatorLimitation" = "シミュレータ環境では完全な動作保証ができません";
+"onboarding.error.watchConnectivityUnsupported" = "このデバイスはWatchConnectivityをサポートしていません。";
+"onboarding.error.watchNotPaired" = "Apple Watchがペアリングされていません。";
+"onboarding.error.watchAppNotInstalled" = "Watchアプリがインストールされていません。";
+"onboarding.step.deviceSettings" = "デバイス設定";
+"onboarding.step.sleepSettings" = "睡眠設定"; 

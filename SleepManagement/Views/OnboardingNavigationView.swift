@@ -3,6 +3,7 @@ import SwiftUI
 // オンボーディングナビゲーション用のコンテナビュー
 struct OnboardingNavigationView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var localizationManager: LocalizationManager
     @State private var currentStep: OnboardingStep = .healthAndWatchSettings
     
     enum OnboardingStep {
@@ -37,12 +38,12 @@ struct OnboardingNavigationView: View {
                 
                 // ステップテキスト
                 HStack {
-                    Text("デバイス設定")
+                    Text("onboarding.step.deviceSettings")
                         .font(.caption)
                         .foregroundColor(currentStep == .healthAndWatchSettings ? .blue : .gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Text("睡眠設定")
+                    Text("onboarding.step.sleepSettings")
                         .font(.caption)
                         .foregroundColor(currentStep == .idealSleepTimeSettings ? .blue : .gray)
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -75,5 +76,6 @@ struct OnboardingNavigationView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingNavigationView()
             .environmentObject(AppState())
+            .environmentObject(LocalizationManager.shared)
     }
 } 
