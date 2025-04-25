@@ -27,11 +27,13 @@
     <array>
         <string>remote-notification</string>
     </array>
-    <!-- HealthKit機能の有効化 -->
+    <!-- HealthKit機能の指定を削除 -->
+    <!-- 
     <key>UIRequiredDeviceCapabilities</key>
     <array>
         <string>healthkit</string>
     </array>
+    -->
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>

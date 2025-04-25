@@ -203,15 +203,16 @@ struct OnboardingView: View {
     }
 
     private func statusText(for status: HKAuthorizationStatus) -> LocalizedStringKey {
-        switch status {
-        case .notDetermined: return "onboarding.status.notDetermined"
-        case .sharingAuthorized: return "onboarding.status.authorized"
-        case .sharingDenied: return "onboarding.status.denied"
         #if targetEnvironment(simulator)
             if status == .notDetermined {
                 return "onboarding.status.simulatorNotDetermined"
             }
         #endif
+
+        switch status {
+        case .notDetermined: return "onboarding.status.notDetermined"
+        case .sharingAuthorized: return "onboarding.status.authorized"
+        case .sharingDenied: return "onboarding.status.denied"
         @unknown default: return "onboarding.status.unknown"
         }
     }
