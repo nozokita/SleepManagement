@@ -2,6 +2,9 @@ import Foundation
 import CoreData
 import UserNotifications
 
+// SleepChartDataモデルのインポートを追加
+@_implementationOnly import SleepChartData
+
 class SleepManager: ObservableObject {
     static let shared = SleepManager()
     
@@ -195,7 +198,7 @@ class SleepManager: ObservableObject {
     // MARK: - チャートデータ取得
     
     /// 過去7日間の睡眠データを取得
-    func getWeeklyChartData(context: NSManagedObjectContext) -> [SleepChartData] {
+    func getWeeklyChartData(context: NSManagedObjectContext) -> [SleepManagement.SleepChartData] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let sevenDaysAgo = calendar.date(byAdding: .day, value: -6, to: today)!
@@ -204,7 +207,7 @@ class SleepManager: ObservableObject {
     }
     
     /// 過去30日間の睡眠データを取得
-    func getMonthlyChartData(context: NSManagedObjectContext) -> [SleepChartData] {
+    func getMonthlyChartData(context: NSManagedObjectContext) -> [SleepManagement.SleepChartData] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let thirtyDaysAgo = calendar.date(byAdding: .day, value: -29, to: today)!
@@ -213,7 +216,7 @@ class SleepManager: ObservableObject {
     }
     
     /// 指定期間の睡眠チャートデータを取得
-    private func getChartData(context: NSManagedObjectContext, from: Date, to: Date) -> [SleepChartData] {
+    private func getChartData(context: NSManagedObjectContext, from: Date, to: Date) -> [SleepManagement.SleepChartData] {
         let calendar = Calendar.current
         let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "startAt >= %@ AND startAt < %@", from as NSDate, to as NSDate)
@@ -234,7 +237,7 @@ class SleepManager: ObservableObject {
             }
             
             // 各日のデータを集計
-            var chartData: [SleepChartData] = []
+            var chartData: [SleepManagement.SleepChartData] = []
             
             // 日付の範囲内の各日を処理
             var currentDate = from
@@ -251,7 +254,7 @@ class SleepManager: ObservableObject {
                         return sum + record.score
                     } / Double(dayRecords.count)
                     
-                    let data = SleepChartData(
+                    let data = SleepManagement.SleepChartData(
                         date: currentDate,
                         duration: totalDuration,
                         score: averageScore
@@ -259,7 +262,7 @@ class SleepManager: ObservableObject {
                     chartData.append(data)
                 } else {
                     // データがない日はゼロデータを追加
-                    let data = SleepChartData(
+                    let data = SleepManagement.SleepChartData(
                         date: currentDate,
                         duration: 0,
                         score: 0

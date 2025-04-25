@@ -1,6 +1,8 @@
 import SwiftUI
 import CoreData
 
+// SleepDashboardViewの記述を削除
+
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var localizationManager: LocalizationManager
@@ -61,7 +63,7 @@ struct HomeView: View {
                         }
                     } else if selectedTab == 1 {
                         // 統計タブ - 睡眠ダッシュボード
-                        SleepDashboardView()
+                        SleepManagement.SleepDashboardView()
                             .environmentObject(localizationManager)
                             .environment(\.managedObjectContext, viewContext)
                     } else {
