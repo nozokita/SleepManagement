@@ -17,10 +17,10 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         // 言語切り替えカード
-                        SettingsSectionCard(title: "言語設定", icon: "globe") {
+                        SettingsSectionCard(title: "settings.language.title", icon: "globe") {
                             VStack(spacing: 16) {
                                 HStack {
-                                    Text("現在の言語")
+                                    Text("settings.language.current")
                                         .font(Theme.Typography.bodyFont)
                                         .foregroundColor(Theme.Colors.text)
                                     Spacer()
@@ -72,13 +72,13 @@ struct SettingsView: View {
                     .padding()
                 }
             }
-            .navigationTitle("設定")
+            .navigationTitle("settings.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if onComplete == nil {
                         // オンボーディングではない場合は閉じるボタンを表示
-                        Button("閉じる") {
+                        Button("settings.close") {
                             dismiss()
                         }
                     }
@@ -91,23 +91,23 @@ struct SettingsView: View {
                 HomeView()
                     .navigationBarHidden(true)
             }
-            .alert("設定をリセット", isPresented: $showResetConfirmation) {
-                Button("キャンセル", role: .cancel) {}
-                Button("リセット", role: .destructive) {
+            .alert("settings.data.reset.title", isPresented: $showResetConfirmation) {
+                Button("settings.data.reset.cancel", role: .cancel) {}
+                Button("settings.data.reset.confirm.button", role: .destructive) {
                     resetSettings()
                 }
             } message: {
-                Text("設定をデフォルトに戻しますか？この操作は元に戻せません。")
+                Text("settings.data.reset.confirm")
             }
         }
     }
     
     // ユーザー情報セクション
     private var userInfoSection: some View {
-        SettingsSectionCard(title: "ユーザー情報", icon: "person.circle") {
+        SettingsSectionCard(title: "settings.user.title", icon: "person.circle") {
             VStack(spacing: 16) {
                 // 年代選択
-                SettingsRow(icon: "calendar", title: "年代") {
+                SettingsRow(icon: "calendar", title: "settings.user.age") {
                     Picker("", selection: $settings.birthYear) {
                         Text("10代").tag(2005)
                         Text("20代").tag(1995)
@@ -124,10 +124,10 @@ struct SettingsView: View {
     
     // 睡眠設定セクション
     private var sleepSettingsSection: some View {
-        SettingsSectionCard(title: "睡眠設定", icon: "bed.double.circle") {
+        SettingsSectionCard(title: "settings.sleep.title", icon: "bed.double.circle") {
             VStack(spacing: 16) {
                 // 理想睡眠時間
-                SettingsRow(icon: "moon.stars", title: "理想睡眠時間") {
+                SettingsRow(icon: "moon.stars", title: "settings.sleep.ideal") {
                     Picker("", selection: $settings.idealSleepDuration) {
                         ForEach([5, 6, 7, 8, 9, 10], id: \.self) { hour in
                             Text("\(hour)時間").tag(TimeInterval(hour * 3600))
@@ -141,29 +141,29 @@ struct SettingsView: View {
     
     // 通知設定セクション
     private var notificationSettingsSection: some View {
-        SettingsSectionCard(title: "通知設定", icon: "bell.circle") {
+        SettingsSectionCard(title: "settings.notification.title", icon: "bell.circle") {
             VStack(spacing: 16) {
                 // 就寝リマインダー
-                SettingsRow(icon: "bed.double", title: "就寝リマインダー") {
+                SettingsRow(icon: "bed.double", title: "settings.notification.bedtime") {
                     Toggle("", isOn: $settings.enableSleepReminder)
                         .labelsHidden()
                 }
                 
                 if settings.enableSleepReminder {
-                    SettingsRow(icon: "clock", title: "リマインダー時刻") {
+                    SettingsRow(icon: "clock", title: "settings.notification.bedtime.time") {
                         DatePicker("", selection: $settings.sleepReminderTime, displayedComponents: .hourAndMinute)
                             .labelsHidden()
                     }
                 }
                 
                 // 朝のサマリー
-                SettingsRow(icon: "sun.max", title: "朝のサマリー通知") {
+                SettingsRow(icon: "sun.max", title: "settings.notification.morning") {
                     Toggle("", isOn: $settings.enableMorningSummary)
                         .labelsHidden()
                 }
                 
                 if settings.enableMorningSummary {
-                    SettingsRow(icon: "clock", title: "サマリー時刻") {
+                    SettingsRow(icon: "clock", title: "settings.notification.morning.time") {
                         DatePicker("", selection: $settings.morningSummaryTime, displayedComponents: .hourAndMinute)
                             .labelsHidden()
                     }
@@ -174,29 +174,29 @@ struct SettingsView: View {
     
     // アプリ表示設定
     private var appDisplaySettingsSection: some View {
-        SettingsSectionCard(title: "表示設定", icon: "paintbrush.circle") {
+        SettingsSectionCard(title: "settings.display.title", icon: "paintbrush.circle") {
             VStack(spacing: 16) {
                 // テーマの設定
-                SettingsRow(icon: "circle.lefthalf.filled", title: "システムテーマに従う") {
+                SettingsRow(icon: "circle.lefthalf.filled", title: "settings.display.system") {
                     Toggle("", isOn: $settings.useSystemTheme)
                         .labelsHidden()
                 }
                 
                 if !settings.useSystemTheme {
-                    SettingsRow(icon: "moon.circle", title: "ダークモード") {
+                    SettingsRow(icon: "moon.circle", title: "settings.display.dark") {
                         Toggle("", isOn: $settings.darkModeEnabled)
                             .labelsHidden()
                     }
                 }
                 
                 // 睡眠負債の表示
-                SettingsRow(icon: "chart.bar", title: "睡眠負債を表示") {
+                SettingsRow(icon: "chart.bar", title: "settings.display.debt") {
                     Toggle("", isOn: $settings.showSleepDebt)
                         .labelsHidden()
                 }
                 
                 // 睡眠スコアの表示
-                SettingsRow(icon: "chart.bar.fill", title: "睡眠スコアを表示") {
+                SettingsRow(icon: "chart.bar.fill", title: "settings.display.score") {
                     Toggle("", isOn: $settings.showSleepScore)
                         .labelsHidden()
                 }
@@ -206,10 +206,10 @@ struct SettingsView: View {
     
     // ヘルスケア連携
     private var healthKitIntegrationSection: some View {
-        SettingsSectionCard(title: "ヘルスケア連携", icon: "heart.circle") {
+        SettingsSectionCard(title: "settings.healthkit.title", icon: "heart.circle") {
             VStack(spacing: 16) {
                 // HealthKit自動同期
-                SettingsRow(icon: "arrow.clockwise", title: "HealthKitと自動同期") {
+                SettingsRow(icon: "arrow.clockwise", title: "settings.healthkit.sync") {
                     Toggle("", isOn: $settings.autoSyncHealthKit)
                         .labelsHidden()
                 }
@@ -217,7 +217,7 @@ struct SettingsView: View {
                 // 説明文を追加
                 if settings.autoSyncHealthKit {
                     HStack {
-                        Text("HealthKitから睡眠データを自動的に取得します")
+                        Text("settings.healthkit.description")
                             .font(.caption)
                             .foregroundColor(Theme.Colors.subtext)
                             .fixedSize(horizontal: false, vertical: true)
@@ -231,10 +231,10 @@ struct SettingsView: View {
     
     // アプリ情報
     private var appInfoSection: some View {
-        SettingsSectionCard(title: "アプリ情報", icon: "info.circle") {
+        SettingsSectionCard(title: "settings.info.title", icon: "info.circle") {
             VStack(spacing: 16) {
                 // アプリバージョン
-                SettingsRow(icon: "tag", title: "バージョン") {
+                SettingsRow(icon: "tag", title: "settings.info.version") {
                     Text("\(settings.appVersion) (\(settings.buildNumber))")
                         .foregroundColor(Theme.Colors.subtext)
                 }
@@ -244,7 +244,7 @@ struct SettingsView: View {
     
     // リセットとデータ管理
     private var dataManagementSection: some View {
-        SettingsSectionCard(title: "データ管理", icon: "tray.circle") {
+        SettingsSectionCard(title: "settings.data.title", icon: "tray.circle") {
             VStack(spacing: 16) {
                 // 設定リセット
                 Button(action: {
@@ -253,7 +253,7 @@ struct SettingsView: View {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
                             .foregroundColor(Theme.Colors.danger)
-                        Text("設定をリセット")
+                        Text("settings.data.reset")
                             .foregroundColor(Theme.Colors.danger)
                         Spacer()
                     }
@@ -286,7 +286,7 @@ struct SettingsView: View {
                 dismiss()
             }
         }) {
-            Text(onComplete != nil ? "設定を保存してホームへ" : "保存")
+            Text(onComplete != nil ? "settings.save.home" : "settings.save")
                 .font(Theme.Typography.bodyFont.bold())
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)

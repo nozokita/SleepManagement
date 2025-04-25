@@ -110,7 +110,7 @@ struct OnboardingView: View {
 
                     // 睡眠記録の説明
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("利用方法")
+                        Text("onboarding.usage.title")
                             .font(.headline)
                             .padding(.bottom, 4)
                             
@@ -121,11 +121,11 @@ struct OnboardingView: View {
                                 .frame(width: 40, height: 40)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("HealthKitとの自動同期")
+                                Text("onboarding.usage.healthkit.title")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                 
-                                Text("既存の睡眠データを自動的に同期して分析します")
+                                Text("onboarding.usage.healthkit.description")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -138,11 +138,11 @@ struct OnboardingView: View {
                                 .frame(width: 40, height: 40)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("手動で睡眠を記録")
+                                Text("onboarding.usage.manual.title")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                 
-                                Text("就寝時間と起床時間を手動で記録することもできます")
+                                Text("onboarding.usage.manual.description")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
