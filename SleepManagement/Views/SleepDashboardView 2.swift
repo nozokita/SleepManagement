@@ -21,7 +21,7 @@ struct SleepDashboardView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 24) {
                     // 期間切り替えセグメント
                     periodSelector
                     
@@ -38,8 +38,8 @@ struct SleepDashboardView: View {
                     sleepDebtCard
                 }
                 .padding(.horizontal)
-                .padding(.top, 12)
-                .padding(.bottom, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
             }
             .navigationTitle("dashboard_title".localized)
             .background(Theme.Colors.background.ignoresSafeArea())
@@ -141,7 +141,7 @@ struct SleepDashboardView: View {
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         .offset(y: animateCharts ? 0 : 50)
         .opacity(animateCharts ? 1 : 0)
     }
@@ -204,7 +204,7 @@ struct SleepDashboardView: View {
                         }
                     }
                     .chartYScale(domain: 0...(sleepManager.recommendedSleepHours * 1.5))
-                    .frame(height: 220)
+                    .frame(height: 200)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
                 }
@@ -235,7 +235,7 @@ struct SleepDashboardView: View {
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         .offset(y: animateCharts ? 0 : 50)
         .opacity(animateCharts ? 1 : 0)
     }
@@ -323,12 +323,12 @@ struct SleepDashboardView: View {
                         }
                     }
                     .chartYScale(domain: 0...100)
-                    .frame(height: 220)
+                    .frame(height: 200)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
                 }
                 
-                // 凡例を言語対応で統一
+                // 凡例
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
                         Circle()
@@ -362,7 +362,7 @@ struct SleepDashboardView: View {
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         .offset(y: animateCharts ? 0 : 50)
         .opacity(animateCharts ? 1 : 0)
     }
@@ -448,7 +448,7 @@ struct SleepDashboardView: View {
                         }
                     }
                     .chartYScale(domain: 0...3)
-                    .frame(height: 220)
+                    .frame(height: 200)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
                 }
@@ -475,7 +475,7 @@ struct SleepDashboardView: View {
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         .offset(y: animateCharts ? 0 : 50)
         .opacity(animateCharts ? 1 : 0)
     }
@@ -497,7 +497,7 @@ struct SleepDashboardView: View {
                 .foregroundColor(Theme.Colors.primary)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 160)
+        .frame(height: 150)
         .padding(.vertical, 24)
     }
     
@@ -553,27 +553,20 @@ struct SleepDashboardView: View {
         }
     }
     
-    // 日付のフォーマット - 言語設定に合わせる
+    // 日付のフォーマット
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = selectedPeriod == .week ? "E" : "MM/dd"
-        
-        // localizationManagerの言語設定に合わせてロケールを設定
-        formatter.locale = Locale(identifier: localizationManager.currentLanguage == "ja" ? "ja_JP" : "en_US")
+        formatter.locale = Locale(identifier: "ja_JP")
         return formatter.string(from: date)
     }
     
-    // 平均睡眠時間のフォーマット - 言語設定に合わせて単位を変更
+    // 平均睡眠時間のフォーマット
     private func averageDurationFormatted(from data: [SleepChartData]) -> String {
         let averageDuration = data.averageDuration
         let hours = Int(averageDuration / 3600)
         let minutes = Int((averageDuration.truncatingRemainder(dividingBy: 3600)) / 60)
-        
-        if localizationManager.currentLanguage == "ja" {
-            return "\(hours)時間\(minutes)分"
-        } else {
-            return "\(hours)h \(minutes)m"
-        }
+        return "\(hours)時間\(minutes)分"
     }
     
     // 平均睡眠スコアのフォーマット
