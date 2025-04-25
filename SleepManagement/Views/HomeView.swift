@@ -21,6 +21,8 @@ struct HomeView: View {
         return ["home_tab", "stats_tab", "records_tab"].map { $0.localized }
     }
     
+    @State private var showSettings = false
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -89,6 +91,10 @@ struct HomeView: View {
                 SleepInputView()
                     .environment(\.managedObjectContext, viewContext)
             }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(localizationManager)
+            }
         }
     }
     
@@ -132,7 +138,7 @@ struct HomeView: View {
                     
                     // 設定ボタン
                     Button(action: {
-                        // 設定画面などの表示
+                        showSettings = true
                     }) {
                         Image(systemName: "gearshape")
                             .font(.body)
