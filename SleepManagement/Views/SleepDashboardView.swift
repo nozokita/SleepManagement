@@ -41,7 +41,7 @@ struct SleepDashboardView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 20)
             }
-            .navigationTitle("dashboard_title".localized)
+            .navigationTitle("stats_tab".localized)
             .background(Theme.Colors.background.ignoresSafeArea())
             .onAppear {
                 loadData()
@@ -120,8 +120,8 @@ struct SleepDashboardView: View {
                 // 最長睡眠日
                 if let maxDay = currentData.maxDurationDay {
                     dataOverviewItem(
-                        title: "longest_sleep_day".localized,
-                        value: maxDay.dayFormatted + " (" + maxDay.durationFormatted + ")",
+                        title: "longest_sleep".localized,
+                        value: formatDayAndDuration(date: maxDay.date, duration: maxDay.duration),
                         icon: "arrow.up.right",
                         color: Theme.Colors.success
                     )
@@ -131,7 +131,7 @@ struct SleepDashboardView: View {
                 if let minDay = currentData.minDurationDay, minDay.duration > 0 {
                     dataOverviewItem(
                         title: "shortest_sleep_day".localized,
-                        value: minDay.dayFormatted + " (" + minDay.durationFormatted + ")",
+                        value: formatDayAndDuration(date: minDay.date, duration: minDay.duration),
                         icon: "arrow.down.right",
                         color: Theme.Colors.warning
                     )
@@ -374,7 +374,7 @@ struct SleepDashboardView: View {
         return VStack(spacing: 0) {
             // カードヘッダー
             HStack {
-                Label("sleep_debt_trend".localized, systemImage: "chart.line.uptrend.xyaxis")
+                Label("sleep_debt".localized, systemImage: "chart.line.uptrend.xyaxis")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
@@ -561,6 +561,22 @@ struct SleepDashboardView: View {
         // localizationManagerの言語設定に合わせてロケールを設定
         formatter.locale = Locale(identifier: localizationManager.currentLanguage == "ja" ? "ja_JP" : "en_US")
         return formatter.string(from: date)
+    }
+    
+    // 日付と時間のフォーマット（最長・最短睡眠日用）
+    private func formatDayAndDuration(date: Date, duration: TimeInterval) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd"
+        let dateStr = formatter.string(from: date)
+        
+        let hours = Int(duration / 3600)
+        let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
+        
+        if localizationManager.currentLanguage == "ja" {
+            return "\(dateStr) (\(hours)時間\(minutes)分)"
+        } else {
+            return "\(dateStr) (\(hours)h \(minutes)m)"
+        }
     }
     
     // 平均睡眠時間のフォーマット - 言語設定に合わせて単位を変更

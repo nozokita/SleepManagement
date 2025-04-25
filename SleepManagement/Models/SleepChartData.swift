@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// 睡眠チャートデータを表す構造体
 struct SleepChartData: Identifiable {
@@ -7,11 +8,20 @@ struct SleepChartData: Identifiable {
     var duration: TimeInterval  // 秒単位の睡眠時間
     var score: Double  // 睡眠スコア
     
+    // フォーマット用の環境
+    @Environment(\.locale) var locale
+    
     // 睡眠時間をフォーマットした文字列
     var durationFormatted: String {
         let hours = Int(duration / 3600)
         let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
-        return "\(hours)時間\(minutes)分"
+        
+        // ロケールが日本語の場合
+        if locale.identifier.starts(with: "ja") {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 日付を「MM/dd」形式でフォーマット
@@ -21,10 +31,30 @@ struct SleepChartData: Identifiable {
         return formatter.string(from: date)
     }
     
-    // 曜日を取得
+    // 曜日を取得（ロケールに応じて表示）
     var weekdayString: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = locale
+        formatter.dateFormat = "E"
+        return formatter.string(from: date)
+    }
+    
+    // デュレーションをフォーマット（引数でロケールを指定可能）
+    func formattedDuration(isJapanese: Bool) -> String {
+        let hours = Int(duration / 3600)
+        let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
+        
+        if isJapanese {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
+    }
+    
+    // 曜日をフォーマット（引数でロケールを指定可能）
+    func formattedWeekday(locale: Locale) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
         formatter.dateFormat = "E"
         return formatter.string(from: date)
     }
