@@ -24,79 +24,119 @@ struct OnboardingView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 32) {
                     // ヘッダー
-                    Text("ようこそ！")
-                        .font(.largeTitle)
-                        .fontWeight(.heavy)
-                        .padding(.top)
-                    Text("設定はあとで変更できます。まずはアプリを始めましょう！")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                    VStack(spacing: 16) {
+                        Text("ようこそ！")
+                            .font(.largeTitle)
+                            .fontWeight(.heavy)
+                        
+                        Text("設定はあとで変更できます。まずはアプリを始めましょう！")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .padding(.top, 20)
 
                     // 必須設定カード
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 20) {
                         Text("必須設定")
                             .font(.headline)
-                        HStack {
-                            Label("睡眠データ", systemImage: "moon.zzz.fill")
-                            Spacer()
-                            Text(statusText(for: hkSleepStatus))
-                                .foregroundColor(statusColor(for: hkSleepStatus))
-                                .fontWeight(.bold)
+                            .padding(.bottom, 4)
+                        
+                        VStack(spacing: 16) {
+                            HStack {
+                                Label("睡眠データ", systemImage: "moon.zzz.fill")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text(statusText(for: hkSleepStatus))
+                                    .foregroundColor(statusColor(for: hkSleepStatus))
+                                    .fontWeight(.bold)
+                            }
+                            
+                            HStack {
+                                Label("心拍数", systemImage: "heart.fill")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text(statusText(for: hkHeartRateStatus))
+                                    .foregroundColor(statusColor(for: hkHeartRateStatus))
+                                    .fontWeight(.bold)
+                            }
                         }
+                        
                         HStack {
-                            Label("心拍数", systemImage: "heart.fill")
+                            Button("ステータス更新") { 
+                                updateStatuses() 
+                            }
+                            .buttonStyle(.bordered)
+                            
                             Spacer()
-                            Text(statusText(for: hkHeartRateStatus))
-                                .foregroundColor(statusColor(for: hkHeartRateStatus))
-                                .fontWeight(.bold)
-                        }
-                        HStack(spacing: 12) {
-                            Button("ステータス更新") { updateStatuses() }
-                                .font(.caption)
+                            
                             Button(isHealthAuthorized ? "許可済み" : "HealthKit を許可する") {
                                 requestHealthKit()
                             }
                             .buttonStyle(.borderedProminent)
+                            .fixedSize(horizontal: false, vertical: true)
                         }
+                        .padding(.top, 4)
                     }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(UIColor.secondarySystemBackground)))
+                    .padding(20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(UIColor.secondarySystemBackground))
+                    )
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
 
                     // オプション設定カード
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 20) {
                         Text("オプション設定")
                             .font(.headline)
+                            .padding(.bottom, 4)
+                        
                         HStack {
                             Label("Apple Watch 接続", systemImage: "applewatch")
+                                .foregroundColor(.primary)
                             Spacer()
                             Text(isWatchConnected ? "接続済み" : "未接続")
                                 .foregroundColor(isWatchConnected ? .green : .primary)
+                                .fontWeight(isWatchConnected ? .bold : .regular)
                         }
+                        
                         Button(isWatchConnected ? "Watch 接続済み" : "Watch を検出する") {
                             checkWatch()
                         }
                         .buttonStyle(.bordered)
                         .tint(isWatchConnected ? .green : .blue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(UIColor.secondarySystemBackground)))
+                    .padding(20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(UIColor.secondarySystemBackground))
+                    )
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
 
                     // アクションボタン
-                    HStack(spacing: 16) {
-                        Button("スキップ") { onComplete?() }
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Button("次へ進む") { onComplete?() }
-                            .disabled(false)
-                            .buttonStyle(.borderedProminent)
+                    VStack {
+                        Button("次へ進む") { 
+                            onComplete?() 
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        
+                        Button("スキップ") { 
+                            onComplete?() 
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal)
+                    .padding(.top, 8)
                 }
-                .padding()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 24)
             }
             .navigationTitle("オンボーディング")
             .toolbar {
