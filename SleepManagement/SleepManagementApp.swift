@@ -20,15 +20,23 @@ class AppState: ObservableObject {
     init() {
         // UserDefaultsから初期化
         // デバッグ用：オンボーディング状態をリセットする場合はコメントを外す
-        UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+        // UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
         
         self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
         print("AppState: 初期化 - オンボーディング完了状態: \(hasCompletedOnboarding)")
     }
     
     func completeOnboarding() {
-        hasCompletedOnboarding = true
-        print("AppState: オンボーディング完了メソッド呼び出し")
+        print("AppState: オンボーディング完了処理を開始")
+        
+        // 同期的に更新
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        
+        // UIの更新のためにメインスレッドで確実に更新
+        DispatchQueue.main.async {
+            self.hasCompletedOnboarding = true
+            print("AppState: オンボーディング完了状態を更新しました: \(self.hasCompletedOnboarding)")
+        }
     }
     
     // 開発用：オンボーディングをリセット
@@ -47,7 +55,7 @@ struct SleepManagementApp: App {
     @StateObject private var appState = AppState()
     
     // 開発用：強制的にオンボーディングを表示するフラグ
-    private let forceOnboarding = true
+    private let forceOnboarding = false
     
     var body: some Scene {
         WindowGroup {
@@ -60,11 +68,17 @@ struct SleepManagementApp: App {
                     .environmentObject(appState)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .environmentObject(localizationManager)
+                    .onAppear {
+                        print("オンボーディングフローを表示: オンボーディング完了状態 = \(appState.hasCompletedOnboarding)")
+                    }
             } else {
                 // 通常起動時のメインフロー
                 ContentView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .environmentObject(localizationManager)
+                    .onAppear {
+                        print("メインフローを表示: オンボーディング完了状態 = \(appState.hasCompletedOnboarding)")
+                    }
                     .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
                         // 言語変更通知を受け取った時の処理（必要に応じて）
                     }

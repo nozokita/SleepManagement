@@ -175,7 +175,7 @@ struct SleepInputView: View {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
-            .onChange(of: sleepMode) { newValue in
+            .onChange(of: sleepMode) { oldValue, newValue in
                 if newValue == .watchData {
                     watchConnectivityManager.requestSleepData()
                 }

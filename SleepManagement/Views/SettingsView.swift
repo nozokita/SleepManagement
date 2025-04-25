@@ -3,10 +3,11 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject var settings = SettingsManager.shared
     @State private var navigateHome = false
+    @State private var navigateToHomeFromOnboarding = false
     var onComplete: (() -> Void)? = nil
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Form {
                     Section(header: Text("ユーザー情報")) {
@@ -20,10 +21,22 @@ struct SettingsView: View {
                     }
                     Section {
                         Button(action: {
+                            print("設定を保存しました")
                             settings.save()
+                            
                             if let onComplete = onComplete {
-                                onComplete()
+                                // オンボーディングからの場合はHomeViewに遷移
+                                print("オンボーディングからの遷移を開始")
+                                // まず遷移フラグをセット
+                                navigateToHomeFromOnboarding = true
+                                
+                                // 少し遅延させてからonCompleteを呼び出す
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onComplete()
+                                    print("onComplete実行完了")
+                                }
                             } else {
+                                print("通常の設定画面からの遷移")
                                 navigateHome = true
                             }
                         }) {
@@ -32,13 +45,15 @@ struct SettingsView: View {
                         }
                     }
                 }
-                if onComplete == nil {
-                    NavigationLink(destination: HomeView(), isActive: $navigateHome) {
-                        EmptyView()
-                    }
-                }
             }
             .navigationTitle("設定")
+            .navigationDestination(isPresented: $navigateHome) {
+                HomeView()
+            }
+            .navigationDestination(isPresented: $navigateToHomeFromOnboarding) {
+                HomeView()
+                    .navigationBarHidden(true)
+            }
         }
     }
 }
