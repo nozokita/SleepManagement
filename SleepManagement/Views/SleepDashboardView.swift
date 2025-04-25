@@ -103,7 +103,7 @@ struct SleepDashboardView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                 // 平均睡眠時間
                 dataOverviewItem(
-                    title: "avg_sleep_duration".localized,
+                    title: localizationManager.currentLanguage == "ja" ? "平均睡眠時間" : "Avg. Sleep Duration",
                     value: averageDurationFormatted(from: currentData),
                     icon: "clock",
                     color: Theme.Colors.primary
@@ -111,7 +111,7 @@ struct SleepDashboardView: View {
                 
                 // 平均睡眠スコア
                 dataOverviewItem(
-                    title: "avg_sleep_score".localized,
+                    title: localizationManager.currentLanguage == "ja" ? "平均睡眠スコア" : "Avg. Sleep Score",
                     value: averageScoreFormatted(from: currentData),
                     icon: "star.fill",
                     color: sleepScoreColor(for: currentData.averageScore)
@@ -120,7 +120,7 @@ struct SleepDashboardView: View {
                 // 最長睡眠日
                 if let maxDay = currentData.maxDurationDay {
                     dataOverviewItem(
-                        title: "longest_sleep".localized,
+                        title: localizationManager.currentLanguage == "ja" ? "最長睡眠時間" : "Longest Sleep Duration",
                         value: formatDayAndDuration(date: maxDay.date, duration: maxDay.duration),
                         icon: "arrow.up.right",
                         color: Theme.Colors.success
@@ -130,7 +130,7 @@ struct SleepDashboardView: View {
                 // 最短睡眠日
                 if let minDay = currentData.minDurationDay, minDay.duration > 0 {
                     dataOverviewItem(
-                        title: "shortest_sleep_day".localized,
+                        title: "shortest_sleep_day",
                         value: formatDayAndDuration(date: minDay.date, duration: minDay.duration),
                         icon: "arrow.down.right",
                         color: Theme.Colors.warning
