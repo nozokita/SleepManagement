@@ -8,16 +8,13 @@ struct SleepChartData: Identifiable {
     var duration: TimeInterval  // 秒単位の睡眠時間
     var score: Double  // 睡眠スコア
     
-    // フォーマット用の環境
-    @Environment(\.locale) var locale
-    
     // 睡眠時間をフォーマットした文字列
     var durationFormatted: String {
         let hours = Int(duration / 3600)
         let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
         
-        // ロケールが日本語の場合
-        if locale.identifier.starts(with: "ja") {
+        // 現在の言語設定を確認
+        if SleepChartData.isJapaneseLocale() {
             return "\(hours)時間\(minutes)分"
         } else {
             return "\(hours)h \(minutes)m"
@@ -34,7 +31,7 @@ struct SleepChartData: Identifiable {
     // 曜日を取得（ロケールに応じて表示）
     var weekdayString: String {
         let formatter = DateFormatter()
-        formatter.locale = locale
+        formatter.locale = SleepChartData.isJapaneseLocale() ? Locale(identifier: "ja_JP") : Locale(identifier: "en_US")
         formatter.dateFormat = "E"
         return formatter.string(from: date)
     }
@@ -57,6 +54,18 @@ struct SleepChartData: Identifiable {
         formatter.locale = locale
         formatter.dateFormat = "E"
         return formatter.string(from: date)
+    }
+    
+    // 静的なヘルパーメソッド：現在のロケールが日本語かどうかを判定
+    static func isJapaneseLocale() -> Bool {
+        // UserDefaultsから言語設定を取得
+        let appLanguage = UserDefaults.standard.string(forKey: "app_language")
+        if let language = appLanguage {
+            return language == "ja"
+        }
+        
+        // アプリの言語設定がない場合はシステム言語を使用
+        return Locale.current.identifier.starts(with: "ja")
     }
 }
 
