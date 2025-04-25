@@ -1,6 +1,5 @@
 import SwiftUI
 import HealthKit
-import WatchConnectivity
 import UIKit
 
 struct OnboardingView: View {
@@ -8,13 +7,10 @@ struct OnboardingView: View {
     @EnvironmentObject private var localizationManager: LocalizationManager
     private static let healthStore = HKHealthStore()
     @State private var isHealthAuthorized = false
-    @State private var isWatchConnected = false
     @State private var showHealthDeniedAlert = false
     @State private var hkSleepStatus: HKAuthorizationStatus = .notDetermined
     @State private var hkHeartRateStatus: HKAuthorizationStatus = .notDetermined
     @State private var isCheckingStatuses = false
-    @State private var watchErrorMessage: String? = nil
-    @State private var showWatchError = false
     @State private var healthKitError: String? = nil
     @State private var refreshView = false // 言語変更時の再描画用
     var onComplete: (() -> Void)? = nil
@@ -41,7 +37,7 @@ struct OnboardingView: View {
                     }
                     .padding(.top, 20)
 
-                    // 必須設定カード
+                    // HealthKit設定カード
                     VStack(alignment: .leading, spacing: 20) {
                         Text("onboarding.requiredSettingsTitle")
                             .font(.headline)
@@ -90,27 +86,45 @@ struct OnboardingView: View {
                     )
                     .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
 
-                    // オプション設定カード
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("onboarding.optionalSettingsTitle")
+                    // 睡眠記録の説明
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("利用方法")
                             .font(.headline)
                             .padding(.bottom, 4)
-                        
-                        HStack {
-                            Label("onboarding.watchConnectionLabel", systemImage: "applewatch")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text(isWatchConnected ? LocalizedStringKey("onboarding.watchStatus.connected") : LocalizedStringKey("onboarding.watchStatus.notConnected"))
-                                .foregroundColor(isWatchConnected ? .green : .primary)
-                                .fontWeight(isWatchConnected ? .bold : .regular)
+                            
+                        HStack(spacing: 12) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundColor(.blue)
+                                .font(.title2)
+                                .frame(width: 40, height: 40)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("HealthKitとの自動同期")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                
+                                Text("既存の睡眠データを自動的に同期して分析します")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                         
-                        Button(isWatchConnected ? LocalizedStringKey("onboarding.watchButton.connected") : LocalizedStringKey("onboarding.watchButton.detect")) {
-                            checkWatch()
+                        HStack(spacing: 12) {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.blue)
+                                .font(.title2)
+                                .frame(width: 40, height: 40)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("手動で睡眠を記録")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                
+                                Text("就寝時間と起床時間を手動で記録することもできます")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                        .buttonStyle(.bordered)
-                        .tint(isWatchConnected ? .green : .blue)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .padding(20)
                     .background(
@@ -159,11 +173,6 @@ struct OnboardingView: View {
         } message: {
             Text("onboarding.alert.healthDenied.message")
         }
-        .alert(LocalizedStringKey("onboarding.alert.watchError.title"), isPresented: $showWatchError) {
-            Button(LocalizedStringKey("common.okButton"), role: .cancel) {}
-        } message: {
-            Text(watchErrorMessage ?? "common.error.unknown")
-        }
         .onAppear {
             print("OnboardingView表示 - HealthKit状態を更新")
             print("OnboardingView表示 - 現在の言語: \(localizationManager.currentLanguage)")
@@ -206,10 +215,6 @@ struct OnboardingView: View {
             healthKitError = NSLocalizedString("onboarding.error.simulatorLimitation", comment: "Error message for simulator limitations")
         }
         #endif
-        
-        let manager = WatchConnectivityManager.shared
-        manager.checkWatchAvailability()
-        isWatchConnected = manager.isWatchAvailable
     }
 
     private func statusText(for status: HKAuthorizationStatus) -> LocalizedStringKey {
@@ -295,31 +300,6 @@ struct OnboardingView: View {
                         self.showHealthDeniedAlert = true
                     }
                 }
-            }
-        }
-    }
-
-    private func checkWatch() {
-        let manager = WatchConnectivityManager.shared
-        manager.checkWatchAvailability()
-        DispatchQueue.main.async {
-            self.isWatchConnected = manager.isWatchAvailable
-           
-            if !manager.isWatchAvailable {
-                if !WCSession.isSupported() {
-                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchConnectivityUnsupported", comment: "Error message for watch connectivity unsupported")
-                } else if !WCSession.default.isPaired {
-                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchNotPaired", comment: "Error message for watch not paired")
-                    self.showWatchError = true
-                } else if !WCSession.default.isWatchAppInstalled {
-                    self.watchErrorMessage = NSLocalizedString("onboarding.error.watchAppNotInstalled", comment: "Error message for watch app not installed")
-                    self.showWatchError = true // Show alert here as well
-                } else {
-                    self.watchErrorMessage = NSLocalizedString("common.error.unknown", comment: "Generic unknown error message")
-                    self.showWatchError = true // Show alert for unknown errors too
-                }
-            } else {
-                self.watchErrorMessage = nil
             }
         }
     }
