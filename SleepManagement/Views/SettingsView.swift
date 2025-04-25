@@ -16,6 +16,35 @@ struct SettingsView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
+                        // 言語切り替えカード
+                        SettingsSectionCard(title: "言語設定", icon: "globe") {
+                            VStack(spacing: 16) {
+                                HStack {
+                                    Text("現在の言語")
+                                        .font(Theme.Typography.bodyFont)
+                                        .foregroundColor(Theme.Colors.text)
+                                    Spacer()
+                                    
+                                    // 言語選択ボタン
+                                    Button(action: {
+                                        localizationManager.toggleLanguage()
+                                    }) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "globe")
+                                                .font(.body)
+                                            Text(localizationManager.currentLanguage == "ja" ? "English" : "日本語")
+                                                .font(.subheadline)
+                                        }
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(Theme.Colors.primary)
+                                        .cornerRadius(20)
+                                    }
+                                }
+                            }
+                        }
+                        
                         // ユーザー情報セクション
                         userInfoSection
                         
@@ -208,15 +237,6 @@ struct SettingsView: View {
                 SettingsRow(icon: "tag", title: "バージョン") {
                     Text("\(settings.appVersion) (\(settings.buildNumber))")
                         .foregroundColor(Theme.Colors.subtext)
-                }
-                
-                // 言語設定
-                SettingsRow(icon: "globe", title: "言語") {
-                    Picker("", selection: $localizationManager.currentLanguage) {
-                        Text("日本語").tag("ja")
-                        Text("English").tag("en")
-                    }
-                    .pickerStyle(MenuPickerStyle())
                 }
             }
         }

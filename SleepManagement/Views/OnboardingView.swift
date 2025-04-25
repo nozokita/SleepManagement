@@ -25,6 +25,28 @@ struct OnboardingView: View {
                 VStack(spacing: 32) {
                     // ヘッダー
                     VStack(spacing: 16) {
+                        // 言語切り替えボタン
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                localizationManager.toggleLanguage()
+                                print("言語を切り替えました: \(localizationManager.currentLanguage)")
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "globe")
+                                        .font(.body)
+                                    Text(localizationManager.currentLanguage == "ja" ? "English" : "日本語")
+                                        .font(.caption)
+                                }
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.blue.opacity(0.1))
+                                .cornerRadius(20)
+                            }
+                        }
+                        .padding(.bottom, 8)
+                        
                         Text("onboarding.welcomeTitle")
                             .font(.largeTitle)
                             .fontWeight(.heavy)
