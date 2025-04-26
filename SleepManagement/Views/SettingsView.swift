@@ -249,7 +249,7 @@ struct SettingsView: View {
                 SettingsRow(icon: "arrow.clockwise", title: "settings.healthkit.sync".localized) {
                     Toggle("", isOn: $settings.autoSyncHealthKit)
                         .labelsHidden()
-                        .onChange(of: settings.autoSyncHealthKit) { newValue in
+                        .onChange(of: settings.autoSyncHealthKit) { oldValue, newValue in
                             if newValue {
                                 // 設定を保存
                                 settings.save()

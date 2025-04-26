@@ -68,11 +68,10 @@ struct SleepDashboardView: View {
             Text("month_period".localized).tag(ChartPeriod.month)
         }
         .pickerStyle(SegmentedPickerStyle())
-        .onChange(of: selectedPeriod) { _ in
+        .onChange(of: selectedPeriod) { oldValue, newValue in
             withAnimation {
                 animateCharts = false
             }
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation(Theme.Animations.springy) {
                     animateCharts = true
