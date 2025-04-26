@@ -136,7 +136,7 @@ struct SettingsView: View {
         // 年齢からガイドラインを計算
         let age = Calendar.current.component(.year, from: Date()) - settings.birthYear
         let guideline = SleepManager.shared.guidelineHours(age: age)
-        SettingsSectionCard(title: "settings.user.title".localized, icon: "person.circle") {
+        return SettingsSectionCard(title: "settings.user.title".localized, icon: "person.circle") {
             VStack(spacing: 16) {
                 // 年代選択
                 SettingsRow(icon: "calendar", title: "settings.user.age".localized) {
