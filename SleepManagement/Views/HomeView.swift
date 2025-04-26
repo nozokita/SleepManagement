@@ -462,7 +462,7 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: Text("睡眠記録一覧")) {
+                NavigationLink(destination: SleepRecordListView()) {
                     HStack(spacing: 4) {
                         Text("view_all".localized)
                             .font(Theme.Typography.captionFont)
