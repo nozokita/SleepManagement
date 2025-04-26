@@ -290,7 +290,12 @@ struct OnboardingView: View {
             return
         }
         
-        let shareTypes: Set<HKSampleType> = [OnboardingView.sleepType]
+        // 書き込み権限: 睡眠、心拍、呼吸数も許可をリクエスト
+        let shareTypes: Set<HKSampleType> = [
+            OnboardingView.sleepType,
+            OnboardingView.heartRateType,
+            OnboardingView.respiratoryType
+        ]
         let readTypes: Set<HKObjectType> = [
             OnboardingView.sleepType,
             OnboardingView.heartRateType,
