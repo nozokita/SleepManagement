@@ -6,6 +6,8 @@ struct SleepRecordListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var localizationManager: LocalizationManager
     @State private var records: [SleepRecord] = []
+    // 編集用状態
+    @State private var selectedRecordForEdit: SleepRecord? = nil
 
     var body: some View {
         List {
@@ -18,8 +20,28 @@ struct SleepRecordListView: View {
                                     .environment(\.managedObjectContext, viewContext)) {
                         SleepRecordCard(record: record)
                     }
+                    .swipeActions(edge: .trailing) {
+                        // 編集
+                        Button {
+                            selectedRecordForEdit = record
+                        } label: {
+                            Label("list.edit".localized, systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                        // 削除
+                        Button(role: .destructive) {
+                            deleteRecord(record)
+                        } label: {
+                            Label("list.delete".localized, systemImage: "trash")
+                        }
+                    }
                 }
             }
+        }
+        // 編集シート
+        .sheet(item: $selectedRecordForEdit) { record in
+            EditSleepRecordView(record: record)
+                .environment(\.managedObjectContext, viewContext)
         }
         .navigationTitle("sleep_record_list_title".localized)
         .onAppear(perform: loadRecords)
@@ -41,6 +63,17 @@ struct SleepRecordListView: View {
         } catch {
             print("30日間の睡眠記録取得失敗: \(error)")
             records = []
+        }
+    }
+
+    // レコードを削除
+    private func deleteRecord(_ record: SleepRecord) {
+        viewContext.delete(record)
+        do {
+            try viewContext.save()
+            loadRecords()
+        } catch {
+            print("睡眠記録削除エラー: \(error)")
         }
     }
 } 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BD6D2F8C2DBB735F001241BF /* SleepChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */; };
 		BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */; };
+		BD72AF2D2DBD1A2300128BC6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD72AF2C2DBD1A2300128BC6 /* LaunchScreen.storyboard */; };
 		BD9334632DBB047D00E49855 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD93344C2DBB047D00E49855 /* WatchConnectivityManager.swift */; };
 		BD9334642DBB047D00E49855 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334502DBB047D00E49855 /* HomeView.swift */; };
 		BD9334652DBB047D00E49855 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334582DBB047D00E49855 /* ContentView.swift */; };
@@ -31,7 +32,6 @@
 		BD9334762DBB047D00E49855 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334442DBB047D00E49855 /* UserSettings.swift */; };
 		BD9334772DBB047D00E49855 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9334522DBB047D00E49855 /* OnboardingView.swift */; };
 		BD9334782DBB047D00E49855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD9334572DBB047D00E49855 /* Assets.xcassets */; };
-		BD93347A2DBB047D00E49855 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD93345A2DBB047D00E49855 /* LaunchScreen.storyboard */; };
 		BD93347B2DBB047D00E49855 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BD9334482DBB047D00E49855 /* Localizable.strings */; };
 		BD96D22B2DBC4B0000569710 /* SleepQualityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */; };
 		BD96D22D2DBC4B1300569710 /* SleepQualityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */; };
@@ -45,6 +45,7 @@
 		BD54711E2DB4D7A7006389E5 /* SleepManagement.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SleepManagement.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepChartData.swift; sourceTree = "<group>"; };
 		BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepDashboardView.swift; sourceTree = "<group>"; };
+		BD72AF2C2DBD1A2300128BC6 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BD9334402DBB047D00E49855 /* SleepDebtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepDebtView.swift; sourceTree = "<group>"; };
 		BD9334412DBB047D00E49855 /* SleepRecordCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepRecordCard.swift; sourceTree = "<group>"; };
 		BD9334422DBB047D00E49855 /* SleepScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepScoreView.swift; sourceTree = "<group>"; };
@@ -65,7 +66,6 @@
 		BD9334572DBB047D00E49855 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD9334582DBB047D00E49855 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BD9334592DBB047D00E49855 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BD93345A2DBB047D00E49855 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BD93345B2DBB047D00E49855 /* SleepManagement.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SleepManagement.entitlements; sourceTree = "<group>"; };
 		BD93345C2DBB047D00E49855 /* SleepManagementApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepManagementApp.swift; sourceTree = "<group>"; };
 		BD93345E2DBB047D00E49855 /* SleepManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepManager.swift; sourceTree = "<group>"; };
@@ -169,6 +169,7 @@
 		BD9334612DBB047D00E49855 /* SleepManagement */ = {
 			isa = PBXGroup;
 			children = (
+				BD72AF2C2DBD1A2300128BC6 /* LaunchScreen.storyboard */,
 				BD9334432DBB047D00E49855 /* Components */,
 				BD9334452DBB047D00E49855 /* Models */,
 				BD9334492DBB047D00E49855 /* Resources */,
@@ -177,7 +178,6 @@
 				BD9334572DBB047D00E49855 /* Assets.xcassets */,
 				BD9334582DBB047D00E49855 /* ContentView.swift */,
 				BD9334592DBB047D00E49855 /* Info.plist */,
-				BD93345A2DBB047D00E49855 /* LaunchScreen.storyboard */,
 				BD93345B2DBB047D00E49855 /* SleepManagement.entitlements */,
 				BD93345C2DBB047D00E49855 /* SleepManagementApp.swift */,
 				BD93345D2DBB047D00E49855 /* SleepManagementModel.xcdatamodeld */,
@@ -250,8 +250,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD72AF2D2DBD1A2300128BC6 /* LaunchScreen.storyboard in Resources */,
 				BD9334782DBB047D00E49855 /* Assets.xcassets in Resources */,
-				BD93347A2DBB047D00E49855 /* LaunchScreen.storyboard in Resources */,
 				BD93347B2DBB047D00E49855 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -440,7 +440,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;
@@ -476,7 +476,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;

@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreData
+import HealthKit
 
 // SleepDashboardViewの記述を削除
 
@@ -12,6 +13,9 @@ struct HomeView: View {
     @State private var showingAddSheet = false
     @State private var showingSleepInputSheet = false
     @State private var totalDebt: Double = 0
+    
+    // 編集用・削除用状態
+    @State private var selectedRecordForEdit: SleepRecord? = nil
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
@@ -80,6 +84,16 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
+                // HealthKit自動同期（設定でオンなら起動時に同期を実行）
+                if SettingsManager.shared.autoSyncHealthKit && HKHealthStore.isHealthDataAvailable() {
+                    SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
+                        if let error = error {
+                            print("HomeView HealthKit sync error: \(error)")
+                        } else {
+                            print("HomeView HealthKit sync completed")
+                        }
+                    }
+                }
                 calculateTotalDebt()
                 sleepManager.requestNotificationPermission()
                 
@@ -103,6 +117,11 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
                     .environmentObject(localizationManager)
+            }
+            // 編集シート表示
+            .sheet(item: $selectedRecordForEdit) { record in
+                EditSleepRecordView(record: record)
+                    .environment(\.managedObjectContext, viewContext)
             }
         }
     }
@@ -490,7 +509,27 @@ struct HomeView: View {
                         sleepRecordRow(record: record, index: index)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .swipeActions(edge: .trailing) {
+                        // 編集
+                        Button {
+                            selectedRecordForEdit = record
+                        } label: {
+                            Label("list.edit".localized, systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                        // 削除
+                        Button(role: .destructive) {
+                            deleteRecord(record)
+                        } label: {
+                            Label("list.delete".localized, systemImage: "trash")
+                        }
+                    }
                 }
+                // HealthKit同期案内メッセージ
+                Text("recent.syncHealthKit.message".localized)
+                    .font(Theme.Typography.captionFont)
+                    .foregroundColor(Theme.Colors.subtext)
+                    .padding(.top, 4)
             }
         }
         .offset(y: animatedCards ? 0 : 50)
@@ -652,8 +691,13 @@ struct HomeView: View {
     
     // 平均睡眠時間
     private var averageSleepDuration: TimeInterval {
-        guard !sleepRecords.isEmpty else { return 0 }
-        let durations = sleepRecords.map { $0.endAt!.timeIntervalSince($0.startAt!) }
+        // nap ではない通常睡眠のみを対象に平均を計算
+        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
+        guard !normalRecords.isEmpty else { return 0 }
+        let durations: [TimeInterval] = normalRecords.compactMap { record -> TimeInterval? in
+            guard let start = record.startAt, let end = record.endAt else { return nil }
+            return end.timeIntervalSince(start)
+        }
         return durations.reduce(0, +) / Double(durations.count)
     }
     
@@ -665,8 +709,10 @@ struct HomeView: View {
     
     // 平均睡眠スコア
     private var averageSleepScore: Double {
-        guard !sleepRecords.isEmpty else { return 0 }
-        let scores = sleepRecords.map { $0.score }
+        // nap ではない通常睡眠のみを対象に平均スコアを計算
+        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
+        guard !normalRecords.isEmpty else { return 0 }
+        let scores = normalRecords.map { $0.score }
         return scores.reduce(0, +) / Double(scores.count)
     }
     
@@ -676,8 +722,14 @@ struct HomeView: View {
     
     // 最長睡眠時間
     private var longestSleepDuration: TimeInterval {
-        guard !sleepRecords.isEmpty else { return 0 }
-        return sleepRecords.map { $0.endAt!.timeIntervalSince($0.startAt!) }.max() ?? 0
+        // nap ではない通常睡眠のみを対象に最長睡眠時間を計算
+        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
+        guard !normalRecords.isEmpty else { return 0 }
+        let durations: [TimeInterval] = normalRecords.compactMap { record -> TimeInterval? in
+            guard let start = record.startAt, let end = record.endAt else { return nil }
+            return end.timeIntervalSince(start)
+        }
+        return durations.max() ?? 0
     }
     
     private var longestSleepText: String {
@@ -688,28 +740,22 @@ struct HomeView: View {
     
     // 平均就寝時間
     private var averageBedTimeText: String {
-        guard !sleepRecords.isEmpty else { return "00:00" }
-        
+        // nap ではない通常睡眠のみを対象に平均就寝時間を計算
+        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
+        guard !normalRecords.isEmpty else { return "00:00" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
-        
-        // 就寝時間の時間と分を取得
-        let bedTimes = sleepRecords.compactMap { record -> Int? in
+        let bedTimes = normalRecords.compactMap { record -> Int? in
             guard let startAt = record.startAt else { return nil }
             let calendar = Calendar.current
             let hour = calendar.component(.hour, from: startAt)
             let minute = calendar.component(.minute, from: startAt)
-            // 分単位に変換（0-1439）
             return hour * 60 + minute
         }
-        
         guard !bedTimes.isEmpty else { return "00:00" }
-        
-        // 平均値を計算
         let averageMinutes = bedTimes.reduce(0, +) / bedTimes.count
         let averageHour = averageMinutes / 60
         let averageMinute = averageMinutes % 60
-        
         return String(format: "%02d:%02d", averageHour, averageMinute)
     }
     
@@ -795,6 +841,17 @@ struct HomeView: View {
         .padding()
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+    }
+    
+    // 削除関数
+    private func deleteRecord(_ record: SleepRecord) {
+        viewContext.delete(record)
+        do {
+            try viewContext.save()
+            calculateTotalDebt()
+        } catch {
+            print("削除エラー: \(error)")
+        }
     }
 }
 

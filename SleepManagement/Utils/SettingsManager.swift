@@ -30,6 +30,16 @@ final class SettingsManager: ObservableObject {
         self.treatShortSleepAsNap = UserDefaults.standard.bool(forKey: "treatShortSleepAsNap")
         let storedThreshold = UserDefaults.standard.double(forKey: "shortSleepThreshold")
         self.shortSleepThreshold = storedThreshold != 0 ? storedThreshold : 90 * 60
+        // その他の設定の読み込み
+        self.autoSyncHealthKit = UserDefaults.standard.bool(forKey: "autoSyncHealthKit")
+        self.enableSleepReminder = UserDefaults.standard.bool(forKey: "enableSleepReminder")
+        self.sleepReminderTime = UserDefaults.standard.object(forKey: "sleepReminderTime") as? Date ?? self.sleepReminderTime
+        self.enableMorningSummary = UserDefaults.standard.bool(forKey: "enableMorningSummary")
+        self.morningSummaryTime = UserDefaults.standard.object(forKey: "morningSummaryTime") as? Date ?? self.morningSummaryTime
+        self.useSystemTheme = UserDefaults.standard.bool(forKey: "useSystemTheme")
+        self.darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
+        self.showSleepDebt = UserDefaults.standard.bool(forKey: "showSleepDebt")
+        self.showSleepScore = UserDefaults.standard.bool(forKey: "showSleepScore")
     }
 
     func save() {

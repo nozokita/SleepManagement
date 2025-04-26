@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreData
+import HealthKit
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -100,6 +101,32 @@ struct SettingsView: View {
                 }
             } message: {
                 Text("settings.data.reset.confirm".localized)
+            }
+            // 初期表示時に自動同期設定が有効なら権限確認・同期を実行
+            .onAppear {
+                if settings.autoSyncHealthKit {
+                    let store = HKHealthStore()
+                    let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+                    let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate)!
+                    let respiratoryType = HKObjectType.quantityType(forIdentifier: .respiratoryRate)!
+                    let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
+                    let shareTypes: Set<HKSampleType> = [sleepType, heartRateType, respiratoryType]
+                    // ヘルスケア権限リクエスト
+                    store.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
+                        DispatchQueue.main.async {
+                            if success {
+                                // 同期実行
+                                SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
+                                    if let error = error {
+                                        print("HealthKit sync error onAppear: \(error)")
+                                    }
+                                }
+                            } else if let error = error {
+                                print("HealthKit auth error onAppear: \(error)")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -224,14 +251,31 @@ struct SettingsView: View {
                         .labelsHidden()
                         .onChange(of: settings.autoSyncHealthKit) { newValue in
                             if newValue {
-                                // 設定を保存し、HealthKitから過去データ同期を開始
+                                // 設定を保存
                                 settings.save()
-                                SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
-                                    if let error = error {
-                                        print("HealthKit sync error: \(error)")
-                                    } else {
-                                        // 同期完了後に必要であれば通知などを送信
-                                        NotificationCenter.default.post(name: Notification.Name("HealthKitDataSynced"), object: nil)
+                                // HealthKit権限をリクエストしてから同期を開始
+                                let store = HKHealthStore()
+                                let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+                                let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate)!
+                                let respiratoryType = HKObjectType.quantityType(forIdentifier: .respiratoryRate)!
+                                let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
+                                let shareTypes: Set<HKSampleType> = [sleepType, heartRateType, respiratoryType]
+                                store.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
+                                    DispatchQueue.main.async {
+                                        if let error = error {
+                                            print("HealthKit authorization error: \(error)")
+                                        } else if success {
+                                            // 権限取得後に同期開始
+                                            SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
+                                                if let error = error {
+                                                    print("HealthKit sync error: \(error)")
+                                                } else {
+                                                    NotificationCenter.default.post(name: Notification.Name("HealthKitDataSynced"), object: nil)
+                                                }
+                                            }
+                                        } else {
+                                            print("HealthKit authorization denied")
+                                        }
                                     }
                                 }
                             }

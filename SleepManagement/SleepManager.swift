@@ -392,54 +392,56 @@ class SleepManager: ObservableObject {
                 DispatchQueue.main.async { completion?(error) }
                 return
             }
-            // CoreDataに保存
-            samples.forEach { sample in
-                let record = SleepRecord(context: context)
-                record.id = UUID()
-                record.startAt = sample.startDate
-                record.endAt = sample.endDate
-                record.quality = Int16(1)
-                record.createdAt = sample.endDate
-                // HealthKit同期が有効の場合のみ判別
-                let durationSec = sample.endDate.timeIntervalSince(sample.startDate)
-                if SettingsManager.shared.autoSyncHealthKit {
-                    // 短い睡眠を仮眠扱いにする設定がある場合
-                    if SettingsManager.shared.treatShortSleepAsNap,
-                       durationSec < SettingsManager.shared.shortSleepThreshold {
-                        // 仮眠として保存
-                        record.sleepType = SleepRecordType.nap.rawValue
-                        record.score = 0
-                        record.debt = self.calculateWeeklyDebt(context: context, days: 7, napDuration: durationSec)
+            // CoreData操作をmain contextのperformで実行し、重複を回避
+            context.perform {
+                samples.forEach { sample in
+                    let sampleId = sample.uuid
+                    // 重複チェック(idで判別)
+                    let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+                    fetchRequest.predicate = NSPredicate(format: "id == %@", sampleId as CVarArg)
+                    if (try? context.count(for: fetchRequest)) ?? 0 > 0 {
+                        return
+                    }
+                    let record = SleepRecord(context: context)
+                    record.id = sampleId
+                    record.startAt = sample.startDate
+                    record.endAt = sample.endDate
+                    record.quality = Int16(1)
+                    record.createdAt = sample.endDate
+                    let durationSec = sample.endDate.timeIntervalSince(sample.startDate)
+                    if SettingsManager.shared.autoSyncHealthKit {
+                        if SettingsManager.shared.treatShortSleepAsNap,
+                           durationSec < SettingsManager.shared.shortSleepThreshold {
+                            record.sleepType = SleepRecordType.nap.rawValue
+                            record.score = 0
+                            record.debt = self.calculateWeeklyDebt(context: context, days: 7, napDuration: durationSec)
+                        } else {
+                            record.sleepType = SleepRecordType.normalSleep.rawValue
+                            let durationH = durationSec / 3600
+                            let efficiency = 1.0
+                            let regularity = 100.0
+                            let latency = 0.0
+                            let waso = 0.0
+                            record.score = self.calculateHealthKitSleepScore(durationH: durationH,
+                                                                        efficiency: efficiency,
+                                                                        regularity: regularity,
+                                                                        latency: latency,
+                                                                        waso: waso)
+                            record.debt = self.calculateDailyDebt(sleepHours: durationH)
+                        }
                     } else {
-                        // 通常睡眠として保存
                         record.sleepType = SleepRecordType.normalSleep.rawValue
                         let durationH = durationSec / 3600
-                        // スコア計算
-                        let efficiency = 1.0
-                        let regularity = 100.0
-                        let latency = 0.0
-                        let waso = 0.0
-                        record.score = self.calculateHealthKitSleepScore(durationH: durationH,
-                                                                    efficiency: efficiency,
-                                                                    regularity: regularity,
-                                                                    latency: latency,
-                                                                    waso: waso)
-                        // 日次負債
+                        record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
                         record.debt = self.calculateDailyDebt(sleepHours: durationH)
                     }
-                } else {
-                    // 手動入力モードと同様
-                    record.sleepType = SleepRecordType.normalSleep.rawValue
-                    let durationH = durationSec / 3600
-                    record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
-                    record.debt = self.calculateDailyDebt(sleepHours: durationH)
                 }
-            }
-            do {
-                try context.save()
-                DispatchQueue.main.async { completion?(nil) }
-            } catch {
-                DispatchQueue.main.async { completion?(error) }
+                do {
+                    try context.save()
+                    DispatchQueue.main.async { completion?(nil) }
+                } catch {
+                    DispatchQueue.main.async { completion?(error) }
+                }
             }
         }
         healthStore.execute(query)

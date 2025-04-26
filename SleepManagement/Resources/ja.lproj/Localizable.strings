@@ -48,6 +48,9 @@
 "add_first_record" = "右下の+ボタンから最初の睡眠記録を追加しましょう";
 "add_record_button" = "記録を追加する";
 
+// Sync hint under recent records
+"recent.syncHealthKit.message" = "ヘルスケアデータを同期したい場合は、設定画面で実施してください。";
+
 // Sleep Input
 "sleep_recording" = "睡眠記録";
 "checking_device" = "デバイス確認中...";
@@ -206,7 +209,7 @@
 "sleep_debt_explanation" = "睡眠負債は、理想的な睡眠時間に対して不足している睡眠時間の累積です。定期的に十分な睡眠をとることで解消できます。";
 
 // HealthKitモデル用睡眠スコア
-"healthkit.score.title" = "HealthKit睡眠スコア (100点満点)";
+"healthkit.score.title" = "HealthKit睡眠スコア (100点満点)"; 
 
 /* Sleep Record List View */
 "sleep_record_list_title" = "睡眠記録一覧";
@@ -214,4 +217,8 @@
 /* Settings: Treat short sleep as nap */
 "settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠扱いにする";
 /* Settings: Short sleep threshold */
-"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値"; 
+"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値";
+
+// Swipe actions
+"list.edit" = "編集";
+"list.delete" = "削除"; 
