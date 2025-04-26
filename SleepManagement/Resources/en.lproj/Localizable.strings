@@ -145,6 +145,10 @@
 "onboarding.error.watchAppNotInstalled" = "Watch app is not installed.";
 "onboarding.step.deviceSettings" = "Device Settings";
 "onboarding.step.sleepSettings" = "Sleep Settings";
+"onboarding.step.sourceSelection" = "Data Source";
+"onboarding.selectSource.title" = "Select Sleep Data Source";
+"onboarding.selectSource.manual" = "Manual Entry";
+"onboarding.selectSource.healthkit" = "Auto-sync from HealthKit";
 "onboarding.usage.title" = "How to Use";
 "onboarding.usage.healthkit.title" = "Auto-sync with HealthKit";
 "onboarding.usage.healthkit.description" = "Automatically sync and analyze your existing sleep data";

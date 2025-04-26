@@ -145,6 +145,10 @@
 "onboarding.error.watchAppNotInstalled" = "Watchアプリがインストールされていません。";
 "onboarding.step.deviceSettings" = "デバイス設定";
 "onboarding.step.sleepSettings" = "睡眠設定";
+"onboarding.step.sourceSelection" = "データ取得方法";
+"onboarding.selectSource.title" = "睡眠データの取得方法を選択してください";
+"onboarding.selectSource.manual" = "手動入力";
+"onboarding.selectSource.healthkit" = "HealthKitから自動取得";
 "onboarding.usage.title" = "利用方法";
 "onboarding.usage.healthkit.title" = "HealthKitとの自動同期";
 "onboarding.usage.healthkit.description" = "既存の睡眠データを自動的に同期して分析します";
