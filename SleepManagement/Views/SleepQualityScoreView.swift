@@ -435,18 +435,22 @@ struct ProgressBar: View {
     )
     
     let sampleData = SleepQualityData(
-        totalSleepTime: 27000, // 7.5時間
+        totalSleepTime: 27000,        // 7.5時間
+        idealSleepTime: 28800,        // 8時間（例）
+        timeInBed: 28800,             // ベッドイン時間のプレースホルダー
         sleepEfficiency: 0.92,
-        sleepTimeVariability: 1800, // 30分
-        wakeTimeVariance: 1200, // 20分
-        sleepLatency: 900, // 15分
-        waso: 1200, // 20分
+        sleepLatency: 900,            // 15分
+        waso: 1200,                   // 20分
+        sleepTimeVariability: 1800,   // 30分
+        wakeTimeVariability: 1200,    // 20分
+        sleepRegularityIndex: nil,
         subjectiveSleepQuality: 4,
+        subjectiveSleepLatency: nil,
         subjectiveSleepRegularity: 4,
-        subjectiveSleepLatency: 4,
-        subjectiveWaso: 4
+        subjectiveWaso: 4,
+        subjectiveSleepiness: nil,
+        hasWearableData: false
     )
-    
-    return SleepQualityScoreView(score: sampleScore, data: sampleData)
+    SleepQualityScoreView(score: sampleScore, data: sampleData)
         .padding()
 } 
