@@ -18,9 +18,9 @@ class SleepManager: ObservableObject {
     // 睡眠スコアの計算 (手動入力用)
     func calculateSleepScore(startAt: Date, endAt: Date, quality: Int16) -> Double {
         let durationH = endAt.timeIntervalSince(startAt) / 3600
-        let baseScore = min(durationH / recommendedSleepHours, 1.0) * 100
-        let qualityFactor = Double(quality) / 5.0
-        return baseScore * qualityFactor
+        let timeRatio = min(durationH / recommendedSleepHours, 1.0)
+        let subjectiveRatio = Double(quality) / 5.0
+        return 60.0 * timeRatio + 40.0 * subjectiveRatio
     }
     
     /// HealthKit連携時に用いる多要素モデルでの睡眠スコア計算 (100点満点)
