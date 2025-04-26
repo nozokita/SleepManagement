@@ -76,6 +76,7 @@ struct SleepManagementApp: App {
             .environmentObject(localizationManager)
             .environmentObject(SettingsManager.shared)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            .environment(\.locale, Locale(identifier: localizationManager.currentLanguage))
         }
     }
 }
