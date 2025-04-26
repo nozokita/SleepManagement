@@ -114,4 +114,25 @@ extension SleepRecord {
         let type = SleepRecordType(rawValue: sleepType) ?? .normalSleep
         return type.iconName
     }
+    
+    // MARK: - SleepEntry 互換プロパティ
+    /// 睡眠エントリの日付
+    var date: Date? { startAt }
+    /// 就寝時刻
+    var bedTime: Date? { startAt }
+    /// 起床時刻
+    var wakeTime: Date? { endAt }
+    /// 睡眠時間（秒）
+    var duration: Double? {
+        guard let start = startAt, let end = endAt else { return nil }
+        return end.timeIntervalSince(start)
+    }
+    /// 主観的な睡眠の質
+    var sleepQuality: Int16? { quality }
+    /// 入眠のしやすさ（未実装）
+    var fallAsleepEase: Int16? { nil }
+    /// 睡眠の連続性（未実装）
+    var sleepContinuity: Int16? { nil }
+    /// 目覚め時の気分（未実装）
+    var morningFeeling: Int16? { nil }
 } 

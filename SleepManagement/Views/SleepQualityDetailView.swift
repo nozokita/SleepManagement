@@ -1,4 +1,7 @@
 import SwiftUI
+import CoreData
+
+typealias SleepEntry = SleepRecord
 
 /// 睡眠の質スコアの詳細表示画面
 struct SleepQualityDetailView: View {
@@ -15,7 +18,7 @@ struct SleepQualityDetailView: View {
             VStack(spacing: 20) {
                 if let score = sleepQualityScore, let data = sleepQualityData {
                     // スコア表示ビュー
-                    SleepQualityScoreView(score: score, sleepData: data)
+                    SleepQualityScoreView(score: score, data: data)
                 } else {
                     // データ読み込み中
                     ProgressView()
@@ -45,29 +48,27 @@ struct SleepQualityDetailView: View {
             Divider()
             
             // 睡眠日時情報
-            if let date = sleepEntry.date {
-                detailRow(title: "日付", value: formatDate(date))
+            if let startAt = sleepEntry.startAt {
+                detailRow(title: "日付", value: formatDate(startAt))
             }
             
             // 睡眠時間帯
             HStack {
-                if let bedTime = sleepEntry.bedTime {
-                    detailRow(title: "就寝時刻", value: formatTime(bedTime))
+                if let startAt = sleepEntry.startAt {
+                    detailRow(title: "就寝時刻", value: formatTime(startAt))
                 }
                 
                 Spacer()
                 
-                if let wakeTime = sleepEntry.wakeTime {
-                    detailRow(title: "起床時刻", value: formatTime(wakeTime))
+                if let endAt = sleepEntry.endAt {
+                    detailRow(title: "起床時刻", value: formatTime(endAt))
                 }
             }
             
             // 睡眠時間
-            if let duration = sleepEntry.duration {
-                detailRow(
-                    title: "睡眠時間",
-                    value: formatDuration(duration)
-                )
+            if let startAt = sleepEntry.startAt, let endAt = sleepEntry.endAt {
+                let seconds = endAt.timeIntervalSince(startAt)
+                detailRow(title: "睡眠時間", value: formatDuration(seconds))
             }
             
             // 主観評価
@@ -84,25 +85,8 @@ struct SleepQualityDetailView: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
             
-            // 主観的な睡眠の質
-            if let quality = sleepEntry.sleepQuality {
-                ratingRow(title: "睡眠の質", rating: quality)
-            }
-            
-            // 入眠のしやすさ
-            if let fallAsleepEase = sleepEntry.fallAsleepEase {
-                ratingRow(title: "入眠のしやすさ", rating: fallAsleepEase)
-            }
-            
-            // 睡眠の連続性
-            if let continuity = sleepEntry.sleepContinuity {
-                ratingRow(title: "睡眠の連続性", rating: continuity)
-            }
-            
-            // 目覚めの気分
-            if let feeling = sleepEntry.morningFeeling {
-                ratingRow(title: "目覚め時の気分", rating: feeling)
-            }
+            // 睡眠の質 (qualityプロパティ直接使用)
+            ratingRow(title: "睡眠の質", rating: sleepEntry.quality)
         }
     }
     
@@ -156,13 +140,19 @@ struct SleepQualityDetailView: View {
         return SleepQualityData.fromSleepEntry(
             sleepEntry,
             sleepHistoryEntries: previousEntries,
-            windowDays: 7
+            windowDays: 7,
+            idealSleepDurationProvider: {
+                let birthYear = SettingsManager.shared.birthYear
+                let age = Calendar.current.component(.year, from: Date()) - birthYear
+                return SleepManager.shared.guidelineHours(age: age) * 3600
+            }
         )
     }
     
     // 過去の睡眠データを取得
     private func fetchPreviousSleepEntries() -> [SleepEntry] {
-        guard let date = sleepEntry.date else { return [] }
+        // SleepEntryのstartAtとidをアンラップ
+        guard let date = sleepEntry.startAt, let id = sleepEntry.id else { return [] }
         
         // 現在の日付から7日前までのデータを取得
         let calendar = Calendar.current
@@ -171,11 +161,11 @@ struct SleepQualityDetailView: View {
         }
         
         let fetchRequest: NSFetchRequest<SleepEntry> = SleepEntry.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "date >= %@ AND date < %@ AND id != %@", 
+        fetchRequest.predicate = NSPredicate(format: "startAt >= %@ AND startAt < %@ AND id != %@", 
                                            startDate as NSDate, 
                                            date as NSDate,
-                                           sleepEntry.id as CVarArg)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+                                           id as CVarArg)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: false)]
         
         do {
             return try viewContext.fetch(fetchRequest)

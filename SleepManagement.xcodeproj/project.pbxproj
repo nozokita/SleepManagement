@@ -36,6 +36,8 @@
 		BD96D22B2DBC4B0000569710 /* SleepQualityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */; };
 		BD96D22D2DBC4B1300569710 /* SleepQualityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */; };
 		BD96D22F2DBC4B1C00569710 /* SleepQualityScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */; };
+		BDD7F70D2DBD00EF007C82FE /* SleepQualityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */; };
+		BDD7F70F2DBD00F7007C82FE /* SleepQualityScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +74,8 @@
 		BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityData.swift; sourceTree = "<group>"; };
 		BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityLevel.swift; sourceTree = "<group>"; };
 		BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityScore.swift; sourceTree = "<group>"; };
+		BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityDetailView.swift; sourceTree = "<group>"; };
+		BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityScoreView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +148,8 @@
 		BD9334562DBB047D00E49855 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */,
+				BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */,
 				BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */,
 				BD93344E2DBB047D00E49855 /* AddSleepRecordView.swift */,
 				BD93344F2DBB047D00E49855 /* EditSleepRecordView.swift */,
@@ -261,6 +267,7 @@
 				BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */,
 				BD9334662DBB047D00E49855 /* OnboardingNavigationView.swift in Sources */,
 				BD9334672DBB047D00E49855 /* Theme.swift in Sources */,
+				BDD7F70D2DBD00EF007C82FE /* SleepQualityDetailView.swift in Sources */,
 				BD9334682DBB047D00E49855 /* SleepRecord+Extension.swift in Sources */,
 				BD9334692DBB047D00E49855 /* SettingsView.swift in Sources */,
 				BD93346A2DBB047D00E49855 /* SettingsManager.swift in Sources */,
@@ -272,6 +279,7 @@
 				BD93346F2DBB047D00E49855 /* SleepRecordDetailView.swift in Sources */,
 				BD9334702DBB047D00E49855 /* LocalizationManager.swift in Sources */,
 				BD9334712DBB047D00E49855 /* SleepManager.swift in Sources */,
+				BDD7F70F2DBD00F7007C82FE /* SleepQualityScoreView.swift in Sources */,
 				BD9334722DBB047D00E49855 /* SleepManagementApp.swift in Sources */,
 				BD9334732DBB047D00E49855 /* SleepRecordCard.swift in Sources */,
 				BD9334742DBB047D00E49855 /* SleepDebtView.swift in Sources */,
