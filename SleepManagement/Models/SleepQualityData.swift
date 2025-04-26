@@ -43,7 +43,7 @@ struct SleepQualityData {
     /// ウェアラブルデータの有無 - 追加
     let hasWearableData: Bool
     
-
+    
     /// 初期化メソッド
     /// - Parameters:
     ///   - totalSleepTime: 総睡眠時間（秒）
@@ -123,7 +123,7 @@ struct SleepQualityData {
 
         // 睡眠効率を計算 (ベッド内時間のプレースホルダーを使用)
         let sleepEfficiency = timeInBed > 0 ? totalSleepTime / timeInBed : nil
-
+        
         // 規則性（時間のばらつき）を計算
         let (sleepTimeVar, wakeTimeVar) = calculateTimeVariability(
             currentRecord: record, // Pass SleepRecord
@@ -149,7 +149,7 @@ struct SleepQualityData {
 
         // 理想睡眠時間を外部から取得
         let idealSleepTime = idealSleepDurationProvider()
-
+        
         return SleepQualityData(
             totalSleepTime: totalSleepTime,
             idealSleepTime: idealSleepTime,
@@ -186,15 +186,15 @@ struct SleepQualityData {
         // 効率 = 睡眠時間 ÷ ベッドにいた時間
         return (duration / timeInBed)
     }
-
+    
     /// 睡眠中の覚醒時間を計算
     /// - Parameter record: 睡眠記録 (Core DataのSleepRecord)
     /// - Returns: 睡眠中の覚醒時間（秒）
     private static func calculateWASO(record: SleepRecord) -> Double? {
         // Placeholder: WASO calculation needs data not present in SleepRecord
-        return nil
+            return nil
     }
-
+    
     /// 睡眠・起床時間のばらつきを計算
     /// - Parameters:
     ///   - currentRecord: 現在の睡眠記録 (Core DataのSleepRecord)
@@ -211,15 +211,15 @@ struct SleepQualityData {
             .filter { ($0.startAt ?? Date.distantFuture) <= (currentRecord.startAt ?? Date.distantPast) && $0.id != currentRecord.id }
             .sorted { ($0.startAt ?? Date.distantPast) > ($1.startAt ?? Date.distantPast) }
         recentEntries.insert(currentRecord, at: 0)
-
+        
         // windowDaysの日数分だけを使用
         let entries = Array(recentEntries.prefix(windowDays))
-
+        
         // エントリが少なすぎる場合は計算しない
         if entries.count < 3 {
             return (nil, nil)
         }
-
+        
         // 就寝時間と起床時間の配列を作成 (Use startAt and endAt)
         let sleepTimes = entries.compactMap { record -> Date? in
             guard let bedTime = record.startAt else { return nil }
@@ -229,7 +229,7 @@ struct SleepQualityData {
                                          second: Calendar.current.component(.second, from: bedTime),
                                          of: Date())
         }
-
+        
         let wakeTimes = entries.compactMap { record -> Date? in
             guard let wakeTime = record.endAt else { return nil }
             // 日付部分を無視して時間だけを比較するために時間を標準化
@@ -238,11 +238,11 @@ struct SleepQualityData {
                                          second: Calendar.current.component(.second, from: wakeTime),
                                          of: Date())
         }
-
+        
         // 時間 (Date) の配列から標準偏差を計算 (秒単位)
         let sleepTimeVariability = calculateTimeStandardDeviation(sleepTimes)
         let wakeTimeVariability = calculateTimeStandardDeviation(wakeTimes)
-
+        
         return (sleepTimeVariability, wakeTimeVariability)
     }
     
@@ -284,7 +284,7 @@ struct SleepQualityData {
             return 3 // やや不規則
         } else if avgVariabilityMinutes < 90 {
             return 2 // 不規則
-        } else {
+                } else {
             return 1 // 非常に不規則
         }
     }
@@ -316,4 +316,4 @@ struct SleepQualityData {
         // 標準偏差を返す
         return sqrt(variance)
     }
-}
+} 

@@ -60,8 +60,8 @@ struct SleepManagementApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                // 全体背景をネイビーに設定
-                Color(red: 0.05, green: 0.06, blue: 0.2)
+                // 背景を白基調に戻す
+                Theme.Colors.background
                     .ignoresSafeArea()
 
                 // オンボーディング or メイン画面を表示
@@ -76,8 +76,6 @@ struct SleepManagementApp: App {
             .environmentObject(localizationManager)
             .environmentObject(SettingsManager.shared)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
-            .accentColor(.white)                // モダンミニマルなアクセント
-            .preferredColorScheme(.dark)        // ダークモード固定
         }
     }
 }

@@ -13,9 +13,9 @@
     <key>CFBundleName</key>
     <string>$(PRODUCT_NAME)</string>
     <key>CFBundleShortVersionString</key>
-    <string>$(MARKETING_VERSION)</string>
+    <string>1.0</string>
     <key>CFBundleVersion</key>
-    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <string>1</string>
     <!-- HealthKit有効化 -->
     <key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
     <string>臨床記録へのアクセスが必要です。</string>

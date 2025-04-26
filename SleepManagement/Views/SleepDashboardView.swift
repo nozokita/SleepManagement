@@ -54,6 +54,10 @@ struct SleepDashboardView: View {
             .refreshable {
                 refreshData()
             }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("HealthKitDataSynced"))) { _ in
+                // HealthKit同期完了後にデータを再読み込み
+                refreshData()
+            }
         }
     }
     

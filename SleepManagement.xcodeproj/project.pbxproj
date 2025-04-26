@@ -33,6 +33,9 @@
 		BD9334782DBB047D00E49855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD9334572DBB047D00E49855 /* Assets.xcassets */; };
 		BD93347A2DBB047D00E49855 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD93345A2DBB047D00E49855 /* LaunchScreen.storyboard */; };
 		BD93347B2DBB047D00E49855 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BD9334482DBB047D00E49855 /* Localizable.strings */; };
+		BD96D22B2DBC4B0000569710 /* SleepQualityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */; };
+		BD96D22D2DBC4B1300569710 /* SleepQualityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */; };
+		BD96D22F2DBC4B1C00569710 /* SleepQualityScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +69,9 @@
 		BD93345F2DBB047D00E49855 /* SleepRecord+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SleepRecord+Extension.swift"; sourceTree = "<group>"; };
 		BD9334602DBB047D00E49855 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		BD9334622DBB047D00E49855 /* SleepManagementModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SleepManagementModel.xcdatamodel; sourceTree = "<group>"; };
+		BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityData.swift; sourceTree = "<group>"; };
+		BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityLevel.swift; sourceTree = "<group>"; };
+		BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityScore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +114,9 @@
 		BD9334452DBB047D00E49855 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				BD96D22A2DBC4B0000569710 /* SleepQualityData.swift */,
+				BD96D22C2DBC4B1300569710 /* SleepQualityLevel.swift */,
+				BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */,
 				BD6D2F8B2DBB735F001241BF /* SleepChartData.swift */,
 				BD9334442DBB047D00E49855 /* UserSettings.swift */,
 			);
@@ -247,6 +256,7 @@
 			files = (
 				BD9334632DBB047D00E49855 /* WatchConnectivityManager.swift in Sources */,
 				BD9334642DBB047D00E49855 /* HomeView.swift in Sources */,
+				BD96D22D2DBC4B1300569710 /* SleepQualityLevel.swift in Sources */,
 				BD9334652DBB047D00E49855 /* ContentView.swift in Sources */,
 				BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */,
 				BD9334662DBB047D00E49855 /* OnboardingNavigationView.swift in Sources */,
@@ -266,6 +276,8 @@
 				BD9334732DBB047D00E49855 /* SleepRecordCard.swift in Sources */,
 				BD9334742DBB047D00E49855 /* SleepDebtView.swift in Sources */,
 				BD9334752DBB047D00E49855 /* SleepManagementModel.xcdatamodeld in Sources */,
+				BD96D22F2DBC4B1C00569710 /* SleepQualityScore.swift in Sources */,
+				BD96D22B2DBC4B0000569710 /* SleepQualityData.swift in Sources */,
 				BD9334762DBB047D00E49855 /* UserSettings.swift in Sources */,
 				BD9334772DBB047D00E49855 /* OnboardingView.swift in Sources */,
 			);
@@ -415,13 +427,14 @@
 				CODE_SIGN_ENTITLEMENTS = SleepManagement/SleepManagement.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepManagement/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -450,13 +463,14 @@
 				CODE_SIGN_ENTITLEMENTS = SleepManagement/SleepManagement.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SleepManagement/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

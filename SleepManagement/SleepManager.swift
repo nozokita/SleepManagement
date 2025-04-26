@@ -211,8 +211,8 @@ class SleepManager: ObservableObject {
         } else {
             // 通常記録は既存ロジック
             let durationHours = durationSeconds / 3600
-            record.score = calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
-            record.debt = calculateDailyDebt(sleepHours: durationHours)
+        record.score = calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
+        record.debt = calculateDailyDebt(sleepHours: durationHours)
         }
         
         // 保存
@@ -421,7 +421,7 @@ class SleepManager: ObservableObject {
             do {
                 try context.save()
                 DispatchQueue.main.async { completion?(nil) }
-            } catch {
+        } catch {
                 DispatchQueue.main.async { completion?(error) }
             }
         }
