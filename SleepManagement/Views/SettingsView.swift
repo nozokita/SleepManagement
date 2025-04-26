@@ -133,6 +133,9 @@ struct SettingsView: View {
     
     // ユーザー情報セクション
     private var userInfoSection: some View {
+        // 年齢からガイドラインを計算
+        let age = Calendar.current.component(.year, from: Date()) - settings.birthYear
+        let guideline = SleepManager.shared.guidelineHours(age: age)
         SettingsSectionCard(title: "settings.user.title".localized, icon: "person.circle") {
             VStack(spacing: 16) {
                 // 年代選択
@@ -146,6 +149,16 @@ struct SettingsView: View {
                         Text(localizationManager.currentLanguage == "ja" ? "60代以上" : "60s+").tag(1955)
                     }
                     .pickerStyle(MenuPickerStyle())
+                }
+                // 年齢別推奨睡眠時間の表示
+                HStack {
+                    Text("settings.user.guideline".localized)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.subtext)
+                    Spacer()
+                    Text(String(format: "%.1f", guideline) + " " + "hours".localized)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.subtext)
                 }
             }
         }

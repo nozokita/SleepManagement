@@ -164,6 +164,7 @@
 "settings.language.current" = "現在の言語";
 "settings.user.title" = "ユーザー";
 "settings.user.age" = "年齢";
+"settings.user.guideline" = "年齢別推奨睡眠時間";
 "settings.sleep.title" = "睡眠";
 "settings.sleep.ideal" = "理想の睡眠時間";
 "settings.notification.title" = "通知";

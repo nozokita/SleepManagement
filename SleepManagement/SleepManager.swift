@@ -58,7 +58,7 @@ class SleepManager: ObservableObject {
     }
     
     // 過去N日間の睡眠負債を計算
-    func calculateTotalDebt(context: NSManagedObjectContext, days: Int = 10) -> Double {
+    func calculateTotalDebt(context: NSManagedObjectContext, days: Int = 7) -> Double {
         let calendar = Calendar.current
         let now = Date()
         let startDate = calendar.date(byAdding: .day, value: -days, to: now)!

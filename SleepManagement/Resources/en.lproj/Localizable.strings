@@ -161,6 +161,7 @@
 "settings.language.current" = "Current Language";
 "settings.user.title" = "User";
 "settings.user.age" = "Age";
+"settings.user.guideline" = "Recommended Sleep Duration by Age";
 "settings.sleep.title" = "Sleep";
 "settings.sleep.ideal" = "Ideal Sleep Duration";
 "settings.notification.title" = "Notifications";
