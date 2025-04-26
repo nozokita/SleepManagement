@@ -1,9 +1,13 @@
 import Foundation
 import CoreData
 import UserNotifications
+import HealthKit
 
 class SleepManager: ObservableObject {
     static let shared = SleepManager()
+    
+    /// HealthKit用のストア
+    private let healthStore = HKHealthStore()
     
     // 推奨睡眠時間（デフォルト7時間）
     var recommendedSleepHours: Double = 7.0
@@ -316,5 +320,47 @@ class SleepManager: ObservableObject {
             print("睡眠負債トレンドの取得に失敗しました: \(error)")
             return [:]
         }
+    }
+    
+    /// HealthKitから過去N日分の睡眠データを取得してCoreDataに保存します
+    func syncSleepDataFromHealthKit(context: NSManagedObjectContext, days: Int = 30, completion: ((Error?) -> Void)? = nil) {
+        // SleepAnalysisのサンプル取得
+        let sampleType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        let startDate = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: [])
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        let query = HKSampleQuery(sampleType: sampleType,
+                                 predicate: predicate,
+                                 limit: HKObjectQueryNoLimit,
+                                 sortDescriptors: [sortDescriptor]) { _, results, error in
+            if let error = error {
+                DispatchQueue.main.async { completion?(error) }
+                return
+            }
+            guard let samples = results as? [HKCategorySample] else {
+                DispatchQueue.main.async { completion?(error) }
+                return
+            }
+            // CoreDataに保存
+            samples.forEach { sample in
+                let record = SleepRecord(context: context)
+                record.id = UUID()
+                record.startAt = sample.startDate
+                record.endAt = sample.endDate
+                record.quality = Int16(1)  // HealthKit由来の質は未設定のため仮値
+                record.createdAt = sample.endDate
+                record.sleepType = SleepRecordType.normalSleep.rawValue
+                // スコアと負債計算
+                record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
+                record.debt = self.calculateDailyDebt(sleepHours: sample.endDate.timeIntervalSince(sample.startDate) / 3600)
+            }
+            do {
+                try context.save()
+                DispatchQueue.main.async { completion?(nil) }
+            } catch {
+                DispatchQueue.main.async { completion?(error) }
+            }
+        }
+        healthStore.execute(query)
     }
 } 
