@@ -37,9 +37,23 @@ class SleepManager: ObservableObject {
         return durScore + effScore + regScore + latScore + wasoScore
     }
     
+    /// 年齢別推奨睡眠時間 (NSF/AASM 2015)
+    func guidelineHours(age: Int) -> Double {
+        switch age {
+        case 14..<18: return 9.0
+        case 18..<65: return 8.0
+        case 65...:   return 7.5
+        default:       return recommendedSleepHours
+        }
+    }
+    
     // 日次睡眠負債の計算
     func calculateDailyDebt(sleepHours: Double) -> Double {
-        return max(recommendedSleepHours - sleepHours, 0)
+        // ユーザー年齢に応じた理想睡眠時間を取得
+        let birthYear = SettingsManager.shared.birthYear
+        let age = Calendar.current.component(.year, from: Date()) - birthYear
+        let ideal = guidelineHours(age: age)
+        return max(ideal - sleepHours, 0)
     }
     
     // 過去N日間の睡眠負債を計算
@@ -162,6 +176,20 @@ class SleepManager: ObservableObject {
         }
     }
     
+    /// 仮眠時に使用する、週単位 (last 7 days) の睡眠負債を計算 (Nap 減算含む)
+    /// - Parameters:
+    ///   - context: NSManagedObjectContext
+    ///   - days: 集計日数 (デフォルト7日)
+    ///   - napDuration: 仮眠時間 (秒)
+    /// - Returns: 再計算後の週負債 (時間)
+    func calculateWeeklyDebt(context: NSManagedObjectContext, days: Int = 7, napDuration: TimeInterval) -> Double {
+        // 1) 週内の原始的な負債合計
+        let rawDebt = calculateTotalDebt(context: context, days: days)
+        // 2) 仮眠減算は30分(1800秒)上限
+        let deduction = min(napDuration, 1800)
+        return max(0, rawDebt - deduction)
+    }
+    
     // 新しい睡眠記録を追加
     func addSleepRecord(context: NSManagedObjectContext, startAt: Date, endAt: Date, quality: Int16, sleepType: SleepRecordType = .normalSleep, memo: String? = nil) -> SleepRecord {
         let record = SleepRecord(context: context)
@@ -173,10 +201,19 @@ class SleepManager: ObservableObject {
         record.createdAt = Date()
         record.sleepType = sleepType.rawValue
         
-        // スコアと負債の計算
-        let durationHours = endAt.timeIntervalSince(startAt) / 3600
-        record.score = calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
-        record.debt = calculateDailyDebt(sleepHours: durationHours)
+        // 仮眠時はスコアを0、週負債を再計算
+        let durationSeconds = endAt.timeIntervalSince(startAt)
+        if sleepType == .nap {
+            record.score = 0
+            // 週単位の負債を算出 (7日間、仮眠減算)
+            let weeklyDebt = calculateWeeklyDebt(context: context, days: 7, napDuration: durationSeconds)
+            record.debt = weeklyDebt
+        } else {
+            // 通常記録は既存ロジック
+            let durationHours = durationSeconds / 3600
+            record.score = calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
+            record.debt = calculateDailyDebt(sleepHours: durationHours)
+        }
         
         // 保存
         do {
@@ -379,7 +416,7 @@ class SleepManager: ObservableObject {
                 } else {
                     record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
                 }
-                record.debt = calculateDailyDebt(sleepHours: durationH)
+                record.debt = self.calculateDailyDebt(sleepHours: durationH)
             }
             do {
                 try context.save()
