@@ -1,8 +1,10 @@
 import SwiftUI
+import CoreData
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var localizationManager: LocalizationManager
+    @Environment(\.managedObjectContext) private var viewContext
     @StateObject var settings = SettingsManager.shared
     @State private var navigateHome = false
     @State private var navigateToHomeFromOnboarding = false
@@ -109,12 +111,12 @@ struct SettingsView: View {
                 // 年代選択
                 SettingsRow(icon: "calendar", title: "settings.user.age".localized) {
                     Picker("", selection: $settings.birthYear) {
-                        Text("10代").tag(2005)
-                        Text("20代").tag(1995)
+                        Text(localizationManager.currentLanguage == "ja" ? "10代" : "10s").tag(2005)
+                        Text(localizationManager.currentLanguage == "ja" ? "20代" : "20s").tag(1995)
                         Text(localizationManager.currentLanguage == "ja" ? "30代" : "30s").tag(1985)
-                        Text("40代").tag(1975)
-                        Text("50代").tag(1965)
-                        Text("60代以上").tag(1955)
+                        Text(localizationManager.currentLanguage == "ja" ? "40代" : "40s").tag(1975)
+                        Text(localizationManager.currentLanguage == "ja" ? "50代" : "50s").tag(1965)
+                        Text(localizationManager.currentLanguage == "ja" ? "60代以上" : "60s+").tag(1955)
                     }
                     .pickerStyle(MenuPickerStyle())
                 }
@@ -213,6 +215,20 @@ struct SettingsView: View {
                 SettingsRow(icon: "arrow.clockwise", title: "settings.healthkit.sync".localized) {
                     Toggle("", isOn: $settings.autoSyncHealthKit)
                         .labelsHidden()
+                        .onChange(of: settings.autoSyncHealthKit) { newValue in
+                            if newValue {
+                                // 設定を保存し、HealthKitから過去データ同期を開始
+                                settings.save()
+                                SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
+                                    if let error = error {
+                                        print("HealthKit sync error: \(error)")
+                                    } else {
+                                        // 同期完了後に必要であれば通知などを送信
+                                        NotificationCenter.default.post(name: Notification.Name("HealthKitDataSynced"), object: nil)
+                                    }
+                                }
+                            }
+                        }
                 }
                 
                 // 説明文を追加
