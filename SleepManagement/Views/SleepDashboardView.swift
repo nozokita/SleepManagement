@@ -207,7 +207,7 @@ struct SleepDashboardView: View {
                                 .foregroundColor(Theme.Colors.subtext)
                         }
                     }
-                    .chartYScale(domain: 0...(sleepManager.recommendedSleepHours * 1.5))
+                    // Y軸はデータに応じて自動スケーリング
                     .frame(height: 220)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
@@ -251,7 +251,7 @@ struct SleepDashboardView: View {
         return VStack(spacing: 0) {
             // カードヘッダー
             HStack {
-                Label("sleep_quality".localized, systemImage: "star")
+                Label("sleep_score".localized, systemImage: "star")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
@@ -326,7 +326,7 @@ struct SleepDashboardView: View {
                                 .foregroundColor(Theme.Colors.warning)
                         }
                     }
-                    .chartYScale(domain: 0...100)
+                    // Y軸はデータに応じて自動スケーリング
                     .frame(height: 220)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
@@ -451,7 +451,7 @@ struct SleepDashboardView: View {
                                 .foregroundColor(Theme.Colors.warning)
                         }
                     }
-                    .chartYScale(domain: 0...3)
+                    // Y軸はデータに応じて自動スケーリング
                     .frame(height: 220)
                     .animation(.easeInOut, value: selectedPeriod)
                     .padding(.top, 8)
