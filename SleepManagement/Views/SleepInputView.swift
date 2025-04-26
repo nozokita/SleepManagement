@@ -7,40 +7,13 @@ struct SleepInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var localizationManager: LocalizationManager
     
-    @ObservedObject var watchConnectivityManager = WatchConnectivityManager.shared
-    
-    // 睡眠データの入力用
-    @State private var selectedDate = Date()
-    @State private var sleepTime = Date().addingTimeInterval(-8 * 3600) // 8時間前をデフォルトに
-    @State private var wakeTime = Date()
+    @State private var sleepStart: Date = Date().addingTimeInterval(-8 * 3600) // 初期就寝日時(8時間前)
+    @State private var sleepEnd: Date = Date()                        // 初期起床日時(現在)
     @State private var quality: Double = 3
-    @State private var sleepMode: SleepMode = .manual
     @State private var selectedSleepType: SleepRecordType = .normalSleep
-    @State private var showDatePicker: Bool = false
-    
-    // 画面表示用プロパティ
-    private var selectedDateText: String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: selectedDate)
-    }
-    
-    // アラート表示用
     @State private var showingAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
-    
-    // 入力モード
-    enum SleepMode: String, CaseIterable, Identifiable {
-        case manual = "manual"
-        case watchData = "watch_data"
-        
-        var id: String { self.rawValue }
-        
-        var localizedTitle: String {
-            return self.rawValue.localized
-        }
-    }
     
     var body: some View {
         NavigationView {
@@ -55,24 +28,9 @@ struct SleepInputView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 5)
                     
-                    // 入力モード選択
-                    inputModeSelector
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                        .padding(.bottom, 8) // 入力モードの下部パディングを減らす
-                    
-                    // スクロール可能なコンテンツエリア
-                    if sleepMode == .manual {
-                        // 手動入力フォーム
-                        manualInputForm
-                            .padding(.bottom, 85) // 保存ボタンの高さ分空ける
-                    } else {
-                        // Apple Watchデータ取得
-                        watchDataView
-                            .padding(.horizontal)
-                            .padding(.vertical, 10)
-                            .padding(.bottom, 85) // 保存ボタンの高さ分空ける
-                    }
+                    // 入力フォーム
+                    manualInputForm
+                        .padding(.bottom, 85) // 保存ボタンの高さ分空ける
                     
                     Spacer(minLength: 0)
                 }
@@ -125,26 +83,6 @@ struct SleepInputView: View {
                 )
             }
         }
-        // カレンダーをシートで表示
-        .sheet(isPresented: $showDatePicker) {
-            NavigationView {
-                VStack {
-                    DatePicker("", selection: $selectedDate, displayedComponents: .date)
-                        .datePickerStyle(GraphicalDatePickerStyle())
-                        .labelsHidden()
-                        .padding()
-                }
-                .navigationTitle("date".localized)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("OK") { showDatePicker = false }
-                    }
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { showDatePicker = false }
-                    }
-                }
-            }
-        }
     }
     
     // ヘッダー
@@ -162,66 +100,15 @@ struct SleepInputView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
-    // 入力モード選択
-    private var inputModeSelector: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("input_mode".localized)
-                .font(Theme.Typography.subheadingFont)
-                .foregroundColor(Theme.Colors.text)
-            
-            Picker("Input Mode", selection: $sleepMode) {
-                ForEach(SleepMode.allCases) { mode in
-                    Text(mode.localizedTitle).tag(mode)
-                }
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .onChange(of: sleepMode) { oldValue, newValue in
-                if newValue == .watchData {
-                    watchConnectivityManager.requestSleepData()
-                }
-            }
-        }
-    }
-    
-    // 手動入力フォーム
+    // 手動入力フォーム (就寝開始日時と起床日時を別々に入力)
     private var manualInputForm: some View {
         ScrollView {
             VStack(spacing: 16) {
-                // 日付選択
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("date".localized)
-                        .font(Theme.Typography.subheadingFont)
-                        .foregroundColor(Theme.Colors.text)
-                    Button(action: {
-                        showDatePicker = true
-                    }) {
-                        HStack {
-                            Text(selectedDateText)
-                                .font(Theme.Typography.bodyFont)
-                                .foregroundColor(Theme.Colors.primary)
-                            Spacer()
-                            Image(systemName: "calendar")
-                                .foregroundColor(Theme.Colors.primary)
-                        }
-                        .padding(8)
-                        .background(Theme.Colors.cardBackground)
-                        .cornerRadius(Theme.Layout.cardCornerRadius)
-                    }
-                }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.5))
-                )
-                .padding(.horizontal, 2)
-                .padding(.bottom, 8)
-                
                 // 睡眠タイプセクション
                 VStack(alignment: .leading, spacing: 10) {
                     Text("sleep_type".localized)
                         .font(Theme.Typography.subheadingFont)
                         .foregroundColor(Theme.Colors.text)
-                    
                     HStack(spacing: 12) {
                         ForEach(SleepRecordType.allCases, id: \.self) { type in
                             Button(action: {
@@ -230,7 +117,6 @@ struct SleepInputView: View {
                                 HStack {
                                     Image(systemName: type.iconName)
                                         .foregroundColor(selectedSleepType == type ? .white : Theme.Colors.primary)
-                                    
                                     Text(type.displayName)
                                         .font(Theme.Typography.bodyFont)
                                         .foregroundColor(selectedSleepType == type ? .white : Theme.Colors.primary)
@@ -257,82 +143,70 @@ struct SleepInputView: View {
                 .padding(.horizontal, 2)
                 .padding(.bottom, 8)
                 
-                // セクション区切り（空のスペース）
-                // Spacerを削除（入力モードと日付の間にはSpacerがないため）
-                
-                // 就寝時間とウェイク時間セクション（背景色で区別）
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("sleep_duration".localized)
+                // 就寝開始日時
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("sleep_start_datetime".localized)
                         .font(Theme.Typography.subheadingFont)
                         .foregroundColor(Theme.Colors.text)
-                        .padding(.top, 5) // 見出しの上にも少しスペースを追加
-                    
-                    HStack(spacing: 20) {
-                        // 就寝時間
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("sleep_time".localized)
-                                .font(Theme.Typography.bodyFont)
-                                .foregroundColor(Theme.Colors.subtext)
-                            
-                            DatePicker("", selection: $sleepTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(maxWidth: .infinity)
-                                .padding(8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Theme.Colors.cardBackground)
-                                )
-                        }
-                        
-                        // 起床時間
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("wake_time".localized)
-                                .font(Theme.Typography.bodyFont)
-                                .foregroundColor(Theme.Colors.subtext)
-                            
-                            DatePicker("", selection: $wakeTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(maxWidth: .infinity)
-                                .padding(8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Theme.Colors.cardBackground)
-                                )
-                        }
-                    }
-                    
-                    // 睡眠時間表示
-                    HStack {
-                        Spacer()
-                        Text(sleepDurationText)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.primary)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
-                            .background(Theme.Colors.primary.opacity(0.1))
-                            .cornerRadius(8)
-                    }
+                    DatePicker("", selection: $sleepStart, displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity)
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Theme.Colors.cardBackground)
+                        )
                 }
                 .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white.opacity(0.5))
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 2)
-                .padding(.bottom, 8) // 睡眠時間の下のスペースを調整
+                .padding(.bottom, 8)
                 
-                // セクション区切り（空のスペース）
-                // Spacerを削除（入力モードと日付の間にはSpacerがないため）
+                // 起床日時
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("wake_datetime".localized)
+                        .font(Theme.Typography.subheadingFont)
+                        .foregroundColor(Theme.Colors.text)
+                    DatePicker("", selection: $sleepEnd, displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity)
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Theme.Colors.cardBackground)
+                        )
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white.opacity(0.5))
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 2)
+                .padding(.bottom, 8)
                 
-                // 睡眠の質
+                // 睡眠時間表示
+                HStack {
+                    Spacer()
+                    Text(sleepDurationText)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.primary)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(Theme.Colors.primary.opacity(0.1))
+                        .cornerRadius(8)
+                }
+                // 睡眠の質入力
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Text("sleep_quality".localized)
                             .font(Theme.Typography.subheadingFont)
                             .foregroundColor(Theme.Colors.text)
-                        
                         Spacer()
-                        
                         Text("\(Int(quality))" + "points".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.primary)
@@ -342,17 +216,13 @@ struct SleepInputView: View {
                             .cornerRadius(8)
                     }
                     .padding(.top, 5)
-                    
                     Slider(value: $quality, in: 1...5, step: 1)
                         .accentColor(Theme.Colors.primary)
-                    
                     HStack {
                         Text("poor".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.subtext)
-                        
                         Spacer()
-                        
                         Text("excellent".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.subtext)
@@ -363,7 +233,9 @@ struct SleepInputView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white.opacity(0.5))
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 2)
+                .padding(.bottom, 8)
             }
             .padding(.vertical, 8)
         }
@@ -371,148 +243,30 @@ struct SleepInputView: View {
     
     // 睡眠時間テキスト
     private var sleepDurationText: String {
-        let duration = wakeTime.timeIntervalSince(sleepTime)
+        let duration = sleepEnd.timeIntervalSince(sleepStart)
         let hours = Int(duration / 3600)
         let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
         return "sleep_duration".localized + " \(hours)" + "hours".localized + " \(minutes)" + "minutes".localized
     }
     
-    // Apple Watchのデータ表示
-    private var watchDataView: some View {
-        VStack(spacing: 20) {
-            if watchConnectivityManager.isWatchAvailable {
-                if let healthData = watchConnectivityManager.lastReceivedHealthData {
-                    // データ表示
-                    watchDataResultView(data: healthData)
-                } else {
-                    // データ取得中
-                    watchDataLoadingView
-                }
-            } else {
-                // Watchが接続されていない
-                watchNotConnectedView
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Theme.Colors.cardBackground)
-        .cornerRadius(12)
-    }
-    
-    // Watchデータの表示
-    private func watchDataResultView(data: WatchHealthData) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("watch_data_received".localized)
-                .font(Theme.Typography.subheadingFont)
-                .foregroundColor(Theme.Colors.success)
-            
-            Group {
-                dataRow(title: "sleep_time".localized, value: data.sleepTime.formatted(date: Date.FormatStyle.DateStyle.omitted, time: Date.FormatStyle.TimeStyle.shortened))
-                dataRow(title: "wake_time".localized, value: data.wakeTime.formatted(date: Date.FormatStyle.DateStyle.omitted, time: Date.FormatStyle.TimeStyle.shortened))
-                dataRow(title: "total_duration".localized, value: data.durationFormatted)
-                dataRow(title: "deep_sleep".localized, value: data.deepSleepFormatted)
-                dataRow(title: "heart_rate".localized, value: "\(Int(data.avgHeartRate)) bpm")
-            }
-            
-            Button(action: {
-                // Watchデータを手動入力に反映
-                sleepTime = data.sleepTime
-                wakeTime = data.wakeTime
-                quality = min(max(data.quality, 1), 5)
-                sleepMode = .manual
-            }) {
-                HStack {
-                    Spacer()
-                    Text("use_this_data".localized)
-                        .font(Theme.Typography.bodyFont)
-                        .foregroundColor(Theme.Colors.primary)
-                    Spacer()
-                }
-                .padding(.vertical, 10)
-                .background(Theme.Colors.primary.opacity(0.1))
-                .cornerRadius(8)
-            }
-        }
-    }
-    
-    // データ行の表示
-    private func dataRow(title: String, value: String) -> some View {
-        HStack {
-            Text(title)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.text)
-            
-            Spacer()
-            
-            Text(value)
-                .font(Theme.Typography.bodyFont.bold())
-                .foregroundColor(Theme.Colors.primary)
-        }
-    }
-    
-    // データ取得中表示
-    private var watchDataLoadingView: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .scaleEffect(1.5)
-            
-            Text("requesting_watch_data".localized)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.text)
-                .multilineTextAlignment(.center)
-            
-            Text("open_watch_app".localized)
-                .font(Theme.Typography.captionFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
-    }
-    
-    // Watch未接続表示
-    private var watchNotConnectedView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "applewatch.slash")
-                .font(.system(size: 40))
-                .foregroundColor(Theme.Colors.warning)
-            
-            Text("watch_not_paired".localized)
-                .font(Theme.Typography.subheadingFont)
-                .foregroundColor(Theme.Colors.text)
-            
-            Text("use_manual_input".localized)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .multilineTextAlignment(.center)
-            
-            Button(action: {
-                sleepMode = .manual
-            }) {
-                Text("switch_to_manual".localized)
-                    .font(Theme.Typography.bodyFont)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(Theme.Colors.primary)
-                    .cornerRadius(8)
-            }
-        }
-        .padding(.vertical, 20)
-    }
-    
     // 睡眠記録の保存
     private func saveSleepRecord() {
+        // 入力検証：起床時間が就寝時間より後か
+        if sleepEnd <= sleepStart {
+            alertTitle = "error_invalid_time_title".localized
+            alertMessage = "error_invalid_time_message".localized
+            showingAlert = true
+            return
+        }
         let sleepManager = SleepManager.shared
         let _ = sleepManager.addSleepRecord(
             context: viewContext,
-            startAt: sleepTime,
-            endAt: wakeTime,
+            startAt: sleepStart,
+            endAt: sleepEnd,
             quality: Int16(quality),
             sleepType: selectedSleepType,
             memo: nil
         )
-        
         presentationMode.wrappedValue.dismiss()
     }
 }

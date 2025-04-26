@@ -72,6 +72,10 @@
 "sleep_input_title" = "Sleep Input";
 "sleep_record_instruction" = "Record Your Sleep";
 "sleep_input_description" = "Track your sleep patterns by recording when you go to bed and when you wake up.";
+"sleep_start_datetime" = "Bedtime";
+"wake_datetime" = "Wake Time";
+"error_invalid_time_title" = "Invalid Input";
+"error_invalid_time_message" = "Wake time must be later than bedtime.";
 "input_mode" = "Input Mode";
 "total_duration" = "Total Duration";
 "deep_sleep" = "Deep Sleep";

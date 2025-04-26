@@ -72,6 +72,10 @@
 "sleep_input_title" = "睡眠入力";
 "sleep_record_instruction" = "睡眠を記録する";
 "sleep_input_description" = "就寝時間と起床時間を記録して、睡眠パターンを追跡しましょう。";
+"sleep_start_datetime" = "就寝時間";
+"wake_datetime" = "起床時間";
+"error_invalid_time_title" = "入力エラー";
+"error_invalid_time_message" = "起床時間は就寝時間より後になるように入力してください。";
 "input_mode" = "入力モード";
 "total_duration" = "総睡眠時間";
 "deep_sleep" = "深い睡眠";
