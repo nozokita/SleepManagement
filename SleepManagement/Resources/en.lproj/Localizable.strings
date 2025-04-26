@@ -209,4 +209,9 @@
 "healthkit.score.title" = "HealthKit Sleep Score (100 pts)";
 
 /* Sleep Record List View */
-"sleep_record_list_title" = "All Sleep Records"; 
+"sleep_record_list_title" = "All Sleep Records";
+
+/* Settings: Treat short sleep as nap */
+"settings.healthkit.treatShortSleepAsNap" = "Treat short sleep as nap";
+/* Settings: Short sleep threshold */
+"settings.healthkit.shortSleepThreshold" = "Short sleep threshold"; 

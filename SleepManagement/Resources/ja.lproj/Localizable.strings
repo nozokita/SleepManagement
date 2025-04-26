@@ -209,4 +209,9 @@
 "healthkit.score.title" = "HealthKit睡眠スコア (100点満点)";
 
 /* Sleep Record List View */
-"sleep_record_list_title" = "睡眠記録一覧"; 
+"sleep_record_list_title" = "睡眠記録一覧";
+
+/* Settings: Treat short sleep as nap */
+"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠扱いにする";
+/* Settings: Short sleep threshold */
+"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値"; 

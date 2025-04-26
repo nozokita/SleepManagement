@@ -399,24 +399,40 @@ class SleepManager: ObservableObject {
                 record.endAt = sample.endDate
                 record.quality = Int16(1)
                 record.createdAt = sample.endDate
-                record.sleepType = SleepRecordType.normalSleep.rawValue
-                // スコア計算 (手動 or HealthKitモデル切り替え)
-                let durationH = sample.endDate.timeIntervalSince(sample.startDate) / 3600
+                // HealthKit同期が有効の場合のみ判別
+                let durationSec = sample.endDate.timeIntervalSince(sample.startDate)
                 if SettingsManager.shared.autoSyncHealthKit {
-                    // TODO: 各指標(efficiency, regularity, latency, waso)はHKStatisticsCollectionQuery等で取得
-                    let efficiency = 1.0
-                    let regularity = 100.0
-                    let latency = 0.0
-                    let waso = 0.0
-                    record.score = self.calculateHealthKitSleepScore(durationH: durationH,
+                    // 短い睡眠を仮眠扱いにする設定がある場合
+                    if SettingsManager.shared.treatShortSleepAsNap,
+                       durationSec < SettingsManager.shared.shortSleepThreshold {
+                        // 仮眠として保存
+                        record.sleepType = SleepRecordType.nap.rawValue
+                        record.score = 0
+                        record.debt = calculateWeeklyDebt(context: context, days: 7, napDuration: durationSec)
+                    } else {
+                        // 通常睡眠として保存
+                        record.sleepType = SleepRecordType.normalSleep.rawValue
+                        let durationH = durationSec / 3600
+                        // スコア計算
+                        let efficiency = 1.0
+                        let regularity = 100.0
+                        let latency = 0.0
+                        let waso = 0.0
+                        record.score = calculateHealthKitSleepScore(durationH: durationH,
                                                                     efficiency: efficiency,
                                                                     regularity: regularity,
                                                                     latency: latency,
                                                                     waso: waso)
+                        // 日次負債
+                        record.debt = calculateDailyDebt(sleepHours: durationH)
+                    }
                 } else {
-                    record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
+                    // 手動入力モードと同様
+                    record.sleepType = SleepRecordType.normalSleep.rawValue
+                    let durationH = durationSec / 3600
+                    record.score = calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
+                    record.debt = calculateDailyDebt(sleepHours: durationH)
                 }
-                record.debt = self.calculateDailyDebt(sleepHours: durationH)
             }
             do {
                 try context.save()

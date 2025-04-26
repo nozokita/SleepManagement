@@ -38,6 +38,7 @@
 		BD96D22F2DBC4B1C00569710 /* SleepQualityScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */; };
 		BDD7F70D2DBD00EF007C82FE /* SleepQualityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */; };
 		BDD7F70F2DBD00F7007C82FE /* SleepQualityScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */; };
+		BDD7F7112DBD0ADF007C82FE /* SleepRecordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7F7102DBD0ADF007C82FE /* SleepRecordListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		BD96D22E2DBC4B1C00569710 /* SleepQualityScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityScore.swift; sourceTree = "<group>"; };
 		BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityDetailView.swift; sourceTree = "<group>"; };
 		BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityScoreView.swift; sourceTree = "<group>"; };
+		BDD7F7102DBD0ADF007C82FE /* SleepRecordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepRecordListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 		BD9334562DBB047D00E49855 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BDD7F7102DBD0ADF007C82FE /* SleepRecordListView.swift */,
 				BDD7F70E2DBD00F7007C82FE /* SleepQualityScoreView.swift */,
 				BDD7F70C2DBD00EF007C82FE /* SleepQualityDetailView.swift */,
 				BD6D2F8D2DBB736F001241BF /* SleepDashboardView.swift */,
@@ -267,6 +270,7 @@
 				BD6D2F8E2DBB736F001241BF /* SleepDashboardView.swift in Sources */,
 				BD9334662DBB047D00E49855 /* OnboardingNavigationView.swift in Sources */,
 				BD9334672DBB047D00E49855 /* Theme.swift in Sources */,
+				BDD7F7112DBD0ADF007C82FE /* SleepRecordListView.swift in Sources */,
 				BDD7F70D2DBD00EF007C82FE /* SleepQualityDetailView.swift in Sources */,
 				BD9334682DBB047D00E49855 /* SleepRecord+Extension.swift in Sources */,
 				BD9334692DBB047D00E49855 /* SettingsView.swift in Sources */,

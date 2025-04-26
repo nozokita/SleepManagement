@@ -15,6 +15,10 @@ final class SettingsManager: ObservableObject {
     @Published var showSleepDebt: Bool = true
     @Published var showSleepScore: Bool = true
     @Published var autoSyncHealthKit: Bool = false
+    /// HealthKit同期時に短い睡眠を仮眠扱いにする
+    @Published var treatShortSleepAsNap: Bool = false
+    /// 短い睡眠とみなす閾値（秒）
+    @Published var shortSleepThreshold: TimeInterval = 90 * 60
 
     private init() {
         let storedYear = UserDefaults.standard.integer(forKey: "birthYear")
@@ -22,6 +26,10 @@ final class SettingsManager: ObservableObject {
 
         let storedDuration = UserDefaults.standard.double(forKey: "idealSleepDuration")
         self.idealSleepDuration = storedDuration != 0 ? storedDuration : 8 * 3600
+        // 短い睡眠判別設定の読み込み
+        self.treatShortSleepAsNap = UserDefaults.standard.bool(forKey: "treatShortSleepAsNap")
+        let storedThreshold = UserDefaults.standard.double(forKey: "shortSleepThreshold")
+        self.shortSleepThreshold = storedThreshold != 0 ? storedThreshold : 90 * 60
     }
 
     func save() {
@@ -36,6 +44,8 @@ final class SettingsManager: ObservableObject {
         UserDefaults.standard.set(showSleepDebt, forKey: "showSleepDebt")
         UserDefaults.standard.set(showSleepScore, forKey: "showSleepScore")
         UserDefaults.standard.set(autoSyncHealthKit, forKey: "autoSyncHealthKit")
+        UserDefaults.standard.set(treatShortSleepAsNap, forKey: "treatShortSleepAsNap")
+        UserDefaults.standard.set(shortSleepThreshold, forKey: "shortSleepThreshold")
     }
 
     var appVersion: String {

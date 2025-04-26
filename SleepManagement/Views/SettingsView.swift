@@ -231,16 +231,24 @@ struct SettingsView: View {
                         }
                 }
                 
-                // 説明文を追加
-                if settings.autoSyncHealthKit {
-                    HStack {
-                        Text("settings.healthkit.description".localized)
-                            .font(.caption)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Spacer()
+                // 短い睡眠を仮眠扱いにする
+                SettingsRow(icon: "bed.double", title: "settings.healthkit.treatShortSleepAsNap".localized) {
+                    Toggle("", isOn: $settings.treatShortSleepAsNap)
+                        .labelsHidden()
+                }
+                
+                // 閾値設定
+                if settings.treatShortSleepAsNap {
+                    SettingsRow(icon: "timer", title: "settings.healthkit.shortSleepThreshold".localized) {
+                        Picker("", selection: $settings.shortSleepThreshold) {
+                            ForEach([30, 60, 90, 120], id: \.self) { minutes in
+                                Text(localizationManager.currentLanguage == "ja" ? "\(minutes)分" : "\(minutes) min")
+                                    .tag(TimeInterval(minutes * 60))
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .labelsHidden()
                     }
-                    .padding(.leading, 32)
                 }
             }
         }
@@ -327,6 +335,8 @@ struct SettingsView: View {
         settings.showSleepDebt = true
         settings.showSleepScore = true
         settings.autoSyncHealthKit = false
+        settings.treatShortSleepAsNap = false
+        settings.shortSleepThreshold = 30 * 60
         
         settings.save()
     }
