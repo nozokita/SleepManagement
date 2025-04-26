@@ -49,11 +49,12 @@ class SleepManager: ObservableObject {
     
     // 日次睡眠負債の計算
     func calculateDailyDebt(sleepHours: Double) -> Double {
-        // ユーザー年齢に応じた理想睡眠時間を取得
-        let birthYear = SettingsManager.shared.birthYear
-        let age = Calendar.current.component(.year, from: Date()) - birthYear
-        let ideal = guidelineHours(age: age)
-        return max(ideal - sleepHours, 0)
+        // ① ユーザー設定から取得した理想睡眠時間（秒）→時間に変換
+        let idealHours = SettingsManager.shared.idealSleepDuration / 3600
+        // ② （Placeholder）年齢別ガイドラインは guidelineHours で定義済み
+        // let age = Calendar.current.component(.year, from: Date()) - SettingsManager.shared.birthYear
+        // let placeholderIdeal = guidelineHours(age: age)
+        return max(idealHours - sleepHours, 0)
     }
     
     // 過去N日間の睡眠負債を計算
@@ -206,13 +207,13 @@ class SleepManager: ObservableObject {
         if sleepType == .nap {
             record.score = 0
             // 週単位の負債を算出 (7日間、仮眠減算)
-            let weeklyDebt = calculateWeeklyDebt(context: context, days: 7, napDuration: durationSeconds)
+            let weeklyDebt = self.calculateWeeklyDebt(context: context, days: 7, napDuration: durationSeconds)
             record.debt = weeklyDebt
         } else {
             // 通常記録は既存ロジック
             let durationHours = durationSeconds / 3600
-        record.score = calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
-        record.debt = calculateDailyDebt(sleepHours: durationHours)
+            record.score = self.calculateSleepScore(startAt: startAt, endAt: endAt, quality: quality)
+            record.debt = self.calculateDailyDebt(sleepHours: durationHours)
         }
         
         // 保存
@@ -408,7 +409,7 @@ class SleepManager: ObservableObject {
                         // 仮眠として保存
                         record.sleepType = SleepRecordType.nap.rawValue
                         record.score = 0
-                        record.debt = calculateWeeklyDebt(context: context, days: 7, napDuration: durationSec)
+                        record.debt = self.calculateWeeklyDebt(context: context, days: 7, napDuration: durationSec)
                     } else {
                         // 通常睡眠として保存
                         record.sleepType = SleepRecordType.normalSleep.rawValue
@@ -418,26 +419,26 @@ class SleepManager: ObservableObject {
                         let regularity = 100.0
                         let latency = 0.0
                         let waso = 0.0
-                        record.score = calculateHealthKitSleepScore(durationH: durationH,
+                        record.score = self.calculateHealthKitSleepScore(durationH: durationH,
                                                                     efficiency: efficiency,
                                                                     regularity: regularity,
                                                                     latency: latency,
                                                                     waso: waso)
                         // 日次負債
-                        record.debt = calculateDailyDebt(sleepHours: durationH)
+                        record.debt = self.calculateDailyDebt(sleepHours: durationH)
                     }
                 } else {
                     // 手動入力モードと同様
                     record.sleepType = SleepRecordType.normalSleep.rawValue
                     let durationH = durationSec / 3600
-                    record.score = calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
-                    record.debt = calculateDailyDebt(sleepHours: durationH)
+                    record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
+                    record.debt = self.calculateDailyDebt(sleepHours: durationH)
                 }
             }
             do {
                 try context.save()
                 DispatchQueue.main.async { completion?(nil) }
-        } catch {
+            } catch {
                 DispatchQueue.main.async { completion?(error) }
             }
         }

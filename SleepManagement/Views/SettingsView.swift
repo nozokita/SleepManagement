@@ -131,9 +131,16 @@ struct SettingsView: View {
                 // 理想睡眠時間
                 SettingsRow(icon: "moon.stars", title: "settings.sleep.ideal".localized) {
                     Picker("", selection: $settings.idealSleepDuration) {
-                        ForEach([5, 6, 7, 8, 9, 10], id: \.self) { hour in
-                            Text(localizationManager.currentLanguage == "ja" ? "\(hour)時間" : "\(hour) hours")
-                                .tag(TimeInterval(hour * 3600))
+                        // 30分単位で 5.0h から 10.0h まで
+                        ForEach(Array(stride(from: 5.0, through: 10.0, by: 0.5)), id: \.self) { value in
+                            // 整数時間と30分フラグ
+                            let hour = Int(value)
+                            let isHalf = value.truncatingRemainder(dividingBy: 1.0) > 0
+                            let label = localizationManager.currentLanguage == "ja"
+                                ? "\(hour)" + "hours".localized + (isHalf ? "30" + "minutes".localized : "")
+                                : "\(hour) " + "hours".localized + (isHalf ? " 30 " + "minutes".localized : "")
+                            Text(label)
+                                .tag(TimeInterval(value * 3600))
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
