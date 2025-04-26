@@ -203,4 +203,7 @@
 "score_points" = "点数";
 "no_data_available" = "データがありません";
 "add_sleep_records" = "睡眠記録を追加してください";
-"sleep_debt_explanation" = "睡眠負債は、理想的な睡眠時間に対して不足している睡眠時間の累積です。定期的に十分な睡眠をとることで解消できます。"; 
+"sleep_debt_explanation" = "睡眠負債は、理想的な睡眠時間に対して不足している睡眠時間の累積です。定期的に十分な睡眠をとることで解消できます。";
+
+// HealthKitモデル用睡眠スコア
+"healthkit.score.title" = "HealthKit睡眠スコア (100点満点)"; 

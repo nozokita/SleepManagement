@@ -15,13 +15,26 @@ class SleepManager: ObservableObject {
     // スライディングウィンドウの日数
     let debtWindowDays = 10
     
-    // 睡眠スコアの計算
+    // 睡眠スコアの計算 (手動入力用)
     func calculateSleepScore(startAt: Date, endAt: Date, quality: Int16) -> Double {
         let durationH = endAt.timeIntervalSince(startAt) / 3600
         let baseScore = min(durationH / recommendedSleepHours, 1.0) * 100
         let qualityFactor = Double(quality) / 5.0
-        
         return baseScore * qualityFactor
+    }
+    
+    /// HealthKit連携時に用いる多要素モデルでの睡眠スコア計算 (100点満点)
+    func calculateHealthKitSleepScore(durationH: Double,
+                                      efficiency: Double,
+                                      regularity: Double,
+                                      latency: Double,
+                                      waso: Double) -> Double {
+        let durScore = 40.0 * min(durationH / recommendedSleepHours, 1.0)
+        let effScore = 25.0 * min(efficiency / 0.85, 1.0)
+        let regScore = 15.0 * (1.0 - regularity / 100.0)
+        let latScore = 10.0 * max(0.0, (30.0 - latency) / 30.0)
+        let wasoScore = 10.0 * max(0.0, (30.0 - waso) / 30.0)
+        return durScore + effScore + regScore + latScore + wasoScore
     }
     
     // 日次睡眠負債の計算
@@ -347,12 +360,26 @@ class SleepManager: ObservableObject {
                 record.id = UUID()
                 record.startAt = sample.startDate
                 record.endAt = sample.endDate
-                record.quality = Int16(1)  // HealthKit由来の質は未設定のため仮値
+                record.quality = Int16(1)
                 record.createdAt = sample.endDate
                 record.sleepType = SleepRecordType.normalSleep.rawValue
-                // スコアと負債計算
-                record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
-                record.debt = self.calculateDailyDebt(sleepHours: sample.endDate.timeIntervalSince(sample.startDate) / 3600)
+                // スコア計算 (手動 or HealthKitモデル切り替え)
+                let durationH = sample.endDate.timeIntervalSince(sample.startDate) / 3600
+                if SettingsManager.shared.autoSyncHealthKit {
+                    // TODO: 各指標(efficiency, regularity, latency, waso)はHKStatisticsCollectionQuery等で取得
+                    let efficiency = 1.0
+                    let regularity = 100.0
+                    let latency = 0.0
+                    let waso = 0.0
+                    record.score = self.calculateHealthKitSleepScore(durationH: durationH,
+                                                                    efficiency: efficiency,
+                                                                    regularity: regularity,
+                                                                    latency: latency,
+                                                                    waso: waso)
+                } else {
+                    record.score = self.calculateSleepScore(startAt: sample.startDate, endAt: sample.endDate, quality: record.quality)
+                }
+                record.debt = calculateDailyDebt(sleepHours: durationH)
             }
             do {
                 try context.save()

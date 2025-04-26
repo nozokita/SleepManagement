@@ -203,4 +203,7 @@
 "score_points" = " points";
 "no_data_available" = "No Data Available";
 "add_sleep_records" = "Add sleep records to see your data";
-"sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt."; 
+"sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt.";
+
+// HealthKitモデル用睡眠スコア
+"healthkit.score.title" = "HealthKit Sleep Score (100 pts)"; 
