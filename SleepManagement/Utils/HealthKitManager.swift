@@ -20,7 +20,7 @@ final class HealthKitManager: ObservableObject {
         // 読み取りのみ、書き込み権限なし
         let shareTypes: Set<HKSampleType> = []
         try await store.requestAuthorization(toShare: shareTypes, read: readTypes)
-        // 認可リクエストのステータスを取得 (async/await)
+        // 認可リクエストのステータスを async/await で取得
         let status = try await store.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes)
         authorizationStatus = status
     }
@@ -41,6 +41,7 @@ final class HealthKitManager: ObservableObject {
             completionHandler()
         }
         store.execute(query)
+        // バックグラウンド配信を有効化 (即時頻度)
         store.enableBackgroundDelivery(for: sampleType, frequency: .immediate, withCompletion: { success, error in
             if !success {
                 print("Background delivery failed: \(String(describing: error))")
