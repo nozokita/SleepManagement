@@ -704,7 +704,11 @@ struct HomeView: View {
     private var averageSleepDurationText: String {
         let hours = Int(averageSleepDuration / 3600)
         let minutes = Int((averageSleepDuration.truncatingRemainder(dividingBy: 3600)) / 60)
-        return "\(hours)時間\(minutes)分"
+        if localizationManager.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 平均睡眠スコア
@@ -735,7 +739,11 @@ struct HomeView: View {
     private var longestSleepText: String {
         let hours = Int(longestSleepDuration / 3600)
         let minutes = Int((longestSleepDuration.truncatingRemainder(dividingBy: 3600)) / 60)
-        return "\(hours)時間\(minutes)分"
+        if localizationManager.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 平均就寝時間
@@ -772,12 +780,22 @@ struct HomeView: View {
     
     // 睡眠負債メッセージ
     private var debtMessage: String {
-        if totalDebt > 2 {
-            return "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。"
-        } else if totalDebt > 1 {
-            return "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。"
+        if localizationManager.currentLanguage == "ja" {
+            if totalDebt > 2 {
+                return "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。"
+            } else if totalDebt > 1 {
+                return "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。"
+            } else {
+                return "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。"
+            }
         } else {
-            return "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。"
+            if totalDebt > 2 {
+                return "Your sleep debt has exceeded 2 hours. Try to increase your rest as soon as possible to reduce the debt."
+            } else if totalDebt > 1 {
+                return "You have a slight sleep debt. Consider going to bed a bit earlier tonight."
+            } else {
+                return "You have minimal sleep debt. Keep maintaining a good sleep cycle."
+            }
         }
     }
     
