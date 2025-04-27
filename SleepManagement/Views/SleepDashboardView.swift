@@ -22,6 +22,8 @@ struct SleepDashboardView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 28) {
+                    // HealthKit権限バナー
+                    HealthKitPermissionBanner()
                     // 期間切り替えセグメント
                     periodSelector
                     
@@ -55,7 +57,10 @@ struct SleepDashboardView: View {
                 refreshData()
             }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("HealthKitDataSynced"))) { _ in
-                // HealthKit同期完了後にデータを再読み込み
+                refreshData()
+            }
+            // ObserverQueryによるリアルタイム更新
+            .onReceive(NotificationCenter.default.publisher(for: .healthKitDataUpdated)) { _ in
                 refreshData()
             }
         }

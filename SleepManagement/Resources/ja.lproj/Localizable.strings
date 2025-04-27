@@ -222,4 +222,39 @@
 
 // Swipe actions
 "list.edit" = "編集";
-"list.delete" = "削除"; 
+"list.delete" = "削除";
+
+// HealthKit permission banner
+"healthkit.permission.required" = "HealthKit の権限が必要です";
+"healthkit.permission.button" = "設定を開く";
+
+// Sleep Metrics Card
+"metrics.duration" = "総睡眠時間";
+"metrics.efficiency" = "睡眠効率";
+"metrics.regularity" = "睡眠規則性";
+"metrics.latency" = "入眠潜時";
+"metrics.waso" = "中途覚醒時間";
+"metrics.title" = "睡眠指標";
+
+/* Sleep Record List View */
+"sleep_record_list_title" = "睡眠記録一覧";
+
+/* Settings: Treat short sleep as nap */
+"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠扱いにする";
+/* Settings: Short sleep threshold */
+"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値";
+
+// Swipe actions
+"list.edit" = "編集";
+"list.delete" = "削除";
+
+// HealthKit permission banner
+"healthkit.permission.required" = "HealthKit の権限が必要です";
+"healthkit.permission.button" = "設定を開く";
+
+// Sleep Metrics Card
+"metrics.duration" = "総睡眠時間";
+"metrics.efficiency" = "睡眠効率";
+"metrics.regularity" = "睡眠規則性";
+"metrics.latency" = "入眠潜時";
+"metrics.waso" = "中途覚醒時間"; 

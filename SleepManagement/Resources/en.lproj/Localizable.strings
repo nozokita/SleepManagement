@@ -222,4 +222,15 @@
 
 // Swipe actions
 "list.edit" = "Edit";
-"list.delete" = "Delete"; 
+"list.delete" = "Delete";
+
+// HealthKit permission
+"healthkit.permission.required" = "HealthKit permission required";
+"healthkit.permission.button" = "Open Settings";
+
+// Sleep Metrics Card
+"metrics.duration" = "Total Sleep Time";
+"metrics.efficiency" = "Sleep Efficiency";
+"metrics.regularity" = "Sleep Regularity";
+"metrics.latency" = "Sleep Onset Latency";
+"metrics.waso" = "WASO"; 

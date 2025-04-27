@@ -1,3 +1,4 @@
+import Foundation
 import HealthKit
 
 final class HealthKitManager: ObservableObject {
@@ -10,15 +11,45 @@ final class HealthKitManager: ObservableObject {
 
     @Published var authorizationStatus: HKAuthorizationRequestStatus = .unknown
 
-    private init() {}
+    private init() {
+        startObserver()
+    }
 
     @MainActor
     func requestAuthorization() async throws {
-        try await store.requestAuthorization(toShare: [], read: readTypes)
-        authorizationStatus = try await store.getRequestStatusForAuthorization(toShare: [], read: readTypes)
+        // 読み取りのみ、書き込み権限なし
+        let shareTypes: Set<HKSampleType> = []
+        try await store.requestAuthorization(toShare: shareTypes, read: readTypes)
+        // 認可リクエストのステータスを取得 (async/await)
+        let status = try await store.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes)
+        authorizationStatus = status
     }
 
     var healthStore: HKHealthStore {
         store
     }
+
+    /// HKObserverQueryで睡眠データ変更を監視し、更新通知を発行
+    private func startObserver() {
+        let sampleType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        let query = HKObserverQuery(sampleType: sampleType, predicate: nil) { _, completionHandler, error in
+            if error == nil {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .healthKitDataUpdated, object: nil)
+                }
+            }
+            completionHandler()
+        }
+        store.execute(query)
+        store.enableBackgroundDelivery(for: sampleType, frequency: .immediate, withCompletion: { success, error in
+            if !success {
+                print("Background delivery failed: \(String(describing: error))")
+            }
+        })
+    }
+}
+
+// 通知名定義を追加
+extension Notification.Name {
+    static let healthKitDataUpdated = Notification.Name("HealthKitDataUpdated")
 } 
