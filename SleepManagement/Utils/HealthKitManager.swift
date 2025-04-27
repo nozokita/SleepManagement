@@ -1,7 +1,7 @@
 import Foundation
 import HealthKit
 
-final class HealthKitManager: ObservableObject {
+final class HealthKitManager: ObservableObject, @unchecked Sendable {
     static let shared = HealthKitManager()
     private let store = HKHealthStore()
 
@@ -20,9 +20,12 @@ final class HealthKitManager: ObservableObject {
         // 読み取りのみ、書き込み権限なし
         let shareTypes: Set<HKSampleType> = []
         try await store.requestAuthorization(toShare: shareTypes, read: readTypes)
-        // 認可リクエストのステータスを async/await で取得
-        let status = try await store.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes)
-        authorizationStatus = status
+        // 認可リクエストのステータスをコールバックで取得
+        store.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { status, error in
+            DispatchQueue.main.async {
+                self.authorizationStatus = status
+            }
+        }
     }
 
     var healthStore: HKHealthStore {
