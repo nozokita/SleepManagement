@@ -242,4 +242,13 @@
 "session.endTime" = "End Time";
 "session.inBedTime" = "In-Bed Time";
 "session.sleepTime" = "Sleep Time";
-"nap" = "Nap"; 
+"nap" = "Nap";
+
+/* Sleep Log Page */
+"start_time" = "Start Time";
+"end_time" = "End Time";
+"in_bed_time" = "In Bed Time: ";
+"sleep_log_edit" = "Edit Sleep Log";
+"sleep_log_no_data" = "No sleep logs for this day";
+"delete_session_title" = "Delete Sleep Log";
+"delete_session_message" = "Are you sure you want to delete this sleep log?"; 

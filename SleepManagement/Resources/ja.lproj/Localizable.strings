@@ -217,10 +217,10 @@
 /* Sleep Record List View */
 "sleep_record_list_title" = "睡眠記録一覧";
 
-/* Settings: Treat short sleep as nap */
-"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠扱いにする";
-/* Settings: Short sleep threshold */
-"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値";
+/* Sleep Session */
+"start_time" = "開始時刻";
+"end_time" = "終了時刻";
+"in_bed_time" = "入床時間: ";
 
 // Swipe actions
 "list.edit" = "編集";
@@ -238,40 +238,6 @@
 "metrics.waso" = "中途覚醒時間";
 "metrics.title" = "睡眠指標";
 
-/* Sleep Record List View */
-"sleep_record_list_title" = "睡眠記録一覧";
-
-/* Settings: Treat short sleep as nap */
-"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠扱いにする";
-/* Settings: Short sleep threshold */
-"settings.healthkit.shortSleepThreshold" = "短い睡眠の閾値";
-
-// Swipe actions
-"list.edit" = "編集";
-"list.delete" = "削除";
-
-// HealthKit permission banner
-"healthkit.permission.required" = "HealthKit の権限が必要です";
-"healthkit.permission.button" = "設定を開く";
-
-// Sleep Metrics Card
-"metrics.duration" = "総睡眠時間";
-"metrics.efficiency" = "睡眠効率";
-"metrics.regularity" = "睡眠規則性";
-"metrics.latency" = "入眠潜時";
-"metrics.waso" = "中途覚醒時間";
-
-// Sleep Session List View
-"session.startTime" = "開始時刻";
-"session.endTime" = "終了時刻";
-"session.inBedTime" = "入床時間";
-"session.sleepTime" = "睡眠時間";
-"nap" = "仮眠";
-
-// Sleep Session Edit View
-"sleep_log_edit" = "睡眠ログを編集";
-// The cancel and save buttons are already localized by "cancel" and "save" keys 
-
 /* Sleep Session Localization */
 "sleep_log_tab" = "睡眠ログ";
 "sleep_log_edit" = "睡眠ログを編集";
@@ -279,4 +245,13 @@
 "session.endTime" = "終了時刻";
 "session.inBedTime" = "入床時間";
 "session.sleepTime" = "睡眠時間";
-"nap" = "仮眠"; 
+"nap" = "仮眠";
+
+/* Sleep Log Page */
+"start_time" = "開始時刻";
+"end_time" = "終了時刻";
+"in_bed_time" = "入床時間: ";
+"sleep_log_edit" = "睡眠ログを編集";
+"sleep_log_no_data" = "該当日の睡眠ログはありません";
+"delete_session_title" = "睡眠ログを削除";
+"delete_session_message" = "この睡眠ログを削除してもよろしいですか？"; 

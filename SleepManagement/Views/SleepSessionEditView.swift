@@ -18,19 +18,19 @@ struct SleepSessionEditView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("session.startTime".localized)) {
+                Section(header: Text("start_time".localized)) {
                     DatePicker("", selection: $startDate, displayedComponents: [.hourAndMinute, .date])
                         .datePickerStyle(.wheel)
                 }
                 
-                Section(header: Text("session.endTime".localized)) {
+                Section(header: Text("end_time".localized)) {
                     DatePicker("", selection: $endDate, displayedComponents: [.hourAndMinute, .date])
                         .datePickerStyle(.wheel)
                 }
                 
                 Section {
                     HStack {
-                        Text("session.inBedTime".localized)
+                        Text("in_bed_time".localized)
                         Spacer()
                         Text(durationText(endDate.timeIntervalSince(startDate)))
                             .foregroundColor(.gray)

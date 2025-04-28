@@ -25,7 +25,7 @@ struct SleepSessionListView: View {
         NavigationView {
             List {
                 if viewModel.sessions.isEmpty {
-                    Text("該当日の睡眠セッションはありません")
+                    Text("sleep_log_no_data".localized)
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(viewModel.sessions) { session in
@@ -48,11 +48,11 @@ struct SleepSessionListView: View {
                                 }
                             }
                             HStack {
-                                Text("session.inBedTime".localized + ": ")
+                                Text("in_bed_time".localized)
                                 Text(durationText(session.totalInBed))
                                     .bold()
                                 Spacer()
-                                Text("session.sleepTime".localized + ": ")
+                                Text("sleep_duration".localized)
                                 Text(durationText(session.totalAsleep))
                                     .bold()
                             }
@@ -69,7 +69,7 @@ struct SleepSessionListView: View {
                                 sessionToDelete = session
                                 showingDeleteAlert = true
                             } label: {
-                                Label("削除", systemImage: "trash")
+                                Label("list.delete".localized, systemImage: "trash")
                             }
                         }
                     }
@@ -82,15 +82,15 @@ struct SleepSessionListView: View {
                 await viewModel.fetchSessions(for: date)
                 print("SleepSessionListView: Fetched \(viewModel.sessions.count) sessions")
             }
-            .alert("セッションを削除", isPresented: $showingDeleteAlert) {
-                Button("キャンセル", role: .cancel) { }
-                Button("削除", role: .destructive) {
+            .alert("delete_session_title".localized, isPresented: $showingDeleteAlert) {
+                Button("cancel".localized, role: .cancel) { }
+                Button("list.delete".localized, role: .destructive) {
                     if let session = sessionToDelete {
                         viewModel.deleteSession(session)
                     }
                 }
             } message: {
-                Text("この睡眠セッションを削除してもよろしいですか？")
+                Text("delete_session_message".localized)
             }
             .sheet(item: $sessionToEdit) { session in
                 SleepSessionEditView(session: session) { updatedSession in
