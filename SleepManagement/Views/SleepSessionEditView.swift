@@ -60,6 +60,8 @@ struct SleepSessionEditView: View {
                 }
             }
         }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
     }
     
     private func durationText(_ interval: TimeInterval) -> String {
