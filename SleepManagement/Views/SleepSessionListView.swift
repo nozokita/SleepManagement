@@ -38,7 +38,7 @@ struct SleepSessionListView: View {
                                     .font(.headline)
                                 Spacer()
                                 if session.isNap {
-                                    Text("仮眠")
+                                    Text("nap".localized)
                                         .font(.caption)
                                         .foregroundColor(.blue)
                                         .padding(.horizontal, 8)
@@ -48,11 +48,11 @@ struct SleepSessionListView: View {
                                 }
                             }
                             HStack {
-                                Text("入床時間: ")
+                                Text("session.inBedTime".localized + ": ")
                                 Text(durationText(session.totalInBed))
                                     .bold()
                                 Spacer()
-                                Text("睡眠: ")
+                                Text("session.sleepTime".localized + ": ")
                                 Text(durationText(session.totalAsleep))
                                     .bold()
                             }

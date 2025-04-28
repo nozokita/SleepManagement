@@ -259,4 +259,24 @@
 "metrics.efficiency" = "睡眠効率";
 "metrics.regularity" = "睡眠規則性";
 "metrics.latency" = "入眠潜時";
-"metrics.waso" = "中途覚醒時間"; 
+"metrics.waso" = "中途覚醒時間";
+
+// Sleep Session List View
+"session.startTime" = "開始時刻";
+"session.endTime" = "終了時刻";
+"session.inBedTime" = "入床時間";
+"session.sleepTime" = "睡眠時間";
+"nap" = "仮眠";
+
+// Sleep Session Edit View
+"sleep_log_edit" = "睡眠ログを編集";
+// The cancel and save buttons are already localized by "cancel" and "save" keys 
+
+/* Sleep Session Localization */
+"sleep_log_tab" = "睡眠ログ";
+"sleep_log_edit" = "睡眠ログを編集";
+"session.startTime" = "開始時刻";
+"session.endTime" = "終了時刻";
+"session.inBedTime" = "入床時間";
+"session.sleepTime" = "睡眠時間";
+"nap" = "仮眠"; 

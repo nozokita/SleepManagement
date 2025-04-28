@@ -235,4 +235,11 @@
 "metrics.efficiency" = "Sleep Efficiency";
 "metrics.regularity" = "Sleep Regularity";
 "metrics.latency" = "Sleep Onset Latency";
-"metrics.waso" = "WASO"; 
+"metrics.waso" = "WASO";
+
+// Sleep Session List View
+"session.startTime" = "Start Time";
+"session.endTime" = "End Time";
+"session.inBedTime" = "In-Bed Time";
+"session.sleepTime" = "Sleep Time";
+"nap" = "Nap"; 
