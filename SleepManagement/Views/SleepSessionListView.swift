@@ -6,7 +6,6 @@ struct SleepSessionListView: View {
     
     @State private var showingDeleteAlert = false
     @State private var sessionToDelete: SleepSession?
-    @State private var showingEditSheet = false
     @State private var sessionToEdit: SleepSession?
 
     // 時刻フォーマッタ
@@ -64,7 +63,6 @@ struct SleepSessionListView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             sessionToEdit = session
-                            showingEditSheet = true
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
@@ -94,11 +92,9 @@ struct SleepSessionListView: View {
             } message: {
                 Text("この睡眠セッションを削除してもよろしいですか？")
             }
-            .sheet(isPresented: $showingEditSheet) {
-                if let session = sessionToEdit {
-                    SleepSessionEditView(session: session) { updatedSession in
-                        viewModel.updateSession(updatedSession)
-                    }
+            .sheet(item: $sessionToEdit) { session in
+                SleepSessionEditView(session: session) { updatedSession in
+                    viewModel.updateSession(updatedSession)
                 }
             }
         }

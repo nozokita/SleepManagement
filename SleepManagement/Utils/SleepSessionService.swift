@@ -11,14 +11,12 @@ struct SleepSession: Identifiable {
     // 日付を跨ぐ睡眠時間の計算を修正
     var totalInBed: TimeInterval {
         let calendar = Calendar.current
-        if calendar.isDate(start, inSameDayAs: end) {
-            return end.timeIntervalSince(start)
-        } else {
-            // 日付を跨ぐ場合、翌日の0時までの時間 + 0時からの時間
-            let endOfDay = calendar.startOfDay(for: end)
-            let startOfDay = calendar.startOfDay(for: start)
-            return endOfDay.timeIntervalSince(start) + end.timeIntervalSince(startOfDay)
+        // 終了が開始より前の場合は翌日に跨いでいるとみなして1日分を加算
+        var adjustedEnd = end
+        if end <= start {
+            adjustedEnd = calendar.date(byAdding: .day, value: 1, to: end) ?? end
         }
+        return adjustedEnd.timeIntervalSince(start)
     }
     
     var totalAsleep: TimeInterval {
