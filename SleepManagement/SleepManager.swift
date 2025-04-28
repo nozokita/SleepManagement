@@ -275,9 +275,24 @@ class SleepManager: ObservableObject {
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: true)]
         
         do {
-            let records = try context.fetch(fetchRequest)
+            // 1. フェッチしたレコードを取得
+            let allRecords = try context.fetch(fetchRequest)
+            // 2. 不正入力（開始時刻 >= 終了時刻）とユーザー設定による仮眠扱いの記録を除外
+            let records = allRecords.filter { record in
+                guard let startAt = record.startAt, let endAt = record.endAt else { return false }
+                // 開始時刻が終了時刻以上の場合は誤入力とみなして除外
+                if endAt <= startAt {
+                    return false
+                }
+                // ユーザー設定で短い睡眠を仮眠扱いとする場合、Nap タイプは除外
+                if SettingsManager.shared.treatShortSleepAsNap,
+                   record.sleepType == SleepRecordType.nap.rawValue {
+                    return false
+                }
+                return true
+            }
             
-            // 日ごとにレコードをグループ化
+            // グループ化用の辞書
             var dailyRecords: [Date: [SleepRecord]] = [:]
             for record in records {
                 guard let startAt = record.startAt else { continue }

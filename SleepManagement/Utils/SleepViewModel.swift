@@ -26,7 +26,20 @@ final class SleepViewModel: ObservableObject {
             if currentStatus == .sharingAuthorized {
                 let metrics = try await metricsCalc.weeklyMetrics()
                 latestMetrics = metrics
-                score = compositeSleepScore(from: metrics)
+
+                // 比較用: オリジナルのHealthKitスコアとCompositeスコアを両方計算
+                let originalScore = SleepManager.shared.calculateHealthKitSleepScore(
+                    durationH: metrics.durationH,
+                    efficiency: metrics.efficiency,
+                    regularity: metrics.regularity,
+                    latency: metrics.latency,
+                    waso: metrics.waso
+                )
+                let compositeScore = compositeSleepScore(from: metrics)
+                // ログ出力で比較
+                print("Original Score: \(originalScore), Composite Score: \(compositeScore)")
+
+                score = compositeScore
             } else {
                 // 権限がない場合、エラー表示やUI更新など
                 print("HealthKit permission not granted. Cannot refresh data.")

@@ -14,15 +14,31 @@ final class SleepSessionViewModel: ObservableObject {
     func fetchSessions(for date: Date = Date()) async {
         do {
             let result = try await service.fetchSessions(for: date)
-            sessions = result
-            
-            // シミュレーター用のダミーデータ（実際のデータが0件の場合のみ）
-            if sessions.isEmpty {
+            // 取得結果を一時格納
+            var loaded = result
+            // シミュレーター用のダミーデータ（実データ0件の場合）
+            if loaded.isEmpty {
                 print("SleepSessionViewModel: Adding dummy data for simulator")
-                sessions = createDummySessions(for: date)
+                loaded = createDummySessions(for: date)
             }
-            
+            // 設定に応じてフィルタ：開始>=終了（誤入力）と仮眠扱いを除外
+            let filtered = loaded.filter { session in
+                // 開始時刻が終了時刻以上なら除外
+                if session.end <= session.start {
+                    return false
+                }
+                // 短い睡眠を仮眠扱いにする設定がオンの場合、isNap=true のセッションを除外
+                if SettingsManager.shared.treatShortSleepAsNap && session.isNap {
+                    return false
+                }
+                return true
+            }
+            sessions = filtered
             print("SleepSessionViewModel: Fetched \(sessions.count) sessions")
+            // 各セッションのスコアを出力
+            for (i, session) in sessions.enumerated() {
+                print("Session[\(i)]: start=\(session.start), end=\(session.end), score=\(session.sessionScore)")
+            }
         } catch {
             print("Error fetching sleep sessions: \(error)")
             sessions = []

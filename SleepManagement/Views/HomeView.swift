@@ -687,12 +687,21 @@ struct HomeView: View {
     
     // MARK: - 計算プロパティ
     
+    // 有効な通常睡眠レコード（仮眠や不正入力を除外）
+    private var validNormalRecords: [SleepRecord] {
+        sleepRecords.filter { record in
+            // 通常睡眠のみ
+            record.sleepType == SleepRecordType.normalSleep.rawValue &&
+            // 開始/終了時刻の正当性チェック
+            record.startAt != nil && record.endAt != nil && record.endAt! > record.startAt!
+        }
+    }
+    
     // 平均睡眠時間
     private var averageSleepDuration: TimeInterval {
-        // nap ではない通常睡眠のみを対象に平均を計算
-        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
-        guard !normalRecords.isEmpty else { return 0 }
-        let durations: [TimeInterval] = normalRecords.compactMap { record -> TimeInterval? in
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let durations = records.compactMap { record -> TimeInterval? in
             guard let start = record.startAt, let end = record.endAt else { return nil }
             return end.timeIntervalSince(start)
         }
@@ -711,10 +720,9 @@ struct HomeView: View {
     
     // 平均睡眠スコア
     private var averageSleepScore: Double {
-        // nap ではない通常睡眠のみを対象に平均スコアを計算
-        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
-        guard !normalRecords.isEmpty else { return 0 }
-        let scores = normalRecords.map { $0.score }
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let scores = records.map { $0.score }
         return scores.reduce(0, +) / Double(scores.count)
     }
     
@@ -724,10 +732,9 @@ struct HomeView: View {
     
     // 最長睡眠時間
     private var longestSleepDuration: TimeInterval {
-        // nap ではない通常睡眠のみを対象に最長睡眠時間を計算
-        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
-        guard !normalRecords.isEmpty else { return 0 }
-        let durations: [TimeInterval] = normalRecords.compactMap { record -> TimeInterval? in
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let durations = records.compactMap { record -> TimeInterval? in
             guard let start = record.startAt, let end = record.endAt else { return nil }
             return end.timeIntervalSince(start)
         }
@@ -746,12 +753,11 @@ struct HomeView: View {
     
     // 平均就寝時間
     private var averageBedTimeText: String {
-        // nap ではない通常睡眠のみを対象に平均就寝時間を計算
-        let normalRecords = sleepRecords.filter { $0.sleepType == SleepRecordType.normalSleep.rawValue }
-        guard !normalRecords.isEmpty else { return "00:00" }
+        let records = validNormalRecords
+        guard !records.isEmpty else { return "00:00" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
-        let bedTimes = normalRecords.compactMap { record -> Int? in
+        let bedTimes = records.compactMap { record -> Int? in
             guard let startAt = record.startAt else { return nil }
             let calendar = Calendar.current
             let hour = calendar.component(.hour, from: startAt)
