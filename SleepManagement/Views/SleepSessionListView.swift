@@ -58,6 +58,14 @@ struct SleepSessionListView: View {
                             }
                             .font(.subheadline)
                             .foregroundColor(.gray)
+                            HStack {
+                                Text("sleep_score".localized)
+                                Spacer()
+                                Text("\(session.sessionScore)" + "points".localized)
+                                    .bold()
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
                         }
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())
