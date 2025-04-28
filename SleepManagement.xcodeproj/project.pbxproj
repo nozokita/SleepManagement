@@ -14,7 +14,6 @@
 		BDA1503F2DBF2992000CB5CB /* Exceptions for "SleepManagement" folder in "SleepManagement" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"/Localized: Utils/Localization/Localizable.strings",
 				Info.plist,
 			);
 			target = BD54711D2DB4D7A7006389E5 /* SleepManagement */;
@@ -269,7 +268,7 @@
 				CODE_SIGN_ENTITLEMENTS = SleepManagement/SleepManagement.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;
@@ -305,7 +304,7 @@
 				CODE_SIGN_ENTITLEMENTS = SleepManagement/SleepManagement.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Q7MHDQD6L6;
 				ENABLE_PREVIEWS = YES;

@@ -314,6 +314,18 @@ struct SettingsView: View {
                         .labelsHidden()
                     }
                 }
+                
+                // 睡眠セッションの区切り時間
+                SettingsRow(icon: "clock", title: "settings.healthkit.sleepGapThreshold".localized) {
+                    Picker("", selection: $settings.sleepGapThreshold) {
+                        ForEach([15, 30, 45, 60], id: \.self) { minutes in
+                            Text(localizationManager.currentLanguage == "ja" ? "\(minutes)分" : "\(minutes) min")
+                                .tag(TimeInterval(minutes * 60))
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .labelsHidden()
+                }
             }
         }
     }

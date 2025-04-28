@@ -19,6 +19,8 @@ final class SettingsManager: ObservableObject {
     @Published var treatShortSleepAsNap: Bool = false
     /// 短い睡眠とみなす閾値（秒）
     @Published var shortSleepThreshold: TimeInterval = 90 * 60
+    /// 睡眠セッションの区切り時間（秒）
+    @Published var sleepGapThreshold: TimeInterval = 30 * 60
 
     private init() {
         let storedYear = UserDefaults.standard.integer(forKey: "birthYear")
@@ -30,6 +32,9 @@ final class SettingsManager: ObservableObject {
         self.treatShortSleepAsNap = UserDefaults.standard.bool(forKey: "treatShortSleepAsNap")
         let storedThreshold = UserDefaults.standard.double(forKey: "shortSleepThreshold")
         self.shortSleepThreshold = storedThreshold != 0 ? storedThreshold : 90 * 60
+        // 睡眠セッションの区切り時間の読み込み
+        let storedGapThreshold = UserDefaults.standard.double(forKey: "sleepGapThreshold")
+        self.sleepGapThreshold = storedGapThreshold != 0 ? storedGapThreshold : 30 * 60
         // その他の設定の読み込み
         self.autoSyncHealthKit = UserDefaults.standard.bool(forKey: "autoSyncHealthKit")
         self.enableSleepReminder = UserDefaults.standard.bool(forKey: "enableSleepReminder")
@@ -56,6 +61,7 @@ final class SettingsManager: ObservableObject {
         UserDefaults.standard.set(autoSyncHealthKit, forKey: "autoSyncHealthKit")
         UserDefaults.standard.set(treatShortSleepAsNap, forKey: "treatShortSleepAsNap")
         UserDefaults.standard.set(shortSleepThreshold, forKey: "shortSleepThreshold")
+        UserDefaults.standard.set(sleepGapThreshold, forKey: "sleepGapThreshold")
     }
 
     var appVersion: String {

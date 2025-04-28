@@ -24,7 +24,9 @@ actor SleepQueryService {
         guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) else { return [] }
 
         let predicate = HKQuery.predicateForSamples(withStart: dayStart, end: dayEnd, options: .strictStartDate)
-        let type = HKCategoryType.categoryType(forIdentifier: .sleepAnalysis)!
+        let type = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+
+        print("SleepQueryService: Fetching segments for \(dayStart) to \(dayEnd)")
 
         return try await withCheckedThrowingContinuation { cont in
             let query = HKSampleQuery(sampleType: type,
@@ -32,6 +34,7 @@ actor SleepQueryService {
                                       limit: HKObjectQueryNoLimit,
                                       sortDescriptors: nil) { _, samples, error in
                 if let error = error {
+                    print("SleepQueryService: Error fetching samples: \(error)")
                     cont.resume(throwing: error)
                     return
                 }
@@ -41,6 +44,7 @@ actor SleepQueryService {
                                  start: $0.startDate,
                                  end: $0.endDate)
                 } ?? []
+                print("SleepQueryService: Fetched \(segments.count) samples from HealthKit")
                 cont.resume(returning: segments)
             }
             store.execute(query)

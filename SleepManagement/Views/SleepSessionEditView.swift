@@ -37,16 +37,16 @@ struct SleepSessionEditView: View {
                     }
                 }
             }
-            .navigationTitle("睡眠ログを編集")
+            .navigationTitle("sleep_log_edit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button("save".localized) {
                         let updatedSession = SleepSession(
                             id: session.id,
                             segments: [

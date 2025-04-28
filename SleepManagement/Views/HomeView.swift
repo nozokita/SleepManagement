@@ -24,7 +24,7 @@ struct HomeView: View {
     
     // タブアイテム
     private var tabs: [String] {
-        return ["home_tab", "stats_tab", "records_tab"].map { $0.localized }
+        return ["home_tab", "stats_tab", "sleep_log_tab"].map { $0.localized }
     }
     
     @State private var showSettings = false
