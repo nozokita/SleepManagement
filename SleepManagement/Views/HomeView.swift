@@ -71,11 +71,9 @@ struct HomeView: View {
                             .environmentObject(localizationManager)
                             .environment(\.managedObjectContext, viewContext)
                     } else {
-                        // 睡眠記録タブ（開発中）
-                        ScrollView {
-                            developingTabView(tabName: tabs[selectedTab])
-                                .padding(.bottom, 80) // FABのスペース確保
-                        }
+                        // 睡眠セッション一覧タブ
+                        SleepSessionListView()
+                            .padding(.bottom, 80) // FABのスペース確保
                     }
                 }
                 
@@ -813,52 +811,6 @@ struct HomeView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             refreshing = false
         }
-    }
-    
-    // 開発中のタブビュー
-    private func developingTabView(tabName: String) -> some View {
-        VStack(spacing: 24) {
-            Spacer()
-                .frame(height: 40)
-            
-            Image(systemName: tabName == "統計" ? "chart.bar.xaxis" : "list.bullet.clipboard")
-                .font(.system(size: 60))
-                .foregroundColor(Theme.Colors.primary.opacity(0.6))
-            
-            Text(tabName)
-                .font(Theme.Typography.headingFont)
-                .foregroundColor(Theme.Colors.text)
-            
-            Text("developing_feature".localized)
-                .font(Theme.Typography.subheadingFont)
-                .foregroundColor(Theme.Colors.subtext)
-            
-            Text("stay_tuned".localized)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .padding(.top, 8)
-            
-            HStack {
-                Spacer()
-                
-                Text("in_development".localized)
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Theme.Colors.info.opacity(0.2))
-                    .foregroundColor(Theme.Colors.info)
-                    .cornerRadius(20)
-                
-                Spacer()
-            }
-            .padding(.top, 16)
-            
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .offset(y: animatedCards ? 0 : 50)
-        .opacity(animatedCards ? 1 : 0)
     }
     
     // 削除関数
