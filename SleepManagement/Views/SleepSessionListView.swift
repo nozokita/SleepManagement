@@ -58,14 +58,20 @@ struct SleepSessionListView: View {
                             }
                             .font(.subheadline)
                             .foregroundColor(.gray)
+                            // スコアの円形表示
                             HStack {
                                 Text("sleep_score".localized)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                                 Spacer()
-                                Text("\(session.sessionScore)" + "points".localized)
-                                    .bold()
+                                SleepScoreView(
+                                    score: Double(session.sessionScore),
+                                    size: 36,
+                                    showText: false,
+                                    showAnimation: false
+                                )
                             }
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .padding(.vertical, 4)
                         }
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())
