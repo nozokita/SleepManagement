@@ -29,51 +29,47 @@ struct SleepSessionListView: View {
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(viewModel.sessions) { session in
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack {
-                                Text(timeFormatter.string(from: session.start))
-                                    .font(.headline)
-                                Text("〜")
-                                Text(timeFormatter.string(from: session.end))
-                                    .font(.headline)
-                                Spacer()
-                                if session.isNap {
-                                    Text("nap".localized)
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.blue.opacity(0.1))
-                                        .cornerRadius(4)
+                        // スコアと詳細を横並びで表示
+                        HStack(alignment: .center, spacing: 16) {
+                            SleepScoreView(
+                                score: Double(session.sessionScore),
+                                size: 60,
+                                showText: true,
+                                showAnimation: false
+                            )
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    Text(timeFormatter.string(from: session.start))
+                                        .font(.headline)
+                                    Text("〜")
+                                    Text(timeFormatter.string(from: session.end))
+                                        .font(.headline)
+                                    Spacer()
+                                    if session.isNap {
+                                        Text("nap".localized)
+                                            .font(.caption)
+                                            .foregroundColor(.blue)
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 4)
+                                            .background(Color.blue.opacity(0.1))
+                                            .cornerRadius(4)
+                                    }
                                 }
+                                HStack {
+                                    Text("in_bed_time".localized)
+                                    Text(durationText(session.totalInBed))
+                                        .bold()
+                                    Spacer()
+                                    Text("sleep_duration".localized)
+                                    Text(durationText(session.totalAsleep))
+                                        .bold()
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
                             }
-                            HStack {
-                                Text("in_bed_time".localized)
-                                Text(durationText(session.totalInBed))
-                                    .bold()
-                                Spacer()
-                                Text("sleep_duration".localized)
-                                Text(durationText(session.totalAsleep))
-                                    .bold()
-                            }
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            // スコアの円形表示
-                            HStack {
-                                Text("sleep_score".localized)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Spacer()
-                                SleepScoreView(
-                                    score: Double(session.sessionScore),
-                                    size: 36,
-                                    showText: false,
-                                    showAnimation: false
-                                )
-                            }
-                            .padding(.vertical, 4)
+                            Spacer()
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 12)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             sessionToEdit = session
