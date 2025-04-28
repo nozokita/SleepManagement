@@ -12,6 +12,7 @@
 "home_tab" = "ホーム";
 "stats_tab" = "統計";
 "records_tab" = "記録";
+"sleep_log_tab" = "睡眠ログ";
 "home_title" = "睡眠管理";
 "home_subtitle" = "あなたの睡眠を最適化";
 "add_record" = "記録を追加";
@@ -180,6 +181,7 @@
 "settings.healthkit.title" = "ヘルスケア";
 "settings.healthkit.sync" = "ヘルスケアと同期";
 "settings.healthkit.description" = "ヘルスケアから睡眠データを自動取得";
+"settings.healthkit.sleepGapThreshold" = "睡眠ログの区切り時間";
 "settings.info.title" = "情報";
 "settings.info.version" = "バージョン";
 "settings.data.title" = "データ";

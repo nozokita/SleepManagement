@@ -12,6 +12,7 @@
 "home_tab" = "Home";
 "stats_tab" = "Stats";
 "records_tab" = "Records";
+"sleep_log_tab" = "Sleep Log";
 "home_title" = "Sleep Management";
 "home_subtitle" = "Optimize your sleep";
 "add_record" = "Add Record";
@@ -174,9 +175,10 @@
 "settings.display.dark" = "Dark Mode";
 "settings.display.debt" = "Show Sleep Debt";
 "settings.display.score" = "Show Sleep Score";
-"settings.healthkit.title" = "Health";
-"settings.healthkit.sync" = "Sync with Health";
-"settings.healthkit.description" = "Automatically get sleep data from Health app";
+"settings.healthkit.title" = "HealthKit";
+"settings.healthkit.sync" = "Sync with HealthKit";
+"settings.healthkit.description" = "Automatically fetch sleep data from Apple Health";
+"settings.healthkit.sleepGapThreshold" = "Sleep Log Gap Threshold";
 "settings.info.title" = "Info";
 "settings.info.version" = "Version";
 "settings.data.title" = "Data";
