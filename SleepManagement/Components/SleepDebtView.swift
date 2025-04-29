@@ -31,8 +31,8 @@ struct SleepDebtView: View {
                             .font(Theme.Typography.headingFont)
                             .foregroundColor(debtColor)
                         Text("hours".localized)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.subtext)
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(debtColor)
                     }
                     Button(action: { showDetail = true }) {
                         Image(systemName: "info.circle")
@@ -62,8 +62,8 @@ struct SleepDebtView: View {
                         .font(Theme.Typography.headingFont)
                         .foregroundColor(debtColor)
                     Text("hours".localized)
-                        .font(Theme.Typography.captionFont)
-                        .foregroundColor(Theme.Colors.subtext)
+                        .font(Theme.Typography.subheadingFont)
+                        .foregroundColor(debtColor)
                 }
             }
             .frame(width: 120, height: 120)
