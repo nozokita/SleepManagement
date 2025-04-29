@@ -268,21 +268,6 @@ struct SleepDebtDetailView: View {
                         Text(formatHours(actualHours))
                     }
                     HStack {
-                        Text(localizationManager.currentLanguage == "ja" ? "使用した係数合計" : "Weights Sum")
-                        Spacer()
-                        Text(String(format: "%.2f", weightSum))
-                    }
-                    // 係数内訳を表示
-                    Section(header: Text(localizationManager.currentLanguage == "ja" ? "係数内訳" : "Coefficient Breakdown")) {
-                        ForEach(coefficientCategories) { category in
-                            HStack {
-                                Text(localizationManager.currentLanguage == "ja" ? category.ja : category.en)
-                                Spacer()
-                                Text("\(weightBreakdown[category.weight] ?? 0)")
-                            }
-                        }
-                    }
-                    HStack {
                         Text(localizationManager.currentLanguage == "ja" ? "有効睡眠時間" : "Effective Sleep")
                         Spacer()
                         Text(formatHours(weightedHours))
@@ -292,6 +277,31 @@ struct SleepDebtDetailView: View {
                         Spacer()
                         Text(String(format: "%@ - %@ = %@", formatHours(idealHours), formatHours(weightedHours), formatHours(debt)))
                             .multilineTextAlignment(.trailing)
+                    }
+                    // 係数内訳を表示
+                    Section(header: Text(localizationManager.currentLanguage == "ja" ? "係数内訳" : "Coefficient Breakdown")) {
+                        // 表形式ヘッダー
+                        HStack {
+                            Text(localizationManager.currentLanguage == "ja" ? "睡眠時間" : "Sleep Duration")
+                                .font(.subheadline).bold()
+                            Spacer()
+                            Text(localizationManager.currentLanguage == "ja" ? "係数" : "Weight")
+                                .font(.subheadline).bold()
+                            Spacer()
+                            Text(localizationManager.currentLanguage == "ja" ? "件数" : "Count")
+                                .font(.subheadline).bold()
+                        }
+                        ForEach(coefficientCategories) { category in
+                            HStack {
+                                Text(localizationManager.currentLanguage == "ja" ? category.ja : category.en)
+                                Spacer()
+                                // 係数
+                                Text(String(format: localizationManager.currentLanguage == "ja" ? "%.1f" : "%.1f", category.weight))
+                                Spacer()
+                                // 記録件数
+                                Text("\(weightBreakdown[category.weight] ?? 0)")
+                            }
+                        }
                     }
                 }
             }

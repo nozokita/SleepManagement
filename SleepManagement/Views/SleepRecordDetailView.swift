@@ -31,8 +31,8 @@ struct SleepRecordDetailView: View {
                     
                     if record.debt > 0 {
                         detailRow(
-                            title: "睡眠負債", 
-                            value: String(format: "%.1f時間", record.debt),
+                            title: "sleep_debt".localized,
+                            value: record.debtText,
                             icon: "exclamationmark.triangle",
                             color: Theme.Colors.scoreColor(score: max(0, 100 - record.debt * 10))
                         )

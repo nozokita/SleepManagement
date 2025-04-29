@@ -1,5 +1,6 @@
 import Foundation
 import CoreData
+import SwiftUI
 
 // 睡眠タイプの列挙型
 enum SleepRecordType: Int16, CaseIterable {
@@ -70,36 +71,46 @@ extension SleepRecord {
     var durationText: String {
         let hours = Int(durationInHours)
         let minutes = Int((durationInHours - Double(hours)) * 60)
-        return "\(hours)時間\(minutes)分"
+        if LocalizationManager.shared.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 睡眠の日付（表示用）
     var sleepDateText: String {
-        guard let startAt = startAt else { return "不明な日付" }
+        guard let startAt = startAt else {
+            return LocalizationManager.shared.currentLanguage == "ja" ? "不明な日付" : "Unknown Date"
+        }
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = Locale(identifier: LocalizationManager.shared.currentLanguage == "ja" ? "ja_JP" : "en_US")
         return formatter.string(from: startAt)
     }
     
     // 睡眠の開始時刻（表示用）
     var startTimeText: String {
-        guard let startAt = startAt else { return "不明" }
+        guard let startAt = startAt else {
+            return LocalizationManager.shared.currentLanguage == "ja" ? "不明" : "Unknown"
+        }
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = Locale(identifier: LocalizationManager.shared.currentLanguage == "ja" ? "ja_JP" : "en_US")
         return formatter.string(from: startAt)
     }
     
     // 睡眠の終了時刻（表示用）
     var endTimeText: String {
-        guard let endAt = endAt else { return "不明" }
+        guard let endAt = endAt else {
+            return LocalizationManager.shared.currentLanguage == "ja" ? "不明" : "Unknown"
+        }
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = Locale(identifier: LocalizationManager.shared.currentLanguage == "ja" ? "ja_JP" : "en_US")
         return formatter.string(from: endAt)
     }
     
@@ -135,4 +146,15 @@ extension SleepRecord {
     var sleepContinuity: Int16? { nil }
     /// 目覚め時の気分（未実装）
     var morningFeeling: Int16? { nil }
+    
+    /// 睡眠負債の表示用テキスト
+    var debtText: String {
+        let hours = Int(debt)
+        let minutes = Int((debt - Double(hours)) * 60)
+        if LocalizationManager.shared.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return String(format: "%.1fh", debt)
+        }
+    }
 } 

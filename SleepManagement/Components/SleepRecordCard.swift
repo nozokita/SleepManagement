@@ -42,11 +42,11 @@ struct SleepRecordCard: View {
                 // 睡眠負債表示（あれば）
                 if record.debt > 0 {
                     VStack {
-                        Text("負債")
+                        Text("sleep_debt".localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.subtext)
                         
-                        Text(String(format: "%.1f h", record.debt))
+                        Text(record.debtText)
                             .font(Theme.Typography.bodyFont.bold())
                             .foregroundColor(Theme.Colors.scoreColor(score: max(0, 100 - record.debt * 10)))
                     }

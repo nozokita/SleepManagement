@@ -25,9 +25,15 @@ struct SleepDebtView: View {
                 Spacer()
                 
                 HStack(spacing: 4) {
-                    Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
-                        .font(Theme.Typography.headingFont)
-                        .foregroundColor(debtColor)
+                    // 負債値と単位を別行で表示
+                    VStack(spacing: 0) {
+                        Text(String(format: "%+.1f", totalDebt))
+                            .font(Theme.Typography.headingFont)
+                            .foregroundColor(debtColor)
+                        Text("hours".localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                    }
                     Button(action: { showDetail = true }) {
                         Image(systemName: "info.circle")
                             .font(.headline)
@@ -50,9 +56,15 @@ struct SleepDebtView: View {
                     )
                     .rotationEffect(.degrees(-90))
                     .animation(.easeOut, value: progress)
-                Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
-                    .font(Theme.Typography.headingFont)
-                    .foregroundColor(debtColor)
+                // サークル内の負債値と単位を別行で表示
+                VStack(spacing: 0) {
+                    Text(String(format: "%+.1f", totalDebt))
+                        .font(Theme.Typography.headingFont)
+                        .foregroundColor(debtColor)
+                    Text("hours".localized)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.subtext)
+                }
             }
             .frame(width: 120, height: 120)
             
