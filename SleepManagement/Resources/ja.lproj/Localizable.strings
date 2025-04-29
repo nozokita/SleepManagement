@@ -270,13 +270,10 @@
 "score_info_message" = "睡眠スコアは、睡眠時間と睡眠の質に基づき0～100点で算出されます。スコアが高いほど良質な睡眠を示します。";
 
 // Sleep Score Info Dialog for manual records
-"manual_score_info_message" = "・睡眠時間（timeRatio）に60％\n・主観評価（subjectiveRatio）に40％\n・最終スコア = 60 × timeRatio + 40 × subjectiveRatio";
+"manual_score_info_message" = "睡眠スコアは次の3つの要素で計算されます：\n- 睡眠時間（最大60点）：理想睡眠時間（7時間）に対する実際の睡眠時間の割合で評価\n- 主観評価（最大40点）：眠りの深さや目覚めの感覚を自己評価\n- 合計スコア（100点満点）：上記2つを合わせて算出";
 
 // Sleep Score Info Dialog for sessions
-"session_score_info_message" = "成分 | 重み | 式 | 出典\nDuration   | 40 | 40×min(H_actual/H_ideal,1)  | JAMA\nEfficiency | 25 | 25×min(SE/0.85,1)         | 85% 閾値\nRegularity | 15 | 15×(1−SRI/100)           | Nature\nLatency    | 10 | 10×max(0,(30−SL)/30)     | Insomnia Guide\nWASO       | 10 | 10×max(0,(30−WASO)/30)   | PMC\n最終スコア = 合計 (0〜100にクランプ)";
-
-// Session Score Calculation (Table)
-"session_score_info_message" = "成分 | 重み | 式 | 出典\nDuration   | 40 | 40×min(H_actual/H_ideal,1)  | JAMA\nEfficiency | 25 | 25×min(SE/0.85,1)         | 85% 閾値\nRegularity | 15 | 15×(1−SRI/100)           | Nature\nLatency    | 10 | 10×max(0,(30−SL)/30)     | Insomnia Guide\nWASO       | 10 | 10×max(0,(30−WASO)/30)   | PMC\n最終スコア = 合計 (0〜100にクランプ)"; 
+"session_score_info_message" = "睡眠スコアの内訳：\n- 睡眠時間（最大40点）：理想時間との比率で評価\n- 睡眠効率（最大25点）：ベッドにいる時間に対する実際の睡眠時間の割合\n- 睡眠規則性（最大15点）：就寝・起床時間のばらつきで評価\n- 入眠潜時（最大10点）：寝つくまでの時間で評価\n- 中途覚醒（最大10点）：夜間の目覚め時間で評価\n合計で100点満点です";
 
 /* Expert Advice Section */
 "expert_advice" = "睡眠の専門家のおすすめ";

@@ -225,18 +225,8 @@
 "score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
 
 
-"manual_score_info_message" = "• timeRatio weighted by 60%\n• subjectiveRatio weighted by 40%\n• Final Score = 60 × timeRatio + 40 × subjectiveRatio";
+"manual_score_info_message" = "Your sleep score is calculated using three components:\n- Sleep duration (up to 60 points): How your actual sleep compares to a 7-hour goal\n- Subjective feedback (up to 40 points): Your personal rating of sleep quality\n- Total score (out of 100): Sum of the above two metrics";
 
 
-"session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
-
-
-"score_info_title" = "Sleep Score Calculation";
-"score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
-
-
-"manual_score_info_message" = "Calculation:\nElement          | Formula\ntimeRatio         | min(duration ÷ 7h, 1.0)\nsubjectiveRatio   | quality ÷ 5.0\nFinal Score       | 60 × timeRatio + 40 × subjectiveRatio";
-
-
-"session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
+"session_score_info_message" = "Your sleep score breakdown:\n- Duration (up to 40 points): Based on how long you sleep compared to the ideal\n- Efficiency (up to 25 points): Ratio of actual sleep time to time in bed\n- Regularity (up to 15 points): Consistency of your bed/wake times\n- Sleep onset latency (up to 10 points): Time it takes you to fall asleep\n- WASO (up to 10 points): Total awake time during your sleep period\nAll components add up to 100 points";
 
