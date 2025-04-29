@@ -22,6 +22,9 @@ struct HomeView: View {
     @State private var selectedTab: Int = 0
     @State private var refreshing: Bool = false
     
+    // 過去24時間の睡眠負債（時間）
+    @State private var debtHours: Double = 0
+    
     // タブアイテム
     private var tabs: [String] {
         return ["home_tab", "stats_tab", "sleep_log_tab"].map { $0.localized }
@@ -94,6 +97,9 @@ struct HomeView: View {
                 }
                 calculateTotalDebt()
                 sleepManager.requestNotificationPermission()
+                
+                // 過去24時間の負債をロード
+                loadDebt()
                 
                 // アニメーション
                 withAnimation(Theme.Animations.springy.delay(0.3)) {
@@ -332,87 +338,38 @@ struct HomeView: View {
     
     // 睡眠負債カード
     private var sleepDebtCard: some View {
-        VStack(spacing: 0) {
+        // 過去24時間の負債をリングで表示
+        let progress = min(debtHours, 1)
+        VStack(spacing: 16) {
             // カードヘッダー
             HStack {
-                Label("sleep_debt".localized, systemImage: "exclamationmark.triangle")
+                Text("sleep_debt".localized)
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
-                
                 Spacer()
-                
-                Text(totalDebt > 2 ? "danger".localized : (totalDebt > 1 ? "warning".localized : "good".localized))
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(debtStatusColor.opacity(0.2))
-                    .foregroundColor(debtStatusColor)
-                    .cornerRadius(8)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Theme.Colors.cardGradient)
-            
-            Divider()
-            
-            VStack(spacing: 12) {
-                // 睡眠負債ゲージ
-                VStack(spacing: 8) {
-                    HStack {
-                        Text("current_debt".localized)
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.text)
-                        
-                        Spacer()
-                        
-                        Text(String(format: "%.1f", totalDebt) + "hours".localized)
-                            .font(Theme.Typography.headingFont)
-                            .foregroundColor(debtStatusColor)
-                    }
-                    
-                    // ゲージ
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            // 背景
-                            RoundedRectangle(cornerRadius: 8)
-                                .frame(width: geometry.size.width, height: 12)
-                                .foregroundColor(Color.gray.opacity(0.2))
-                            
-                            // 負債の量を表すバー
-                            RoundedRectangle(cornerRadius: 8)
-                                .frame(width: min(CGFloat(totalDebt / 12) * geometry.size.width, geometry.size.width), height: 12)
-                                .foregroundColor(debtStatusColor)
-                                .animation(.easeOut, value: totalDebt)
-                        }
-                    }
-                    .frame(height: 12)
-                    
-                    // 負債メッセージ
-                    HStack {
-                        Image(systemName: "info.circle")
-                            .foregroundColor(debtStatusColor)
-                        
-                        Text(debtMessage)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .fixedSize(horizontal: false, vertical: true)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.05))
-                    .cornerRadius(8)
-                }
-                .padding(16)
+            // リングチャート
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 12)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        Theme.Colors.primary,
+                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut, value: progress)
+                Text(String(format: "%+.1f%@", debtHours, "hours".localized))
+                    .font(Theme.Typography.headingFont)
+                    .foregroundColor(Theme.Colors.primary)
             }
+            .frame(width: 120, height: 120)
         }
+        .padding()
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        .padding(.horizontal)
-        .offset(y: animatedCards ? 0 : 50)
-        .opacity(animatedCards ? 1 : 0)
-        .transition(.opacity.combined(with: .move(edge: .bottom)))
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
     
     // AI診断・アドバイスセクション
@@ -771,38 +728,6 @@ struct HomeView: View {
         return String(format: "%02d:%02d", averageHour, averageMinute)
     }
     
-    // 睡眠負債ステータスの色
-    private var debtStatusColor: Color {
-        if totalDebt > 2 {
-            return Theme.Colors.danger
-        } else if totalDebt > 1 {
-            return Theme.Colors.warning
-        } else {
-            return Theme.Colors.success
-        }
-    }
-    
-    // 睡眠負債メッセージ
-    private var debtMessage: String {
-        if localizationManager.currentLanguage == "ja" {
-            if totalDebt > 2 {
-                return "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。"
-            } else if totalDebt > 1 {
-                return "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。"
-            } else {
-                return "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。"
-            }
-        } else {
-            if totalDebt > 2 {
-                return "Your sleep debt has exceeded 2 hours. Try to increase your rest as soon as possible to reduce the debt."
-            } else if totalDebt > 1 {
-                return "You have a slight sleep debt. Consider going to bed a bit earlier tonight."
-            } else {
-                return "You have minimal sleep debt. Keep maintaining a good sleep cycle."
-            }
-        }
-    }
-    
     // MARK: - メソッド
     
     private func calculateTotalDebt() {
@@ -812,6 +737,9 @@ struct HomeView: View {
     private func refreshData() {
         refreshing = true
         calculateTotalDebt()
+        
+        // 最新の負債を再計算
+        loadDebt()
         
         // リフレッシュアニメーション用の遅延
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -828,6 +756,12 @@ struct HomeView: View {
         } catch {
             print("削除エラー: \(error)")
         }
+    }
+    
+    // MARK: - データ処理
+    /// 24時間分の総睡眠負債（時間）を計算して更新
+    private func loadDebt() {
+        debtHours = sleepManager.calculateTotalDebt(context: viewContext, days: 1)
     }
 }
 
