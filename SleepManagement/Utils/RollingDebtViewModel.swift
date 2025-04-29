@@ -6,9 +6,7 @@ import Combine
 /// ViewModel that computes rolling sleep debt over the past 24 hours
 @MainActor
 final class RollingDebtViewModel: ObservableObject {
-    /// SwiftData から取得した SleepEpisode 配列
-    @Query(sort: \.startAt, order: .reverse) private var episodes: [SleepEpisode]
-
+    private let context: ModelContext
     /// 質×時間で重み付けした合計睡眠分
     @Published var effective24: Double = 0
     /// 急性負債（分単位）
@@ -21,7 +19,8 @@ final class RollingDebtViewModel: ObservableObject {
 
     private var timerCancellable: AnyCancellable?
 
-    init() {
+    init(context: ModelContext) {
+        self.context = context
         // 初期計算
         calculateDebt()
         // 毎分再計算するタイマー
@@ -37,7 +36,12 @@ final class RollingDebtViewModel: ObservableObject {
     private func calculateDebt() {
         let now = Date()
         let since = Calendar.current.date(byAdding: .hour, value: -24, to: now) ?? now
-        let recent = episodes.filter { $0.endAt > since }
+        // SwiftData から FetchDescriptor で取得
+        let descriptor = FetchDescriptor<SleepEpisode>(
+            sortBy: [SortDescriptor(\.startAt, order: .reverse)]
+        )
+        let allEpisodes = context.fetch(descriptor)
+        let recent = allEpisodes.filter { $0.endAt > since }
 
         // 重み付き睡眠時間の合計
         let weightedSum = recent.reduce(0.0) { sum, ep in
