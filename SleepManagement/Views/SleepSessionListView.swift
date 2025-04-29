@@ -7,8 +7,7 @@ struct SleepSessionListView: View {
     @State private var showingDeleteAlert = false
     @State private var sessionToDelete: SleepSession?
     @State private var sessionToEdit: SleepSession?
-    @State private var showScoreInfo = false
-    @State private var scoreInfoMessage: String = ""
+    @State private var showLogScoreInfo = false
 
     // 時刻フォーマッタ
     private var timeFormatter: DateFormatter {
@@ -76,38 +75,8 @@ struct SleepSessionListView: View {
                             .onTapGesture {
                                 sessionToEdit = session
                             }
-
-                            // 情報アイコン
-                            Button(action: {
-                                // 動的に計算根拠を生成
-                                let effScore = min(session.efficiency, 1.0) * 40.0
-                                let wakePenalty = Double(session.awakeCount) * 2.0
-                                let deepBonus = min(session.deepSleepRatio / 0.2, 1.0) * 10.0
-                                let rawScore = effScore - wakePenalty + deepBonus
-                                let es = String(format: "%.1f", effScore)
-                                let wp = String(format: "%.0f", wakePenalty)
-                                let db = String(format: "%.1f", deepBonus)
-                                let rs = String(format: "%.1f", rawScore)
-                                let fs = String(format: "%.0f", Double(session.sessionScore))
-                                if LocalizationManager.shared.currentLanguage == "ja" {
-                                    scoreInfoMessage = "計算式：\n効率スコア = \(es)\n覚醒ペナルティ = \(wp)\n深睡眠ボーナス = \(db)\n生スコア = \(rs)\n最終スコア = \(fs)"
-                                } else {
-                                    scoreInfoMessage = "Calculation:\nefficiencyScore = \(es)\nwakePenalty = \(wp)\ndeepBonus = \(db)\nrawScore = \(rs)\nFinal Score = \(fs)"
-                                }
-                                showScoreInfo = true
-                            }) {
-                                Image(systemName: "info.circle")
-                                    .foregroundColor(Theme.Colors.subtext)
-                            }
-                            .padding(8)
-                            .offset(x: -8, y: -8)
                         }
                         .padding(.vertical, 12)
-                        .alert("score_info_title".localized, isPresented: $showScoreInfo) {
-                            Button("common.okButton".localized, role: .cancel) {}
-                        } message: {
-                            Text(scoreInfoMessage)
-                        }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 sessionToDelete = session
@@ -121,10 +90,12 @@ struct SleepSessionListView: View {
             }
             .listStyle(InsetGroupedListStyle())
             .navigationTitle("sleep_log_tab".localized)
-            .task {
-                print("SleepSessionListView: Starting to fetch sessions")
-                await viewModel.fetchSessions(for: date)
-                print("SleepSessionListView: Fetched \(viewModel.sessions.count) sessions")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showLogScoreInfo = true }) {
+                        Image(systemName: "info.circle")
+                    }
+                }
             }
             .alert("delete_session_title".localized, isPresented: $showingDeleteAlert) {
                 Button("cancel".localized, role: .cancel) { }
@@ -140,6 +111,16 @@ struct SleepSessionListView: View {
                 SleepSessionEditView(session: session) { updatedSession in
                     viewModel.updateSession(updatedSession)
                 }
+            }
+            .alert("score_info_title".localized, isPresented: $showLogScoreInfo) {
+                Button("common.okButton".localized, role: .cancel) {}
+            } message: {
+                Text("session_score_info_message".localized)
+            }
+            .task {
+                print("SleepSessionListView: Starting to fetch sessions")
+                await viewModel.fetchSessions(for: date)
+                print("SleepSessionListView: Fetched \(viewModel.sessions.count) sessions")
             }
         }
     }

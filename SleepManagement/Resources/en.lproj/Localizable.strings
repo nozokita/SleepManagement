@@ -265,7 +265,17 @@
 "score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
 
 // Sleep Score Info Dialog for manual records
-"manual_score_info_message" = "Calculation:\n  timeRatio = min(duration ÷ 7h, 1.0)\n  subjectiveRatio = quality ÷ 5.0\n  Final Score = 60 × timeRatio + 40 × subjectiveRatio";
+"manual_score_info_message" = "Final Score = 60 × timeRatio + 40 × subjectiveRatio";
 
 // Sleep Score Info Dialog for sessions
 "session_score_info_message" = "Calculation:\n  efficiencyScore = min(totalAsleep ÷ totalInBed, 1.0) × 40\n  wakePenalty = awakeCount × 2\n  deepBonus = min(deepSleepRatio ÷ 0.2, 1.0) × 10\n  rawScore = efficiencyScore - wakePenalty + deepBonus\n  Final Score = clamp(rawScore, 0, 100)"; 
+
+// Sleep Score Info Dialog
+"score_info_title" = "Sleep Score Calculation";
+"score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
+
+// Manual Record Score Calculation (Table)
+"manual_score_info_message" = "Calculation:\nElement          | Formula\ntimeRatio         | min(duration ÷ 7h, 1.0)\nsubjectiveRatio   | quality ÷ 5.0\nFinal Score       | 60 × timeRatio + 40 × subjectiveRatio";
+
+// Session Score Calculation (Table)
+"session_score_info_message" = "Calculation:\nElement           | Formula\nefficiencyScore   | min(totalAsleep ÷ totalInBed, 1.0) × 40\nwakePenalty       | awakeCount × 2\ndeepBonus         | min(deepSleepRatio ÷ 0.2, 1.0) × 10\nFinal Score       | clamp(efficiencyScore - wakePenalty + deepBonus, 0, 100)"; 

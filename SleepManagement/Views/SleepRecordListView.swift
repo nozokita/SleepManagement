@@ -8,6 +8,7 @@ struct SleepRecordListView: View {
     @State private var records: [SleepRecord] = []
     // 編集用状態
     @State private var selectedRecordForEdit: SleepRecord? = nil
+    @State private var showListScoreInfo = false
 
     var body: some View {
         List {
@@ -44,6 +45,18 @@ struct SleepRecordListView: View {
                 .environment(\.managedObjectContext, viewContext)
         }
         .navigationTitle("sleep_record_list_title".localized)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { showListScoreInfo = true }) {
+                    Image(systemName: "info.circle")
+                }
+            }
+        }
+        .alert("score_info_title".localized, isPresented: $showListScoreInfo) {
+            Button("common.okButton".localized, role: .cancel) {}
+        } message: {
+            Text("manual_score_info_message".localized)
+        }
         .onAppear(perform: loadRecords)
     }
 
