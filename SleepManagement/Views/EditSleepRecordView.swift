@@ -159,20 +159,33 @@ struct EditSleepRecordView: View {
                                         Spacer()
                                         
                                         VStack(spacing: 8) {
-                                            ZStack {
-                                                // スコア背景の円
-                                                Circle()
-                                                    .fill(qualityColor.opacity(0.1))
-                                                    .frame(width: 150, height: 150)
-                                                
-                                                // スコアビュー
-                                                SleepScoreView(score: previewScore, size: 120)
+                                            // 仮眠時はNapラベルを表示
+                                            if record.sleepType == SleepRecordType.nap.rawValue {
+                                                ZStack {
+                                                    Circle()
+                                                        .stroke(Theme.Colors.subtext, lineWidth: 1)
+                                                        .frame(width: 150, height: 150)
+                                                    Text("nap".localized)
+                                                        .font(.system(size: 24, weight: .bold))
+                                                        .foregroundColor(Theme.Colors.subtext)
+                                                }
+                                                Text("nap".localized)
+                                                    .font(Theme.Typography.captionFont)
+                                                    .foregroundColor(Theme.Colors.subtext)
+                                            } else {
+                                                ZStack {
+                                                    // スコア背景の円
+                                                    Circle()
+                                                        .fill(qualityColor.opacity(0.1))
+                                                        .frame(width: 150, height: 150)
+                                                    // スコアビュー
+                                                    SleepScoreView(score: previewScore, size: 120)
+                                                }
+                                                .padding(.bottom, 8)
+                                                Text("sleep_score".localized)
+                                                    .font(Theme.Typography.bodyFont)
+                                                    .foregroundColor(Theme.Colors.subtext)
                                             }
-                                            .padding(.bottom, 8)
-                                            
-                                            Text("睡眠スコア")
-                                                .font(Theme.Typography.bodyFont)
-                                                .foregroundColor(Theme.Colors.subtext)
                                             
                                             HStack(spacing: 6) {
                                                 Image(systemName: "bed.double")
@@ -183,13 +196,16 @@ struct EditSleepRecordView: View {
                                                     .foregroundColor(Theme.Colors.text)
                                             }
                                             
-                                            HStack(spacing: 6) {
-                                                Image(systemName: "exclamationmark.triangle")
-                                                    .foregroundColor(debtColor)
-                                                
-                                                Text("睡眠負債: \(String(format: "%.1f時間", previewDebt))")
-                                                    .font(Theme.Typography.bodyFont.bold())
-                                                    .foregroundColor(debtColor)
+                                            // nap時は睡眠負債と分析を非表示
+                                            if record.sleepType != SleepRecordType.nap.rawValue {
+                                                HStack(spacing: 6) {
+                                                    Image(systemName: "exclamationmark.triangle")
+                                                        .foregroundColor(debtColor)
+                                                    Text("sleep_debt".localized + ": " + String(format: LocalizationManager.shared.currentLanguage == "ja" ? "%.1f時間" : "%.1fh", previewDebt))
+                                                        .font(Theme.Typography.bodyFont.bold())
+                                                        .foregroundColor(debtColor)
+                                                }
+                                                Spacer()
                                             }
                                         }
                                         
@@ -197,8 +213,8 @@ struct EditSleepRecordView: View {
                                     }
                                     .padding(.vertical, 8)
                                     
-                                    // 睡眠分析結果
-                                    if previewScore > 0 {
+                                    // nap時は分析を非表示
+                                    if record.sleepType != SleepRecordType.nap.rawValue && previewScore > 0 {
                                         VStack(alignment: .leading, spacing: 12) {
                                             Text("睡眠分析")
                                                 .font(Theme.Typography.subheadingFont)
