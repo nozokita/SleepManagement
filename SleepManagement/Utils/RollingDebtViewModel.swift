@@ -40,7 +40,8 @@ final class RollingDebtViewModel: ObservableObject {
         let descriptor = FetchDescriptor<SleepEpisode>(
             sortBy: [SortDescriptor(\.startAt, order: .reverse)]
         )
-        let allEpisodes = context.fetch(descriptor)
+        // fetch が throwing の場合は空配列を使う
+        let allEpisodes = (try? context.fetch(descriptor)) ?? []
         let recent = allEpisodes.filter { $0.endAt > since }
 
         // 重み付き睡眠時間の合計
