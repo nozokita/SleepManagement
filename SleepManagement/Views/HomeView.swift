@@ -336,9 +336,17 @@ struct HomeView: View {
         .opacity(animatedCards ? 1 : 0)
     }
     
-    // 睡眠負債カード
+    // 睡眠負債カード（ローリング24hの時間帯を表示）
     private var sleepDebtCard: some View {
-        SleepDebtView(totalDebt: debtHours)
+        let now = Date()
+        let windowEnd = now
+        let windowStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
+        return SleepDebtView(
+            totalDebt: debtHours,
+            windowStart: windowStart,
+            windowEnd: windowEnd
+        )
+        .environmentObject(localizationManager)
     }
     
     // AI診断・アドバイスセクション

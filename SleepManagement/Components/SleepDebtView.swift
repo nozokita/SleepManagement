@@ -1,8 +1,19 @@
 import SwiftUI
+import Foundation
 
 struct SleepDebtView: View {
     let totalDebt: Double
+    let windowStart: Date
+    let windowEnd: Date
     let maxDebt: Double = 24 // 表示する最大負債（3日分程度）
+    @EnvironmentObject private var localizationManager: LocalizationManager
+    
+    private var timeFormatter: DateFormatter {
+        let df = DateFormatter()
+        df.locale = Locale(identifier: localizationManager.currentLanguage == "ja" ? "ja_JP" : "en_US")
+        df.timeStyle = .short
+        return df
+    }
     
     var body: some View {
         VStack(spacing: 8) {
@@ -37,6 +48,10 @@ struct SleepDebtView: View {
                     .foregroundColor(Theme.Colors.primary)
             }
             .frame(width: 120, height: 120)
+            // 集計対象ウィンドウの時間帯を表示
+            Text("\(timeFormatter.string(from: windowStart)) ～ \(timeFormatter.string(from: windowEnd))")
+                .font(Theme.Typography.captionFont)
+                .foregroundColor(Theme.Colors.subtext)
         }
         .padding()
         .background(Theme.Colors.cardBackground)
@@ -59,9 +74,9 @@ struct SleepDebtView: View {
 
 #Preview {
     VStack(spacing: 20) {
-        SleepDebtView(totalDebt: 2.5)
-        SleepDebtView(totalDebt: 6.0)
-        SleepDebtView(totalDebt: 12.5)
+        SleepDebtView(totalDebt: 2.5, windowStart: Date(), windowEnd: Date())
+        SleepDebtView(totalDebt: 6.0, windowStart: Date(), windowEnd: Date())
+        SleepDebtView(totalDebt: 12.5, windowStart: Date(), windowEnd: Date())
     }
     .padding()
     .background(Theme.Colors.background)
