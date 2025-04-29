@@ -69,14 +69,27 @@ struct SleepDebtDetailView: View {
         }
         return dict
     }
+    // 重み付けカテゴリ用データ構造
+    private struct CoefficientCategory: Identifiable, Hashable {
+        let id: Double
+        let ja: String
+        let en: String
+        let weight: Double
+        init(ja: String, en: String, weight: Double) {
+            self.id = weight
+            self.ja = ja
+            self.en = en
+            self.weight = weight
+        }
+    }
     // 係数カテゴリとラベル
-    private var coefficientCategories: [(ja: String, en: String, weight: Double)] {
+    private var coefficientCategories: [CoefficientCategory] {
         [
-            ("<10分", "<10 min", 0.0),
-            ("10–29分", "10–29 min", 0.3),
-            ("30–59分", "30–59 min", 0.6),
-            ("60–89分", "60–89 min", 0.9),
-            ("≥90分", "≥90 min", 1.0)
+            CoefficientCategory(ja: "<10分", en: "<10 min", weight: 0.0),
+            CoefficientCategory(ja: "10–29分", en: "10–29 min", weight: 0.3),
+            CoefficientCategory(ja: "30–59分", en: "30–59 min", weight: 0.6),
+            CoefficientCategory(ja: "60–89分", en: "60–89 min", weight: 0.9),
+            CoefficientCategory(ja: "≥90分", en: "≥90 min", weight: 1.0)
         ]
     }
 
@@ -203,7 +216,7 @@ struct SleepDebtDetailView: View {
                 }
                 // 係数内訳を表示
                 Section(header: Text(localizationManager.currentLanguage == "ja" ? "係数内訳" : "Coefficient Breakdown")) {
-                    ForEach(coefficientCategories, id: \.(weight)) { category in
+                    ForEach(coefficientCategories) { category in
                         HStack {
                             Text(localizationManager.currentLanguage == "ja" ? category.ja : category.en)
                             Spacer()
