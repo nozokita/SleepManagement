@@ -45,7 +45,7 @@ struct SleepRecordDetailView: View {
                     
                     detailRow(title: localizationManager.currentLanguage == "ja" ? "睡眠の質" : "Quality", value: "\(record.quality)/5", icon: "star")
                     
-                    if record.debt > 0 {
+                    if SleepRecordType(rawValue: record.sleepType) == .normalSleep && record.debt > 0 {
                         detailRow(
                             title: localizationManager.currentLanguage == "ja" ? "睡眠負債" : "Sleep Debt",
                             value: record.debtText,

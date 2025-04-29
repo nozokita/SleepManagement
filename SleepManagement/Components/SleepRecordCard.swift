@@ -52,8 +52,8 @@ struct SleepRecordCard: View {
                 
                 Spacer()
                 
-                // 睡眠負債表示（あれば）
-                if record.debt > 0 {
+                // 睡眠負債表示（通常睡眠かつ負債があれば）
+                if SleepRecordType(rawValue: record.sleepType) == .normalSleep && record.debt > 0 {
                     VStack {
                         Text("sleep_debt".localized)
                             .font(Theme.Typography.captionFont)
