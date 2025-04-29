@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SleepRecordDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dismiss) private var dismiss
     
     let record: SleepRecord
     @State private var showingEditSheet = false
@@ -11,11 +12,25 @@ struct SleepRecordDetailView: View {
             VStack(spacing: 24) {
                 // スコア表示
                 VStack(spacing: 8) {
-                    SleepScoreView(score: record.score, size: 150)
-                    
-                    Text("睡眠スコア")
-                        .font(Theme.Typography.captionFont)
-                        .foregroundColor(Theme.Colors.subtext)
+                    // 仮眠の場合はNapラベルを表示
+                    if SleepRecordType(rawValue: record.sleepType) == .nap {
+                        ZStack {
+                            Circle()
+                                .stroke(Theme.Colors.subtext, lineWidth: 1)
+                                .frame(width: 150, height: 150)
+                            Text("nap".localized)
+                                .font(Theme.Typography.subheadingFont)
+                                .foregroundColor(Theme.Colors.subtext)
+                        }
+                        Text("nap".localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                    } else {
+                        SleepScoreView(score: record.score, size: 150)
+                        Text("sleep_score".localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                    }
                 }
                 .padding(.vertical, 16)
                 
@@ -97,6 +112,22 @@ struct SleepRecordDetailView: View {
         .background(Theme.Colors.background.ignoresSafeArea())
         .navigationTitle("睡眠詳細")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // レコード削除ボタン
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(role: .destructive) {
+                    viewContext.delete(record)
+                    do {
+                        try viewContext.save()
+                    } catch {
+                        print("削除エラー: \(error)")
+                    }
+                    dismiss()
+                } label: {
+                    Image(systemName: "trash")
+                }
+            }
+        }
         .sheet(isPresented: $showingEditSheet) {
             EditSleepRecordView(record: record)
                 .environment(\.managedObjectContext, viewContext)
