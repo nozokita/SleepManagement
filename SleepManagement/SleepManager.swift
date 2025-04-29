@@ -94,60 +94,57 @@ class SleepManager: ObservableObject {
         }
     }
     
-    // 過去N日間の睡眠負債を計算
+    /// 基準時刻（正午±6hシフト可）を返す
+    func anchor(for date: Date, context: NSManagedObjectContext) -> Date {
+        let calendar = Calendar.current
+        guard let noon = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: date) else { return date }
+        // 過去24hの睡眠記録から最長エピソードの中央時刻を取得
+        let since = calendar.date(byAdding: .hour, value: -24, to: noon)!
+        let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+        request.predicate = NSPredicate(format: "startAt >= %@ AND endAt <= %@", since as NSDate, noon as NSDate)
+        do {
+            let records = try context.fetch(request)
+            if let longest = records.max(by: { ($0.endAt!.timeIntervalSince($0.startAt!)) < ($1.endAt!.timeIntervalSince($1.startAt!)) }), let start = longest.startAt, let end = longest.endAt {
+                let midpoint = start.addingTimeInterval(end.timeIntervalSince(start)/2)
+                let diff = midpoint.timeIntervalSince(noon)
+                if diff > 6*3600 {
+                    return calendar.date(byAdding: .hour, value: 6, to: noon)!
+                } else if diff < -6*3600 {
+                    return calendar.date(byAdding: .hour, value: -6, to: noon)!
+                }
+            }
+        } catch {
+            print("アンカー算出失敗: \(error)")
+        }
+        return noon
+    }
+
+    // 過去N日間の睡眠負債をアンカー付き24hウインドウで計算
     func calculateTotalDebt(context: NSManagedObjectContext, days: Int = 7) -> Double {
         let calendar = Calendar.current
-        let now = Date()
-        let startDate = calendar.date(byAdding: .day, value: -days, to: now)!
-        
-        let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startAt >= %@", startDate as NSDate)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: true)]
-        
-        do {
-            let records = try context.fetch(fetchRequest)
-            
-            // 記録が一件もない場合は負債0を返す
-            if records.isEmpty {
-                return 0
-            }
-            
-            var dailyRecords: [Date: [SleepRecord]] = [:]
-            var totalDebt: Double = 0
-            
-            // 各日ごとに睡眠記録をグループ化
-            for record in records {
-                guard let startAt = record.startAt, let _ = record.endAt else { continue }
-                
-                let dateKey = calendar.startOfDay(for: startAt)
-                if dailyRecords[dateKey] == nil {
-                    dailyRecords[dateKey] = []
+        var totalDebt: Double = 0
+        for dayOffset in 0..<days {
+            // 基準日（offset日前）のアンカーを計算
+            let date = calendar.date(byAdding: .day, value: -dayOffset, to: Date())!
+            let windowStart = anchor(for: date, context: context)
+            let windowEnd = calendar.date(byAdding: .hour, value: 24, to: windowStart)!
+            // ウインドウ内のエピソードを取得
+            let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+            request.predicate = NSPredicate(format: "startAt < %@ AND endAt > %@", windowEnd as NSDate, windowStart as NSDate)
+            do {
+                let records = try context.fetch(request)
+                // 合計睡眠時間（時間単位）
+                let dailySleepHours = records.reduce(0.0) { sum, record in
+                    guard let start = record.startAt, let end = record.endAt else { return sum }
+                    return sum + end.timeIntervalSince(start) / 3600
                 }
-                dailyRecords[dateKey]?.append(record)
+                let dailyDebt = calculateDailyDebt(sleepHours: dailySleepHours)
+                totalDebt += dailyDebt
+            } catch {
+                print("睡眠負債の計算に失敗しました (offset:\(dayOffset)): \(error)")
             }
-            
-            // 日ごとの睡眠負債を計算（記録がある日のみ）
-            for day in 0..<days {
-                if let date = calendar.date(byAdding: .day, value: -day, to: calendar.startOfDay(for: now)) {
-                    // 記録がある日のみ負債を計算
-                    if let dailyRecords = dailyRecords[date], !dailyRecords.isEmpty {
-                        let dailySleepHours = dailyRecords.reduce(0.0) { sum, record in
-                            guard let startAt = record.startAt, let endAt = record.endAt else { return sum }
-                            return sum + (endAt.timeIntervalSince(startAt) / 3600)
-                        }
-                        
-                        let dailyDebt = calculateDailyDebt(sleepHours: dailySleepHours)
-                        totalDebt += dailyDebt
-                    }
-                }
-            }
-            
-            return totalDebt
-            
-        } catch {
-            print("睡眠負債の計算に失敗しました: \(error)")
-            return 0
         }
+        return totalDebt
     }
     
     // 仮眠が必要かどうかの判断

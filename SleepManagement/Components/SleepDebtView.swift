@@ -56,12 +56,16 @@ struct SleepDebtView: View {
             }
             .frame(width: 120, height: 120)
             
-            // 集計期間ラベルを表示
-            Text(localizationManager.currentLanguage == "ja"
-                 ? "集計期間: \(timeFormatter.string(from: windowStart)) ～ \(timeFormatter.string(from: windowEnd))"
-                 : "Reporting Period: \(timeFormatter.string(from: windowStart)) - \(timeFormatter.string(from: windowEnd))")
-                .font(Theme.Typography.captionFont)
-                .foregroundColor(Theme.Colors.subtext)
+            // ７日間固定集計時には期間ラベルを表示しない
+            if detailTitle == (localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail") {
+                EmptyView()
+            } else {
+                Text(localizationManager.currentLanguage == "ja"
+                     ? "集計期間: \(timeFormatter.string(from: windowStart)) ～ \(timeFormatter.string(from: windowEnd))"
+                     : "Reporting Period: \(timeFormatter.string(from: windowStart)) - \(timeFormatter.string(from: windowEnd))")
+                    .font(Theme.Typography.captionFont)
+                    .foregroundColor(Theme.Colors.subtext)
+            }
         }
         .padding()
         .background(Theme.Colors.cardBackground)
