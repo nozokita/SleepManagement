@@ -128,6 +128,11 @@ struct HomeView: View {
                 EditSleepRecordView(record: record)
                     .environment(\.managedObjectContext, viewContext)
             }
+            .alert("score_info_title".localized, isPresented: $showScoreInfo) {
+                Button("common.okButton".localized, role: .cancel) {}
+            } message: {
+                Text("manual_score_info_message".localized)
+            }
         }
     }
     
@@ -205,25 +210,34 @@ struct HomeView: View {
                         .background(Color.white.opacity(0.15))
                         .cornerRadius(10)
                         
-                        HStack(spacing: 8) {
-                            Image(systemName: "chart.bar.fill")
-                                .font(.caption)
-                                .foregroundColor(.white)
-                            
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("sleep_score".localized)
+                        ZStack(alignment: .topTrailing) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "chart.bar.fill")
                                     .font(.caption)
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundColor(.white)
                                 
-                                Text("\(Int(latestRecord.score))" + "points".localized)
-                                    .font(.subheadline.bold())
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("sleep_score".localized)
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
+                                    
+                                    Text("\(Int(latestRecord.score))" + "points".localized)
+                                        .font(.subheadline.bold())
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.15))
+                            .cornerRadius(10)
+                            
+                            Button(action: { showScoreInfo = true }) {
+                                Image(systemName: "info.circle")
+                                    .font(.caption)
                                     .foregroundColor(.white)
                             }
+                            .padding(6)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.15))
-                        .cornerRadius(10)
                         
                         Spacer()
                     }
@@ -536,7 +550,7 @@ struct HomeView: View {
         .alert("score_info_title".localized, isPresented: $showScoreInfo) {
             Button("common.okButton".localized, role: .cancel) {}
         } message: {
-            Text("score_info_message".localized)
+            Text("manual_score_info_message".localized)
         }
         .padding()
         .background(Theme.Colors.cardBackground)

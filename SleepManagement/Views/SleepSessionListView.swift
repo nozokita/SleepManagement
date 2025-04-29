@@ -87,7 +87,7 @@ struct SleepSessionListView: View {
                         .alert("score_info_title".localized, isPresented: $showScoreInfo) {
                             Button("common.okButton".localized, role: .cancel) {}
                         } message: {
-                            Text("score_info_message".localized)
+                            Text("session_score_info_message".localized)
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {

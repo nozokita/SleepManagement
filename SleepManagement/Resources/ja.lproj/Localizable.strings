@@ -265,4 +265,10 @@
 
 // Sleep Score Info Dialog
 "score_info_title" = "睡眠スコアの計算方法";
-"score_info_message" = "睡眠スコアは、睡眠時間と睡眠の質に基づき0～100点で算出されます。スコアが高いほど良質な睡眠を示します。"; 
+"score_info_message" = "睡眠スコアは、睡眠時間と睡眠の質に基づき0～100点で算出されます。スコアが高いほど良質な睡眠を示します。";
+
+// Sleep Score Info Dialog for manual records
+"manual_score_info_message" = "計算式：\n要素           | 計算式\n睡眠時間比率   | min(睡眠時間 ÷ 7h, 1.0)\n主観評価比率   | 品質 ÷ 5.0\n最終スコア     | 60 × 睡眠時間比率 + 40 × 主観評価比率";
+
+// Sleep Score Info Dialog for sessions
+"session_score_info_message" = "計算式：\n要素           | 計算式\n効率スコア     | min(総睡眠時間 ÷ 総入床時間, 1.0) × 40\n覚醒ペナルティ | 覚醒回数 × 2\n深睡眠ボーナス | min(深睡眠比率 ÷ 0.2, 1.0) × 10\n最終スコア     | clamp(効率スコア − 覚醒ペナルティ + 深睡眠ボーナス, 0, 100)"; 
