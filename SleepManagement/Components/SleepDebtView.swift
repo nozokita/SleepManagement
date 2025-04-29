@@ -7,13 +7,13 @@ struct SleepDebtView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("睡眠負債")
+                Text("sleep_debt".localized)
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 
                 Spacer()
                 
-                Text(String(format: "%.1f時間", totalDebt))
+                Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
                     .font(Theme.Typography.headingFont)
                     .foregroundColor(debtColor)
             }

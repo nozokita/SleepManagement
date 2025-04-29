@@ -338,38 +338,7 @@ struct HomeView: View {
     
     // 睡眠負債カード
     private var sleepDebtCard: some View {
-        // 過去24時間の負債をリングで表示
-        let progress = min(debtHours, 1)
-        VStack(spacing: 16) {
-            // カードヘッダー
-            HStack {
-                Text("sleep_debt".localized)
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
-                Spacer()
-            }
-            // リングチャート
-            ZStack {
-                Circle()
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 12)
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(
-                        Theme.Colors.primary,
-                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeOut, value: progress)
-                Text(String(format: "%+.1f%@", debtHours, "hours".localized))
-                    .font(Theme.Typography.headingFont)
-                    .foregroundColor(Theme.Colors.primary)
-            }
-            .frame(width: 120, height: 120)
-        }
-        .padding()
-        .background(Theme.Colors.cardBackground)
-        .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        SleepDebtView(totalDebt: debtHours)
     }
     
     // AI診断・アドバイスセクション
