@@ -26,17 +26,27 @@ extension SleepSession {
         return totalAsleep / totalInBed
     }
 
-    /// セッション単位の睡眠スコア (0–100)
+    /// セッション単位の睡眠スコア (0–100) を HealthKit モデルに変更
     var sessionScore: Int {
-        // 効率（40点満点）
-        let efficiencyScore = min(efficiency, 1.0) * 40.0
-        // 覚醒ペナルティ（2点/回）
-        let wakePenalty = Double(awakeCount) * 2.0
-        // 深睡眠ボーナス（10点満点、深睡眠比率20%で満点）
-        let deepBonus = min(deepSleepRatio / 0.2, 1.0) * 10.0
-        // 合計とクランプ
-        let rawScore = efficiencyScore - wakePenalty + deepBonus
-        let clamped = max(0, min(rawScore, 100))
-        return Int(clamped)
+        // HealthKit マルチファクターモデルで 100 点満点で計算
+        let durationH = totalAsleep / 3600.0
+        let eff = efficiency
+        // 規則性はセッション単体では未実装のため、1.0(完璧)と仮定
+        let reg = 1.0
+        // 潜時: 最初の入眠セグメント到達までの時間（分）
+        let firstAsleep = segments.first(where: { $0.state.isAsleep })
+        let lat = firstAsleep.map { $0.start.timeIntervalSince(start) / 60 } ?? 0.0
+        // WASO: セッション中のAwakeセグメント合計時間（分）
+        let waso = segments
+            .filter { $0.state == .awake }
+            .reduce(0.0) { $0 + $1.duration } / 60.0
+        let score = SleepManager.shared.calculateHealthKitSleepScore(
+            durationH: durationH,
+            efficiency: eff,
+            regularity: reg,
+            latency: lat,
+            waso: waso
+        )
+        return Int(max(0, min(score, 100)))
     }
 } 
