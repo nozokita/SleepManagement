@@ -340,9 +340,10 @@ struct HomeView: View {
     private var sleepDebtCard: some View {
         let now = Date()
         let windowEnd = now
-        let windowStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
+        // 過去7日間で固定集計
+        let windowStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
         return SleepDebtView(
-            totalDebt: debtHours,
+            totalDebt: totalDebt, // 7日間の累積睡眠負債
             windowStart: windowStart,
             windowEnd: windowEnd
         )
