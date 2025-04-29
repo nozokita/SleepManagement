@@ -210,37 +210,34 @@ struct HomeView: View {
                         .background(Color.white.opacity(0.15))
                         .cornerRadius(10)
                         
-                        ZStack(alignment: .topTrailing) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "chart.bar.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.white)
-                                
-                                VStack(alignment: .leading, spacing: 1) {
-                                    Text("sleep_score".localized)
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.8))
-                                    
-                                    Text("\(Int(latestRecord.score))" + "points".localized)
-                                        .font(.subheadline.bold())
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.15))
-                            .cornerRadius(10)
-                            
-                            Button(action: {
-                                showScoreInfo = true
-                            }) {
-                                Image(systemName: "info.circle")
-                                    .font(.caption)
-                                    .foregroundColor(.white)
-                            }
-                            .padding(6)
-                            .offset(x: -6, y: -6)
+                        Button(action: {
+                            showScoreInfo = true
+                        }) {
+                            Image(systemName: "info.circle")
+                                .font(.caption)
+                                .foregroundColor(.white)
                         }
+                        .padding(6)
+                        
+                        HStack(spacing: 8) {
+                            Image(systemName: "chart.bar.fill")
+                                .font(.caption)
+                                .foregroundColor(.white)
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("sleep_score".localized)
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.8))
+
+                                Text("\(Int(latestRecord.score))" + "points".localized)
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.15))
+                        .cornerRadius(10)
                         
                         Spacer()
                     }
