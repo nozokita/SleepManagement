@@ -57,6 +57,43 @@ class SleepManager: ObservableObject {
         return max(idealHours - sleepHours, 0)
     }
     
+    // MARK: - 重み付け関数 (質×時間)
+    /// ナップ時間（分）に応じた回復係数を返す
+    func weight(for minutes: Int) -> Double {
+        switch minutes {
+        case ..<10: return 0.0
+        case ..<30: return 0.3
+        case ..<60: return 0.6
+        case ..<90: return 0.9
+        default:    return 1.0
+        }
+    }
+    
+    // MARK: - 急性睡眠負債 (ローリング24h) の計算
+    /// 過去24時間分の睡眠エピソードを重み付きで合計し、理想睡眠時間との差を返す
+    func calculateAcuteDebt(context: NSManagedObjectContext) -> Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let since = calendar.date(byAdding: .hour, value: -24, to: now)!
+        // 24h以内に終了した記録を取得
+        let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+        request.predicate = NSPredicate(format: "endAt >= %@", since as NSDate)
+        do {
+            let records = try context.fetch(request)
+            // 重み付き合計 (時間)
+            let effectiveHours = records.reduce(0.0) { sum, record in
+                guard let start = record.startAt, let end = record.endAt else { return sum }
+                let durationMin = Int(end.timeIntervalSince(start) / 60)
+                return sum + weight(for: durationMin) * (Double(durationMin) / 60)
+            }
+            let idealHours = SettingsManager.shared.idealSleepDuration / 3600
+            return max(idealHours - effectiveHours, 0)
+        } catch {
+            print("急性睡眠負債の計算に失敗: \(error)")
+            return 0
+        }
+    }
+    
     // 過去N日間の睡眠負債を計算
     func calculateTotalDebt(context: NSManagedObjectContext, days: Int = 7) -> Double {
         let calendar = Calendar.current

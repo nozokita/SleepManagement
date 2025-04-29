@@ -728,9 +728,9 @@ struct HomeView: View {
     }
     
     // MARK: - データ処理
-    /// 24時間分の総睡眠負債（時間）を計算して更新
+    /// 24時間分の急性睡眠負債（ローリング24h）を計算して更新
     private func loadDebt() {
-        debtHours = sleepManager.calculateTotalDebt(context: viewContext, days: 1)
+        debtHours = sleepManager.calculateAcuteDebt(context: viewContext)
     }
 }
 
