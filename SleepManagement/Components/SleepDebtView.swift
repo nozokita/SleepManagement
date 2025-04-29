@@ -37,12 +37,6 @@ struct SleepDebtView: View {
                     .foregroundColor(Theme.Colors.primary)
             }
             .frame(width: 120, height: 120)
-            
-            // 負債の説明テキスト
-            Text(debtDescription)
-                .font(Theme.Typography.captionFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
         .background(Theme.Colors.cardBackground)
