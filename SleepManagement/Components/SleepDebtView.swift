@@ -18,22 +18,25 @@ struct SleepDebtView: View {
                     .foregroundColor(debtColor)
             }
             
-            // 負債ゲージ
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // 背景
-                    RoundedRectangle(cornerRadius: 8)
-                        .frame(width: geometry.size.width, height: 12)
-                        .foregroundColor(Color.gray.opacity(0.2))
-                    
-                    // 負債の量を表すバー
-                    RoundedRectangle(cornerRadius: 8)
-                        .frame(width: min(CGFloat(totalDebt / maxDebt) * geometry.size.width, geometry.size.width), height: 12)
-                        .foregroundColor(debtColor)
-                        .animation(.easeOut, value: totalDebt)
-                }
+            // リングチャート表示
+            let idealHours = SettingsManager.shared.idealSleepDuration / 3600
+            let progress = min(totalDebt / idealHours, 1)
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 12)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        Theme.Colors.primary,
+                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut, value: progress)
+                Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
+                    .font(Theme.Typography.headingFont)
+                    .foregroundColor(Theme.Colors.primary)
             }
-            .frame(height: 12)
+            .frame(width: 120, height: 120)
             
             // 負債の説明テキスト
             Text(debtDescription)
