@@ -512,48 +512,35 @@ struct HomeView: View {
     
     // 睡眠記録の行アイテム
     private func sleepRecordRow(record: SleepRecord, index: Int) -> some View {
-        ZStack(alignment: .topTrailing) {
-            HStack(spacing: 16) {
-                // 仮眠時はスコアを非表示にして空欄を表示
-                if record.sleepType == SleepRecordType.nap.rawValue {
-                    // 仮眠ラベルをサークルアイコンで表示
-                    ZStack {
-                        Circle()
-                            .stroke(Theme.Colors.subtext, lineWidth: 1)
-                            .frame(width: 60, height: 60)
-                        Text("nap".localized)
-                            .font(.subheadline)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .multilineTextAlignment(.center)
-                    }
-                } else {
-                    // スコア表示
-                    SleepScoreView(score: record.score, size: 60, showAnimation: false)
+        HStack(spacing: 16) {
+            // 仮眠時はスコアを非表示にして空欄を表示
+            if record.sleepType == SleepRecordType.nap.rawValue {
+                // 仮眠ラベルをサークルアイコンで表示
+                ZStack {
+                    Circle()
+                        .stroke(Theme.Colors.subtext, lineWidth: 1)
+                        .frame(width: 60, height: 60)
+                    Text("nap".localized)
+                        .font(.subheadline)
+                        .foregroundColor(Theme.Colors.subtext)
+                        .multilineTextAlignment(.center)
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    // 日付
-                    Text(record.sleepDateText)
-                        .font(Theme.Typography.subheadingFont)
-                        .foregroundColor(Theme.Colors.text)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .foregroundColor(Theme.Colors.subtext)
+            } else {
+                // スコア表示
+                SleepScoreView(score: record.score, size: 60, showAnimation: false)
             }
-            // 情報ボタン
-            Button(action: { showScoreInfo = true }) {
-                Image(systemName: "info.circle")
-                    .foregroundColor(Theme.Colors.subtext)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                // 日付
+                Text(record.sleepDateText)
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
             }
-            .padding(8)
-        }
-        .alert("score_info_title".localized, isPresented: $showScoreInfo) {
-            Button("common.okButton".localized, role: .cancel) {}
-        } message: {
-            Text("manual_score_info_message".localized)
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(Theme.Colors.subtext)
         }
         .padding()
         .background(Theme.Colors.cardBackground)
