@@ -1,13 +1,12 @@
 import SwiftUI
-import Foundation
 
 struct SleepDebtView: View {
+    @State private var showDetail: Bool = false
+    @EnvironmentObject private var localizationManager: LocalizationManager
     let totalDebt: Double
     let windowStart: Date
     let windowEnd: Date
     let maxDebt: Double = 24 // 表示する最大負債（3日分程度）
-    @EnvironmentObject private var localizationManager: LocalizationManager
-    
     private var timeFormatter: DateFormatter {
         let df = DateFormatter()
         df.locale = Locale(identifier: localizationManager.currentLanguage == "ja" ? "ja_JP" : "en_US")
@@ -16,7 +15,7 @@ struct SleepDebtView: View {
     }
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             HStack {
                 Text("sleep_debt".localized)
                     .font(Theme.Typography.subheadingFont)
@@ -24,9 +23,16 @@ struct SleepDebtView: View {
                 
                 Spacer()
                 
-                Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
-                    .font(Theme.Typography.headingFont)
-                    .foregroundColor(debtColor)
+                HStack(spacing: 4) {
+                    Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
+                        .font(Theme.Typography.headingFont)
+                        .foregroundColor(debtColor)
+                    Button(action: { showDetail = true }) {
+                        Image(systemName: "info.circle")
+                            .font(.headline)
+                            .foregroundColor(Theme.Colors.subtext)
+                    }
+                }
             }
             
             // リングチャート表示
@@ -48,8 +54,11 @@ struct SleepDebtView: View {
                     .foregroundColor(Theme.Colors.primary)
             }
             .frame(width: 120, height: 120)
-            // 集計対象ウィンドウの時間帯を表示
-            Text("\(timeFormatter.string(from: windowStart)) ～ \(timeFormatter.string(from: windowEnd))")
+            
+            // 集計期間ラベルを表示
+            Text(localizationManager.currentLanguage == "ja"
+                 ? "集計期間: \(timeFormatter.string(from: windowStart)) ～ \(timeFormatter.string(from: windowEnd))"
+                 : "Reporting Period: \(timeFormatter.string(from: windowStart)) - \(timeFormatter.string(from: windowEnd))")
                 .font(Theme.Typography.captionFont)
                 .foregroundColor(Theme.Colors.subtext)
         }
@@ -57,6 +66,11 @@ struct SleepDebtView: View {
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        // ℹ︎ ボタンで詳細画面を表示
+        .sheet(isPresented: $showDetail) {
+            SleepDebtDetailView(windowStart: windowStart, windowEnd: windowEnd)
+                .environmentObject(localizationManager)
+        }
     }
     
     // 負債に応じた色
