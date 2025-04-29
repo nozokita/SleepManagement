@@ -348,7 +348,16 @@ struct EditSleepRecordView: View {
         let durationSeconds = endDate.timeIntervalSince(startDate)
         let hours = Int(durationSeconds) / 3600
         let minutes = Int(durationSeconds) % 3600 / 60
-        return "\(hours)時間\(minutes)分"
+        // 単位をローカライズ
+        let hoursKey = "hours".localized
+        let minutesKey = "minutes".localized
+        if LocalizationManager.shared.currentLanguage == "ja" {
+            // 日本語: 例: 3時間15分
+            return "\(hours)\(hoursKey)\(minutes)\(minutesKey)"
+        } else {
+            // 英語: 例: 3 hours 15 min
+            return "\(hours) \(hoursKey) \(minutes)\(minutesKey)"
+        }
     }
     
     private func analysisRow(icon: String, color: Color, title: String, message: String) -> some View {
