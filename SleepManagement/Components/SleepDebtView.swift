@@ -55,20 +55,6 @@ struct SleepDebtView: View {
             return Color(hex: "E5636E") // 赤：危険
         }
     }
-    
-    // 負債に応じた説明テキスト
-    private var debtDescription: String {
-        switch totalDebt {
-        case 0..<4:
-            return "睡眠負債は低レベルです。良好な睡眠習慣を維持しましょう。"
-        case 4..<8:
-            return "睡眠負債が蓄積しています。今週中に回復睡眠を取ることをお勧めします。"
-        case 8..<12:
-            return "睡眠負債レベルが高くなっています。できるだけ早く回復睡眠を取りましょう。"
-        default:
-            return "睡眠負債が危険レベルです。至急、長時間の回復睡眠が必要です。"
-        }
-    }
 }
 
 #Preview {
