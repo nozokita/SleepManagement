@@ -56,6 +56,7 @@ struct SleepRecordListView: View {
             Button("common.okButton".localized, role: .cancel) {}
         } message: {
             Text("manual_score_info_message".localized)
+                .multilineTextAlignment(.leading)
         }
         .onAppear(perform: loadRecords)
     }

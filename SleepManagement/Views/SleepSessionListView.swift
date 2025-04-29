@@ -116,6 +116,7 @@ struct SleepSessionListView: View {
                 Button("common.okButton".localized, role: .cancel) {}
             } message: {
                 Text("session_score_info_message".localized)
+                    .multilineTextAlignment(.leading)
             }
             .task {
                 print("SleepSessionListView: Starting to fetch sessions")

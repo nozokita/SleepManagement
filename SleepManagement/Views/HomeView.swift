@@ -31,7 +31,6 @@ struct HomeView: View {
     }
     
     @State private var showSettings = false
-    @State private var showScoreInfo = false
     
     var body: some View {
         NavigationView {
@@ -128,11 +127,6 @@ struct HomeView: View {
                 EditSleepRecordView(record: record)
                     .environment(\.managedObjectContext, viewContext)
             }
-            .alert("score_info_title".localized, isPresented: $showScoreInfo) {
-                Button("common.okButton".localized, role: .cancel) {}
-            } message: {
-                Text("manual_score_info_message".localized)
-            }
         }
     }
     
@@ -209,15 +203,6 @@ struct HomeView: View {
                         .padding(.vertical, 8)
                         .background(Color.white.opacity(0.15))
                         .cornerRadius(10)
-                        
-                        Button(action: {
-                            showScoreInfo = true
-                        }) {
-                            Image(systemName: "info.circle")
-                                .font(.caption)
-                                .foregroundColor(.white)
-                        }
-                        .padding(6)
                         
                         HStack(spacing: 8) {
                             Image(systemName: "chart.bar.fill")
