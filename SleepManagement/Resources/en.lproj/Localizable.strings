@@ -268,7 +268,7 @@
 "manual_score_info_message" = "• timeRatio weighted by 60%\n• subjectiveRatio weighted by 40%\n• Final Score = 60 × timeRatio + 40 × subjectiveRatio";
 
 // Sleep Score Info Dialog for sessions
-"session_score_info_message" = "• Efficiency Score = min(totalAsleep ÷ totalInBed, 1.0) × 40\n• Wake Penalty = awakeCount × 2\n• Deep Sleep Bonus = min(deepSleepRatio ÷ 0.2, 1.0) × 10\n• Raw Score = Efficiency Score − Wake Penalty + Deep Sleep Bonus\n• Final Score = clamp(Raw Score, 0, 100)"; 
+"session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
 
 // Sleep Score Info Dialog
 "score_info_title" = "Sleep Score Calculation";
@@ -278,4 +278,32 @@
 "manual_score_info_message" = "Calculation:\nElement          | Formula\ntimeRatio         | min(duration ÷ 7h, 1.0)\nsubjectiveRatio   | quality ÷ 5.0\nFinal Score       | 60 × timeRatio + 40 × subjectiveRatio";
 
 // Session Score Calculation (Table)
-"session_score_info_message" = "Calculation:\nElement           | Formula\nefficiencyScore   | min(totalAsleep ÷ totalInBed, 1.0) × 40\nwakePenalty       | awakeCount × 2\ndeepBonus         | min(deepSleepRatio ÷ 0.2, 1.0) × 10\nFinal Score       | clamp(efficiencyScore - wakePenalty + deepBonus, 0, 100)"; 
+"session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
+
+/* Expert Advice Section */
+"expert_advice" = "Expert Advice";
+"expert_advice_description" = "Guidance based on your sleep data";
+
+"advice.irregular_sleep_schedule.title" = "Maintain a consistent sleep schedule";
+"advice.irregular_sleep_schedule.description" = "Your sleep times vary significantly. Aim to go to bed and wake up at the same time every day to align your circadian rhythm and improve sleep quality.";
+
+"advice.sleep_debt.title" = "Catch up on sleep debt";
+"advice.sleep_debt.description" = "You are short by %1$d hour(s) compared to the ideal sleep duration. Ensure 7–9 hours of sleep each night to avoid accumulating sleep debt.";
+
+"advice.ideal_sleep_duration.title" = "Aim for recommended sleep duration";
+"advice.ideal_sleep_duration.description" = "Your sleep differs by %1$d hour(s) from the ideal duration. Although individual needs vary, targeting 7–9 hours of sleep is generally advised.";
+
+"advice.low_sleep_efficiency.title" = "Improve your sleep efficiency";
+"advice.low_sleep_efficiency.description" = "Your sleep efficiency is at %1$d%%. Reserve your bed for sleep, and if you can't sleep, leave the bed and relax before returning.";
+
+"advice.long_sleep_latency.title" = "Establish a pre-sleep routine";
+"advice.long_sleep_latency.description" = "It takes you a while to fall asleep. Start a relaxing routine 30–60 minutes before bedtime—such as a warm bath or reading—to signal your body that it's time to sleep.";
+
+"advice.frequent_wakeups.title" = "Reduce nighttime awakenings";
+"advice.frequent_wakeups.description" = "When you wake up at night, avoid checking the clock. Engage in a calming activity in low light until you feel sleepy again.";
+
+"advice.low_sleep_regularity.title" = "Enhance sleep regularity";
+"advice.low_sleep_regularity.description" = "Your sleep start and end times vary widely. Keeping a regular sleep schedule helps synchronize your internal clock.";
+
+"advice.low_subjective_quality.title" = "Boost your perceived sleep quality";
+"advice.low_subjective_quality.description" = "Your subjective sleep rating is low. Improving your pre-sleep routine or sleep environment can help enhance your sleep quality.;"
