@@ -8,7 +8,11 @@ struct SleepRecordCard: View {
         Button(action: onTap) {
             HStack(alignment: .center, spacing: 16) {
                 // 睡眠スコア表示
-                SleepScoreView(score: record.score, size: 60)
+                if SleepRecordType(rawValue: record.sleepType) == .nap {
+                    Color.clear.frame(width: 60, height: 60)
+                } else {
+                    SleepScoreView(score: record.score, size: 60)
+                }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     // 日付

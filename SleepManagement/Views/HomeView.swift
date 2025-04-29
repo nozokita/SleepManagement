@@ -493,8 +493,13 @@ struct HomeView: View {
     // 睡眠記録の行アイテム
     private func sleepRecordRow(record: SleepRecord, index: Int) -> some View {
         HStack(spacing: 16) {
-            // スコア表示
-            SleepScoreView(score: record.score, size: 60, showAnimation: false)
+            // 仮眠時はスコアを非表示にして空欄を表示
+            if record.sleepType == SleepRecordType.nap.rawValue {
+                Color.clear.frame(width: 60, height: 60)
+            } else {
+                // スコア表示
+                SleepScoreView(score: record.score, size: 60, showAnimation: false)
+            }
             
             VStack(alignment: .leading, spacing: 4) {
                 // 日付
