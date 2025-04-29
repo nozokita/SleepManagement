@@ -4,6 +4,8 @@ struct SleepRecordCard: View {
     let record: SleepRecord
     var onTap: () -> Void = {}
     @State private var showScoreInfo = false
+    // ダイアログ用メッセージ
+    @State private var scoreInfoMessage: String = ""
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -77,16 +79,31 @@ struct SleepRecordCard: View {
             }
             .buttonStyle(PlainButtonStyle())
 
-            Button(action: { showScoreInfo = true }) {
+            Button(action: {
+                // 計算根拠メッセージを動的に生成
+                let durationH = record.durationInHours
+                let timeRatio = min(durationH / SleepManager.shared.recommendedSleepHours, 1.0)
+                let subjectiveRatio = Double(record.quality) / 5.0
+                let timeRatioStr = String(format: "%.2f", timeRatio)
+                let subjectiveStr = String(format: "%.2f", subjectiveRatio)
+                let scoreStr = String(format: "%.0f", record.score)
+                if LocalizationManager.shared.currentLanguage == "ja" {
+                    scoreInfoMessage = "計算式：\n睡眠時間比率 = \(timeRatioStr)\n主観評価比率 = \(subjectiveStr)\n最終スコア = 60 × \(timeRatioStr) + 40 × \(subjectiveStr) = \(scoreStr)"
+                } else {
+                    scoreInfoMessage = "Calculation:\ntimeRatio = \(timeRatioStr)\nsubjectiveRatio = \(subjectiveStr)\nFinal Score = 60 × \(timeRatioStr) + 40 × \(subjectiveStr) = \(scoreStr)"
+                }
+                showScoreInfo = true
+            }) {
                 Image(systemName: "info.circle")
                     .foregroundColor(Theme.Colors.subtext)
             }
             .padding(8)
+            .offset(x: -8, y: -8)
         }
         .alert("score_info_title".localized, isPresented: $showScoreInfo) {
             Button("common.okButton".localized, role: .cancel) {}
         } message: {
-            Text("manual_score_info_message".localized)
+            Text(scoreInfoMessage)
         }
     }
 }

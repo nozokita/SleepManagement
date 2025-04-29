@@ -32,6 +32,8 @@ struct HomeView: View {
     
     @State private var showSettings = false
     @State private var showScoreInfo = false
+    // Infoダイアログ用のメッセージ
+    @State private var scoreInfoMessage: String = ""
     
     var body: some View {
         NavigationView {
@@ -131,7 +133,7 @@ struct HomeView: View {
             .alert("score_info_title".localized, isPresented: $showScoreInfo) {
                 Button("common.okButton".localized, role: .cancel) {}
             } message: {
-                Text("manual_score_info_message".localized)
+                Text(scoreInfoMessage)
             }
         }
     }
@@ -231,12 +233,27 @@ struct HomeView: View {
                             .background(Color.white.opacity(0.15))
                             .cornerRadius(10)
                             
-                            Button(action: { showScoreInfo = true }) {
+                            Button(action: {
+                                // 動的に計算根拠を生成
+                                let durationH = latestRecord.durationInHours
+                                let timeRatio = min(durationH / SleepManager.shared.recommendedSleepHours, 1.0)
+                                let subjectiveRatio = Double(latestRecord.quality) / 5.0
+                                let trStr = String(format: "%.2f", timeRatio)
+                                let srStr = String(format: "%.2f", subjectiveRatio)
+                                let scStr = String(format: "%.0f", latestRecord.score)
+                                if localizationManager.currentLanguage == "ja" {
+                                    scoreInfoMessage = "計算式：\n睡眠時間比率 = \(trStr)\n主観評価比率 = \(srStr)\n最終スコア = 60 × \(trStr) ＋ 40 × \(srStr) = \(scStr)"
+                                } else {
+                                    scoreInfoMessage = "Calculation:\ntimeRatio = \(trStr)\nsubjectiveRatio = \(srStr)\nFinal Score = 60 × \(trStr) + 40 × \(srStr) = \(scStr)"
+                                }
+                                showScoreInfo = true
+                            }) {
                                 Image(systemName: "info.circle")
                                     .font(.caption)
                                     .foregroundColor(.white)
                             }
                             .padding(6)
+                            .offset(x: -6, y: -6)
                         }
                         
                         Spacer()
