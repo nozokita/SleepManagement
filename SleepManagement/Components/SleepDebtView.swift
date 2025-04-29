@@ -7,6 +7,7 @@ struct SleepDebtView: View {
     let windowStart: Date
     let windowEnd: Date
     let maxDebt: Double = 24 // 表示する最大負債（3日分程度）
+    let detailTitle: String
     private var timeFormatter: DateFormatter {
         let df = DateFormatter()
         df.locale = Locale(identifier: localizationManager.currentLanguage == "ja" ? "ja_JP" : "en_US")
@@ -68,8 +69,12 @@ struct SleepDebtView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         // ℹ︎ ボタンで詳細画面を表示
         .sheet(isPresented: $showDetail) {
-            SleepDebtDetailView(windowStart: windowStart, windowEnd: windowEnd)
-                .environmentObject(localizationManager)
+            SleepDebtDetailView(
+                windowStart: windowStart,
+                windowEnd: windowEnd,
+                detailTitle: detailTitle
+            )
+            .environmentObject(localizationManager)
         }
     }
     
@@ -88,9 +93,9 @@ struct SleepDebtView: View {
 
 #Preview {
     VStack(spacing: 20) {
-        SleepDebtView(totalDebt: 2.5, windowStart: Date(), windowEnd: Date())
-        SleepDebtView(totalDebt: 6.0, windowStart: Date(), windowEnd: Date())
-        SleepDebtView(totalDebt: 12.5, windowStart: Date(), windowEnd: Date())
+        SleepDebtView(totalDebt: 2.5, windowStart: Date(), windowEnd: Date(), detailTitle: "Calculation Detail")
+        SleepDebtView(totalDebt: 6.0, windowStart: Date(), windowEnd: Date(), detailTitle: "Calculation Detail")
+        SleepDebtView(totalDebt: 12.5, windowStart: Date(), windowEnd: Date(), detailTitle: "Calculation Detail")
     }
     .padding()
     .background(Theme.Colors.background)

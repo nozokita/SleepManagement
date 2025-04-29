@@ -8,6 +8,8 @@ struct SleepDebtDetailView: View {
 
     let windowStart: Date
     let windowEnd: Date
+    // 詳細画面のタイトル
+    let detailTitle: String
 
     private let manager = SleepManager.shared
 
@@ -236,7 +238,7 @@ struct SleepDebtDetailView: View {
                         .multilineTextAlignment(.trailing)
                 }
             }
-            .navigationTitle(localizationManager.currentLanguage == "ja" ? "計算過程" : "Calculation Detail")
+            .navigationTitle(detailTitle)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(localizationManager.currentLanguage == "ja" ? "閉じる" : "Close") {
@@ -250,7 +252,11 @@ struct SleepDebtDetailView: View {
 
 struct SleepDebtDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        SleepDebtDetailView(windowStart: Date(), windowEnd: Date())
+        SleepDebtDetailView(
+            windowStart: Date(),
+            windowEnd: Date(),
+            detailTitle: LocalizationManager.shared.currentLanguage == "ja" ? "計算過程" : "Calculation Detail"
+        )
             .environmentObject(LocalizationManager.shared)
             .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
     }

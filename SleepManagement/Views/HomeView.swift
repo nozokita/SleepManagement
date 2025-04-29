@@ -350,7 +350,8 @@ struct HomeView: View {
                 SleepDebtView(
                     totalDebt: debtHours,
                     windowStart: window24hStart,
-                    windowEnd: now
+                    windowEnd: now,
+                    detailTitle: localizationManager.currentLanguage == "ja" ? "過去24時間の計算過程" : "24-Hour Calculation Detail"
                 )
                 .environmentObject(localizationManager)
             }
@@ -362,7 +363,8 @@ struct HomeView: View {
                 SleepDebtView(
                     totalDebt: totalDebt,
                     windowStart: window7dStart,
-                    windowEnd: now
+                    windowEnd: now,
+                    detailTitle: localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail"
                 )
                 .environmentObject(localizationManager)
             }
