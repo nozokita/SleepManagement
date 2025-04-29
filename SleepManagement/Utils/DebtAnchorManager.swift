@@ -24,9 +24,9 @@ struct DebtAnchorManager {
             predicate: #Predicate { episode in
                 episode.startAt >= startWindow && episode.startAt < endWindow
             },
-            sortBy: [SortDescriptor(\.startAt, order: .ascending)]
+            sortBy: [SortDescriptor(\.startAt, order: .forward)]
         )
-        let episodes = (try? context.fetch(descriptor)) ?? []
+        let episodes: [SleepEpisode] = (try? context.fetch(descriptor)) ?? []
 
         // 日ごとに最長エピソードを抽出し、その中心時刻を計算
         var centers: [Date] = []
