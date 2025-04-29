@@ -44,14 +44,14 @@ struct SleepDebtView: View {
                 Circle()
                     .trim(from: 0, to: progress)
                     .stroke(
-                        Theme.Colors.primary,
+                        debtColor,
                         style: StrokeStyle(lineWidth: 12, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
                     .animation(.easeOut, value: progress)
                 Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
                     .font(Theme.Typography.headingFont)
-                    .foregroundColor(Theme.Colors.primary)
+                    .foregroundColor(debtColor)
             }
             .frame(width: 120, height: 120)
             

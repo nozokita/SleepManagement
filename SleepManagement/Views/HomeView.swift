@@ -336,18 +336,37 @@ struct HomeView: View {
         .opacity(animatedCards ? 1 : 0)
     }
     
-    // 睡眠負債カード（ローリング24hの時間帯を表示）
+    // 睡眠負債カード（過去24h と 7日間固定集計 を並べて表示）
     private var sleepDebtCard: some View {
         let now = Date()
-        let windowEnd = now
-        // 過去7日間で固定集計
-        let windowStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
-        return SleepDebtView(
-            totalDebt: totalDebt, // 7日間の累積睡眠負債
-            windowStart: windowStart,
-            windowEnd: windowEnd
-        )
-        .environmentObject(localizationManager)
+        let window24hStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
+        let window7dStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        return VStack(spacing: 32) {
+            // 過去24時間表示
+            VStack(spacing: 8) {
+                Text(localizationManager.currentLanguage == "ja" ? "過去24時間表示" : "Past 24 Hours")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                SleepDebtView(
+                    totalDebt: debtHours,
+                    windowStart: window24hStart,
+                    windowEnd: now
+                )
+                .environmentObject(localizationManager)
+            }
+            // 7日間固定集計
+            VStack(spacing: 8) {
+                Text(localizationManager.currentLanguage == "ja" ? "７日間固定集計" : "7-Day Fixed")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                SleepDebtView(
+                    totalDebt: totalDebt,
+                    windowStart: window7dStart,
+                    windowEnd: now
+                )
+                .environmentObject(localizationManager)
+            }
+        }
     }
     
     // AI診断・アドバイスセクション
