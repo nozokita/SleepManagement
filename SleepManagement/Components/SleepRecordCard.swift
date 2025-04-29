@@ -3,77 +3,91 @@ import SwiftUI
 struct SleepRecordCard: View {
     let record: SleepRecord
     var onTap: () -> Void = {}
+    @State private var showScoreInfo = false
     
     var body: some View {
-        Button(action: onTap) {
-            HStack(alignment: .center, spacing: 16) {
-                // 睡眠スコア表示
-                if SleepRecordType(rawValue: record.sleepType) == .nap {
-                    // 仮眠ラベルをサークルアイコンで表示
-                    ZStack {
-                        Circle()
-                            .stroke(Theme.Colors.subtext, lineWidth: 1)
-                            .frame(width: 60, height: 60)
-                        Text("nap".localized)
-                            .font(.subheadline)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .multilineTextAlignment(.center)
-                    }
-                } else {
-                    SleepScoreView(score: record.score, size: 60)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    // 日付
-                    Text(record.sleepDateText)
-                        .font(Theme.Typography.subheadingFont)
-                        .foregroundColor(Theme.Colors.text)
-                    
-                    // 睡眠時間
-                    HStack(spacing: 8) {
-                        Image(systemName: "clock")
-                            .foregroundColor(Theme.Colors.primary)
-                        
-                        Text("\(record.startTimeText) - \(record.endTimeText)")
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.text)
+        ZStack(alignment: .topTrailing) {
+            Button(action: onTap) {
+                HStack(alignment: .center, spacing: 16) {
+                    // 睡眠スコア表示
+                    if SleepRecordType(rawValue: record.sleepType) == .nap {
+                        // 仮眠ラベルをサークルアイコンで表示
+                        ZStack {
+                            Circle()
+                                .stroke(Theme.Colors.subtext, lineWidth: 1)
+                                .frame(width: 60, height: 60)
+                            Text("nap".localized)
+                                .font(.subheadline)
+                                .foregroundColor(Theme.Colors.subtext)
+                                .multilineTextAlignment(.center)
+                        }
+                    } else {
+                        SleepScoreView(score: record.score, size: 60)
                     }
                     
-                    // 睡眠の長さ
-                    HStack(spacing: 8) {
-                        Image(systemName: "bed.double")
-                            .foregroundColor(Theme.Colors.primary)
-                        
-                        Text(record.durationText)
-                            .font(Theme.Typography.bodyFont)
+                    VStack(alignment: .leading, spacing: 4) {
+                        // 日付
+                        Text(record.sleepDateText)
+                            .font(Theme.Typography.subheadingFont)
                             .foregroundColor(Theme.Colors.text)
-                    }
-                }
-                
-                Spacer()
-                
-                // 睡眠負債表示（あれば）
-                if record.debt > 0 {
-                    VStack {
-                        Text("sleep_debt".localized)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.subtext)
                         
-                        Text(record.debtText)
-                            .font(Theme.Typography.bodyFont.bold())
-                            .foregroundColor(Theme.Colors.scoreColor(score: max(0, 100 - record.debt * 10)))
+                        // 睡眠時間
+                        HStack(spacing: 8) {
+                            Image(systemName: "clock")
+                                .foregroundColor(Theme.Colors.primary)
+                            
+                            Text("\(record.startTimeText) - \(record.endTimeText)")
+                                .font(Theme.Typography.bodyFont)
+                                .foregroundColor(Theme.Colors.text)
+                        }
+                        
+                        // 睡眠の長さ
+                        HStack(spacing: 8) {
+                            Image(systemName: "bed.double")
+                                .foregroundColor(Theme.Colors.primary)
+                            
+                            Text(record.durationText)
+                                .font(Theme.Typography.bodyFont)
+                                .foregroundColor(Theme.Colors.text)
+                        }
                     }
+                    
+                    Spacer()
+                    
+                    // 睡眠負債表示（あれば）
+                    if record.debt > 0 {
+                        VStack {
+                            Text("sleep_debt".localized)
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(Theme.Colors.subtext)
+                            
+                            Text(record.debtText)
+                                .font(Theme.Typography.bodyFont.bold())
+                                .foregroundColor(Theme.Colors.scoreColor(score: max(0, 100 - record.debt * 10)))
+                        }
+                    }
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Theme.Colors.subtext)
                 }
-                
-                Image(systemName: "chevron.right")
+                .padding()
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: { showScoreInfo = true }) {
+                Image(systemName: "info.circle")
                     .foregroundColor(Theme.Colors.subtext)
             }
-            .padding()
-            .background(Theme.Colors.cardBackground)
-            .cornerRadius(Theme.Layout.cardCornerRadius)
-            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+            .padding(8)
         }
-        .buttonStyle(PlainButtonStyle())
+        .alert("score_info_title".localized, isPresented: $showScoreInfo) {
+            Button("common.okButton".localized, role: .cancel) {}
+        } message: {
+            Text("score_info_message".localized)
+        }
     }
 }
 

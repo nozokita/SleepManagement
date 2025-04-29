@@ -7,6 +7,7 @@ struct SleepSessionListView: View {
     @State private var showingDeleteAlert = false
     @State private var sessionToDelete: SleepSession?
     @State private var sessionToEdit: SleepSession?
+    @State private var showScoreInfo = false
 
     // 時刻フォーマッタ
     private var timeFormatter: DateFormatter {
@@ -29,50 +30,64 @@ struct SleepSessionListView: View {
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(viewModel.sessions) { session in
-                        // スコアと詳細を横並びで表示
-                        HStack(alignment: .center, spacing: 16) {
-                            SleepScoreView(
-                                score: Double(session.sessionScore),
-                                size: 60,
-                                showText: true,
-                                showAnimation: false
-                            )
-                            VStack(alignment: .leading, spacing: 6) {
-                                HStack {
-                                    Text(timeFormatter.string(from: session.start))
-                                        .font(.headline)
-                                    Text("〜")
-                                    Text(timeFormatter.string(from: session.end))
-                                        .font(.headline)
-                                    Spacer()
-                                    if session.isNap {
-                                        Text("nap".localized)
-                                            .font(.caption)
-                                            .foregroundColor(.blue)
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
-                                            .background(Color.blue.opacity(0.1))
-                                            .cornerRadius(4)
+                        ZStack(alignment: .topTrailing) {
+                            // スコアと詳細を横並びで表示
+                            HStack(alignment: .center, spacing: 16) {
+                                SleepScoreView(
+                                    score: Double(session.sessionScore),
+                                    size: 60,
+                                    showText: true,
+                                    showAnimation: false
+                                )
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack {
+                                        Text(timeFormatter.string(from: session.start))
+                                            .font(.headline)
+                                        Text("〜")
+                                        Text(timeFormatter.string(from: session.end))
+                                            .font(.headline)
+                                        Spacer()
+                                        if session.isNap {
+                                            Text("nap".localized)
+                                                .font(.caption)
+                                                .foregroundColor(.blue)
+                                                .padding(.horizontal, 8)
+                                                .padding(.vertical, 4)
+                                                .background(Color.blue.opacity(0.1))
+                                                .cornerRadius(4)
+                                        }
                                     }
+                                    HStack {
+                                        Text("in_bed_time".localized)
+                                        Text(durationText(session.totalInBed))
+                                            .bold()
+                                        Spacer()
+                                        Text("sleep_duration".localized)
+                                        Text(durationText(session.totalAsleep))
+                                            .bold()
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                                 }
-                                HStack {
-                                    Text("in_bed_time".localized)
-                                    Text(durationText(session.totalInBed))
-                                        .bold()
-                                    Spacer()
-                                    Text("sleep_duration".localized)
-                                    Text(durationText(session.totalAsleep))
-                                        .bold()
-                                }
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                                Spacer()
                             }
-                            Spacer()
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                sessionToEdit = session
+                            }
+
+                            // 情報アイコン
+                            Button(action: { showScoreInfo = true }) {
+                                Image(systemName: "info.circle")
+                                    .foregroundColor(Theme.Colors.subtext)
+                            }
+                            .padding(8)
                         }
                         .padding(.vertical, 12)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            sessionToEdit = session
+                        .alert("score_info_title".localized, isPresented: $showScoreInfo) {
+                            Button("common.okButton".localized, role: .cancel) {}
+                        } message: {
+                            Text("score_info_message".localized)
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {

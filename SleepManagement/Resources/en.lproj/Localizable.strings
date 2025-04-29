@@ -258,4 +258,8 @@
 "edit_sleep_record_subtitle" = "Update sleep record details";
 "score_preview" = "Score Preview";
 "sleep_analysis" = "Sleep Analysis";
-"duration" = "Duration"; 
+"duration" = "Duration";
+
+// Sleep Score Info Dialog
+"score_info_title" = "Sleep Score Calculation";
+"score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep."; 

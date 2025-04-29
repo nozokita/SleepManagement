@@ -261,4 +261,8 @@
 "edit_sleep_record_subtitle" = "睡眠の詳細を更新します";
 "score_preview" = "スコアプレビュー";
 "sleep_analysis" = "睡眠分析";
-"duration" = "睡眠時間"; 
+"duration" = "睡眠時間";
+
+// Sleep Score Info Dialog
+"score_info_title" = "睡眠スコアの計算方法";
+"score_info_message" = "睡眠スコアは、睡眠時間と睡眠の質に基づき0～100点で算出されます。スコアが高いほど良質な睡眠を示します。"; 
