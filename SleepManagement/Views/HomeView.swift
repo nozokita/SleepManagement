@@ -463,6 +463,14 @@ struct HomeView: View {
                         sleepRecordRow(record: record, index: index)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    // 長押しで削除メニューを表示
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            deleteRecord(record)
+                        } label: {
+                            Label("list.delete".localized, systemImage: "trash")
+                        }
+                    }
                     .swipeActions(edge: .trailing) {
                         // 編集
                         Button {
@@ -471,12 +479,6 @@ struct HomeView: View {
                             Label("list.edit".localized, systemImage: "pencil")
                         }
                         .tint(.blue)
-                        // 削除
-                        Button(role: .destructive) {
-                            deleteRecord(record)
-                        } label: {
-                            Label("list.delete".localized, systemImage: "trash")
-                        }
                     }
                 }
                 // HealthKit同期案内メッセージ
@@ -495,7 +497,16 @@ struct HomeView: View {
         HStack(spacing: 16) {
             // 仮眠時はスコアを非表示にして空欄を表示
             if record.sleepType == SleepRecordType.nap.rawValue {
-                Color.clear.frame(width: 60, height: 60)
+                // 仮眠ラベルをサークルアイコンで表示
+                ZStack {
+                    Circle()
+                        .stroke(Theme.Colors.subtext, lineWidth: 1)
+                        .frame(width: 60, height: 60)
+                    Text("nap".localized)
+                        .font(.subheadline)
+                        .foregroundColor(Theme.Colors.subtext)
+                        .multilineTextAlignment(.center)
+                }
             } else {
                 // スコア表示
                 SleepScoreView(score: record.score, size: 60, showAnimation: false)

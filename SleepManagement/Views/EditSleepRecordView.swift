@@ -3,6 +3,7 @@ import SwiftUI
 struct EditSleepRecordView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     // 編集対象の睡眠記録
     var record: SleepRecord
@@ -37,13 +38,9 @@ struct EditSleepRecordView: View {
                     VStack(spacing: 20) {
                         // ヘッダー部分
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("睡眠記録の編集")
-                                .font(Theme.Typography.headingFont)
-                                .foregroundColor(Theme.Colors.text)
+                            Text("edit_sleep_record_title".localized)
                             
-                            Text("睡眠の詳細を更新します")
-                                .font(Theme.Typography.captionFont)
-                                .foregroundColor(Theme.Colors.subtext)
+                            Text("edit_sleep_record_subtitle".localized)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
@@ -53,18 +50,18 @@ struct EditSleepRecordView: View {
                         
                         // 睡眠時間セクション
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("睡眠時間")
+                            Text("sleep_time".localized)
                                 .font(.headline)
                                 .foregroundColor(Theme.Colors.text)
                             
                             VStack(spacing: 12) {
-                                DatePicker("開始時刻", selection: $startDate)
+                                DatePicker("bedtime".localized, selection: $startDate)
                                     .onChange(of: startDate) { oldValue, newValue in
                                         calculatePreview()
                                     }
                                     .foregroundColor(Theme.Colors.text)
                                 
-                                DatePicker("終了時刻", selection: $endDate)
+                                DatePicker("wake_time".localized, selection: $endDate)
                                     .onChange(of: endDate) { oldValue, newValue in
                                         calculatePreview()
                                     }
@@ -78,7 +75,7 @@ struct EditSleepRecordView: View {
                         
                         // 睡眠の質セクション
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("睡眠の質 (1〜5)")
+                            Text("sleep_quality".localized)
                                 .font(.headline)
                                 .foregroundColor(Theme.Colors.text)
                             
@@ -105,7 +102,7 @@ struct EditSleepRecordView: View {
                                 .accentColor(qualityColor)
                                 
                                 HStack {
-                                    Text("悪い")
+                                    Text("bad".localized)
                                         .font(Theme.Typography.captionFont)
                                         .foregroundColor(Theme.Colors.subtext)
                                     
@@ -121,7 +118,7 @@ struct EditSleepRecordView: View {
                                     
                                     Spacer()
                                     
-                                    Text("良い")
+                                    Text("good_quality".localized)
                                         .font(Theme.Typography.captionFont)
                                         .foregroundColor(Theme.Colors.subtext)
                                 }
@@ -134,7 +131,7 @@ struct EditSleepRecordView: View {
                         
                         // メモセクション
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("メモ (任意)")
+                            Text("memo_optional".localized)
                                 .font(.headline)
                                 .foregroundColor(Theme.Colors.text)
                             
@@ -150,7 +147,7 @@ struct EditSleepRecordView: View {
                         // スコアプレビュー
                         if showPreview {
                             VStack(alignment: .leading, spacing: 16) {
-                                Text("スコアプレビュー")
+                                Text("score_preview".localized)
                                     .font(.headline)
                                     .foregroundColor(Theme.Colors.primary)
                                 
@@ -201,7 +198,7 @@ struct EditSleepRecordView: View {
                                                 HStack(spacing: 6) {
                                                     Image(systemName: "exclamationmark.triangle")
                                                         .foregroundColor(debtColor)
-                                                    Text("sleep_debt".localized + ": " + String(format: LocalizationManager.shared.currentLanguage == "ja" ? "%.1f時間" : "%.1fh", previewDebt))
+                                                    Text("\("sleep_debt".localized): \(String(format: "%.1fh", previewDebt))")
                                                         .font(Theme.Typography.bodyFont.bold())
                                                         .foregroundColor(debtColor)
                                                 }
@@ -216,21 +213,21 @@ struct EditSleepRecordView: View {
                                     // nap時は分析を非表示
                                     if record.sleepType != SleepRecordType.nap.rawValue && previewScore > 0 {
                                         VStack(alignment: .leading, spacing: 12) {
-                                            Text("睡眠分析")
+                                            Text("sleep_analysis".localized)
                                                 .font(Theme.Typography.subheadingFont)
                                                 .foregroundColor(Theme.Colors.text)
                                             
                                             analysisRow(
                                                 icon: "moon.stars",
                                                 color: qualityColor,
-                                                title: "睡眠の質",
+                                                title: "sleep_quality".localized,
                                                 message: qualityMessage
                                             )
                                             
                                             analysisRow(
                                                 icon: "clock",
                                                 color: durationColor,
-                                                title: "睡眠時間",
+                                                title: "duration".localized,
                                                 message: durationMessage
                                             )
                                         }
@@ -249,20 +246,18 @@ struct EditSleepRecordView: View {
                     .padding(.vertical)
                 }
             }
-            .navigationTitle("睡眠記録の編集")
+            .navigationTitle("edit_sleep_record_title".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
-                        dismiss()
+                    Button(action: { dismiss() }) {
+                        Text("cancel".localized)
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        updateRecord()
-                    } label: {
-                        Text("保存")
+                    Button(action: { updateRecord() }) {
+                        Text("save".localized)
                             .fontWeight(.semibold)
                     }
                     .buttonStyle(.borderedProminent)
@@ -297,32 +292,55 @@ struct EditSleepRecordView: View {
     }
     
     private var qualityMessage: String {
-        switch quality {
-        case 1:
-            return "非常に悪い睡眠です。改善が必要です。"
-        case 2:
-            return "あまり良くない睡眠でした。"
-        case 3:
-            return "平均的な睡眠の質です。"
-        case 4:
-            return "良好な睡眠が取れました。"
-        case 5:
-            return "素晴らしい睡眠の質です！"
-        default:
-            return ""
+        if localizationManager.currentLanguage == "ja" {
+            switch quality {
+            case 1:
+                return "非常に悪い睡眠です。改善が必要です。"
+            case 2:
+                return "あまり良くない睡眠でした。"
+            case 3:
+                return "平均的な睡眠の質です。"
+            case 4:
+                return "良好な睡眠が取れました。"
+            case 5:
+                return "素晴らしい睡眠の質です！"
+            default:
+                return ""
+            }
+        } else {
+            switch quality {
+            case 1: return "Very poor sleep. Improvement needed."
+            case 2: return "Not very good sleep."
+            case 3: return "Average sleep quality."
+            case 4: return "Good sleep quality."
+            case 5: return "Excellent sleep quality!"
+            default: return ""
+            }
         }
     }
     
     private var durationMessage: String {
         let duration = endDate.timeIntervalSince(startDate) / 3600
-        if duration < 5 {
-            return "睡眠時間が短すぎます。最低でも7時間は睡眠を取りましょう。"
-        } else if duration < 6 {
-            return "睡眠時間がやや不足しています。"
-        } else if duration < 8 {
-            return "理想的な睡眠時間です。"
+        if localizationManager.currentLanguage == "ja" {
+            if duration < 5 {
+                return "睡眠時間が短すぎます。最低でも7時間は睡眠を取りましょう。"
+            } else if duration < 6 {
+                return "睡眠時間がやや不足しています。"
+            } else if duration < 8 {
+                return "理想的な睡眠時間です。"
+            } else {
+                return "睡眠時間が長すぎるかもしれません。質の高い睡眠を心がけましょう。"
+            }
         } else {
-            return "睡眠時間が長すぎるかもしれません。質の高い睡眠を心がけましょう。"
+            if duration < 5 {
+                return "Sleep duration is too short. Aim for at least 7 hours."
+            } else if duration < 6 {
+                return "Sleep duration is slightly low."
+            } else if duration < 8 {
+                return "Ideal sleep duration."
+            } else {
+                return "You may be oversleeping; focus on sleep quality."
+            }
         }
     }
     

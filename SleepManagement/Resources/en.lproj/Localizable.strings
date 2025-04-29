@@ -251,4 +251,11 @@
 "sleep_log_edit" = "Edit Sleep Log";
 "sleep_log_no_data" = "No sleep logs for this day";
 "delete_session_title" = "Delete Sleep Log";
-"delete_session_message" = "Are you sure you want to delete this sleep log?"; 
+"delete_session_message" = "Are you sure you want to delete this sleep log?";
+
+// Edit Sleep Record View
+"edit_sleep_record_title" = "Edit Sleep Record";
+"edit_sleep_record_subtitle" = "Update sleep record details";
+"score_preview" = "Score Preview";
+"sleep_analysis" = "Sleep Analysis";
+"duration" = "Duration"; 

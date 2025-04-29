@@ -9,7 +9,16 @@ struct SleepRecordCard: View {
             HStack(alignment: .center, spacing: 16) {
                 // 睡眠スコア表示
                 if SleepRecordType(rawValue: record.sleepType) == .nap {
-                    Color.clear.frame(width: 60, height: 60)
+                    // 仮眠ラベルをサークルアイコンで表示
+                    ZStack {
+                        Circle()
+                            .stroke(Theme.Colors.subtext, lineWidth: 1)
+                            .frame(width: 60, height: 60)
+                        Text("nap".localized)
+                            .font(.subheadline)
+                            .foregroundColor(Theme.Colors.subtext)
+                            .multilineTextAlignment(.center)
+                    }
                 } else {
                     SleepScoreView(score: record.score, size: 60)
                 }

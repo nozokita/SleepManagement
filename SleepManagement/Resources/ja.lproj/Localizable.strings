@@ -254,4 +254,11 @@
 "sleep_log_edit" = "睡眠ログを編集";
 "sleep_log_no_data" = "該当日の睡眠ログはありません";
 "delete_session_title" = "睡眠ログを削除";
-"delete_session_message" = "この睡眠ログを削除してもよろしいですか？"; 
+"delete_session_message" = "この睡眠ログを削除してもよろしいですか？";
+
+// Edit Sleep Record View
+"edit_sleep_record_title" = "睡眠記録の編集";
+"edit_sleep_record_subtitle" = "睡眠の詳細を更新します";
+"score_preview" = "スコアプレビュー";
+"sleep_analysis" = "睡眠分析";
+"duration" = "睡眠時間"; 

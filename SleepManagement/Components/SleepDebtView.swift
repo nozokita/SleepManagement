@@ -25,15 +25,10 @@ struct SleepDebtView: View {
                 Spacer()
                 
                 HStack(spacing: 4) {
-                    // 負債値と単位を別行で表示
-                    VStack(spacing: 0) {
-                        Text(String(format: "%+.1f", totalDebt))
-                            .font(Theme.Typography.headingFont)
-                            .foregroundColor(debtColor)
-                        Text("hours".localized)
-                            .font(Theme.Typography.subheadingFont)
-                            .foregroundColor(debtColor)
-                    }
+                    // ヘッダースコアを一行表示
+                    Text(String(format: "%+.1f%@", totalDebt, "hours".localized))
+                        .font(Theme.Typography.headingFont)
+                        .foregroundColor(debtColor)
                     Button(action: { showDetail = true }) {
                         Image(systemName: "info.circle")
                             .font(.headline)
