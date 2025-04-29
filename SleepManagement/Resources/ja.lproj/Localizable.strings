@@ -182,6 +182,8 @@
 "settings.healthkit.sync" = "ヘルスケアと同期";
 "settings.healthkit.description" = "ヘルスケアから睡眠データを自動取得";
 "settings.healthkit.sleepGapThreshold" = "睡眠ログの区切り時間";
+"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠として記録する";
+"settings.healthkit.shortSleepThreshold" = "仮眠とみなす最小睡眠時間";
 "settings.info.title" = "情報";
 "settings.info.version" = "バージョン";
 "settings.data.title" = "データ";
@@ -277,29 +279,29 @@
 "session_score_info_message" = "成分 | 重み | 式 | 出典\nDuration   | 40 | 40×min(H_actual/H_ideal,1)  | JAMA\nEfficiency | 25 | 25×min(SE/0.85,1)         | 85% 閾値\nRegularity | 15 | 15×(1−SRI/100)           | Nature\nLatency    | 10 | 10×max(0,(30−SL)/30)     | Insomnia Guide\nWASO       | 10 | 10×max(0,(30−WASO)/30)   | PMC\n最終スコア = 合計 (0〜100にクランプ)"; 
 
 /* Expert Advice Section */
-"expert_advice" = "専門家のアドバイス";
-"expert_advice_description" = "あなたの睡眠データに基づいたアドバイスを表示します";
+"expert_advice" = "睡眠の専門家のおすすめ";
+"expert_advice_description" = "睡眠データに基づいて、専門家がおすすめする改善方法をご紹介します。";
 
-"advice.irregular_sleep_schedule.title" = "睡眠時間の一貫性を保ちましょう";
-"advice.irregular_sleep_schedule.description" = "睡眠スケジュールの変動が大きいようです。毎日同じ時間に就寝・起床することで、体内時計を整え、質の高い睡眠を促進します。";
+"advice.irregular_sleep_schedule.title" = "毎日の就寝・起床時間をそろえましょう";
+"advice.irregular_sleep_schedule.description" = "起床時間や就寝時間がバラバラだと体内リズムが乱れます。毎日同じ時間に起きて、同じ時間に寝る習慣を作りましょう。";
 
-"advice.sleep_debt.title" = "睡眠不足を解消しましょう";
-"advice.sleep_debt.description" = "理想的な睡眠時間より%1$d時間短くなっています。毎晩7-9時間の睡眠を確保し、睡眠負債を蓄積しないようにしましょう。";
+"advice.sleep_debt.title" = "慢性的な寝不足に注意";
+"advice.sleep_debt.description" = "今日は理想の睡眠時間より%1$d時間短く眠りました。毎晩7〜9時間の睡眠を目指し、少しずつ補いましょう。";
 
-"advice.ideal_sleep_duration.title" = "適切な睡眠時間を目指しましょう";
-"advice.ideal_sleep_duration.description" = "理想的な睡眠時間と比較して%1$d時間の差があります。個人差はありますが、7-9時間の睡眠を目標にすると良いでしょう。";
+"advice.ideal_sleep_duration.title" = "睡眠時間を調整しましょう";
+"advice.ideal_sleep_duration.description" = "実際の睡眠時間は理想から%1$d時間ずれています。自分に合った睡眠時間を見つけましょう。";
 
-"advice.low_sleep_efficiency.title" = "睡眠効率を向上させましょう";
-"advice.low_sleep_efficiency.description" = "睡眠効率が%1$d％と低下しています。ベッドは睡眠専用にし、眠れない場合は一時的にベッドを離れ、リラックスしてから戻りましょう。";
+"advice.low_sleep_efficiency.title" = "睡眠効率を改善しましょう";
+"advice.low_sleep_efficiency.description" = "ベッドにいる時間の割に眠れていないようです。寝床は睡眠専用にし、眠れないときは一度起きてリラックスしましょう。";
 
-"advice.long_sleep_latency.title" = "すぐに眠りにつく習慣を作りましょう";
-"advice.long_sleep_latency.description" = "入眠に時間がかかっています。就寝30〜60分前から温かいお風呂や読書などリラックスルーティンを行い、体に睡眠の準備を促しましょう。";
+"advice.long_sleep_latency.title" = "寝つきを良くする習慣を";
+"advice.long_sleep_latency.description" = "入眠に30分以上かかっています。就寝前にぬるめのお風呂や軽いストレッチなどリラックスできる習慣を取り入れてみましょう。";
 
-"advice.frequent_wakeups.title" = "夜中の覚醒を減らしましょう";
-"advice.frequent_wakeups.description" = "夜中に目覚めた際は時計を見ず、暗い場所でリラックスした活動を行うと再入眠しやすくなります。";
+"advice.frequent_wakeups.title" = "夜中の目覚めを減らしましょう";
+"advice.frequent_wakeups.description" = "夜中に目が覚めたときは強い光を避け、薄暗い部屋で軽くリラックスしましょう。再び眠くなったらベッドに戻ると再入眠しやすくなります。";
 
 "advice.low_sleep_regularity.title" = "睡眠の規則性を高めましょう";
-"advice.low_sleep_regularity.description" = "睡眠開始・終了時間のばらつきが大きいです。規則的な睡眠スケジュールを心がけると体内時計が整います。";
+"advice.low_sleep_regularity.description" = "就寝や起床の時間にバラつきがあります。規則正しいリズムを作ることで睡眠の質が向上します。";
 
-"advice.low_subjective_quality.title" = "睡眠の主観的評価を改善しましょう";
-"advice.low_subjective_quality.description" = "睡眠の主観的評価が低いです。就寝前のリラックスや環境調整で睡眠の質を向上させましょう。"; 
+"advice.low_subjective_quality.title" = "睡眠の満足度を高めましょう";
+"advice.low_subjective_quality.description" = "眠りの満足感が低いようです。寝室環境や寝る前の習慣を見直して、気持ちよく眠れる工夫をしてみましょう。"; 

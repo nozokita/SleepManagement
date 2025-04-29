@@ -458,7 +458,7 @@ struct HomeView: View {
                             .font(Theme.Typography.bodyFont)
                             .foregroundColor(Theme.Colors.subtext)
 
-                        ForEach(advices.prefix(5), id: \.id) { advice in
+                        ForEach(advices.prefix(3), id: \.id) { advice in
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(advice.title.localized)
                                     .font(Theme.Typography.subheadingFont)

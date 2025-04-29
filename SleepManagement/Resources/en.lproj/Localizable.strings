@@ -1,14 +1,6 @@
-/* 
-  Localizable.strings
-  SleepManagement
-
-  English localization
-*/
-
-// App Name
 "app_name" = "DreamLog";
 
-// Home Screen
+
 "home_tab" = "Home";
 "stats_tab" = "Stats";
 "records_tab" = "Records";
@@ -20,7 +12,7 @@
 "language" = "Language";
 "switch_language" = "Switch to Japanese";
 
-// Sleep Summary
+
 "sleep_summary" = "Sleep Summary";
 "records" = "records";
 "avg_duration" = "Avg Sleep Time";
@@ -31,7 +23,7 @@
 "last_sleep" = "Last Sleep";
 "sleep_score" = "Sleep Score";
 
-// Sleep Debt
+
 "sleep_debt" = "Sleep Debt";
 "current_debt" = "Current Sleep Debt";
 "hours" = "hours";
@@ -42,14 +34,14 @@
 "debt_medium_message" = "You have a mild sleep debt. It is recommended to go to bed a little earlier tonight.";
 "debt_low_message" = "Currently, you have almost no sleep debt. You are maintaining a good sleep cycle.";
 
-// Recent Records
+
 "recent_records" = "Recent Sleep Records";
 "view_all" = "View all";
 "no_records" = "No Sleep Records";
 "add_first_record" = "Add your first sleep record using the + button below";
 "add_record_button" = "Add a Record";
 
-// Sleep Input
+
 "sleep_recording" = "Sleep Recording";
 "checking_device" = "Checking device...";
 "watch_integration" = "Apple Watch Integration";
@@ -95,23 +87,23 @@
 "normal_sleep" = "Normal Sleep";
 "nap" = "Nap";
 
-// AI Advice
+
 "ai_advice" = "AI Advice";
 "ai_analysis" = "AI Sleep Analysis & Advice";
 "ai_description" = "AI analyzes your sleep data and offers personalized advice.";
 "coming_soon" = "Coming Soon";
 
-// Developing Features
+
 "developing_feature" = "This feature is currently in development";
 "stay_tuned" = "Look forward to future updates";
 
-// Common
+
 "common.okButton" = "OK";
 "common.cancelButton" = "Cancel";
 "common.error.unknown" = "An unknown error occurred.";
 "common.error.format" = "Error: %@";
 
-// Onboarding
+
 "onboarding.welcomeTitle" = "Welcome!";
 "onboarding.welcomeMessage" = "Settings can be changed later. Let's start the app first!";
 "onboarding.requiredSettingsTitle" = "Required Settings";
@@ -156,7 +148,7 @@
 "onboarding.usage.manual.title" = "Record sleep manually";
 "onboarding.usage.manual.description" = "You can also manually record your bedtime and wake time";
 
-// Settings
+
 "settings.title" = "Settings";
 "settings.language.title" = "Language";
 "settings.language.current" = "Current Language";
@@ -179,6 +171,8 @@
 "settings.healthkit.sync" = "Sync with HealthKit";
 "settings.healthkit.description" = "Automatically fetch sleep data from Apple Health";
 "settings.healthkit.sleepGapThreshold" = "Sleep Log Gap Threshold";
+"settings.healthkit.treatShortSleepAsNap" = "Record short sleep as a nap";
+"settings.healthkit.shortSleepThreshold" = "Minimum duration to count as a nap";
 "settings.info.title" = "Info";
 "settings.info.version" = "Version";
 "settings.data.title" = "Data";
@@ -191,7 +185,7 @@
 "settings.save" = "Save";
 "settings.save.home" = "Save & Go Home";
 
-// Dashboard View
+
 "dashboard_title" = "Sleep Dashboard";
 "sleep_pattern" = "Sleep Pattern";
 "data_overview" = "Data Overview";
@@ -208,43 +202,9 @@
 "add_sleep_records" = "Add sleep records to see your data";
 "sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt.";
 
-// HealthKitモデル用睡眠スコア
+
 "healthkit.score.title" = "HealthKit Sleep Score (100 pts)"; 
 
-/* Sleep Record List View */
-"sleep_record_list_title" = "Sleep Records";
-
-/* Settings: Treat short sleep as nap */
-"settings.healthkit.treatShortSleepAsNap" = "Treat short sleep as nap";
-/* Settings: Short sleep threshold */
-"settings.healthkit.shortSleepThreshold" = "Short sleep threshold";
-
-// Sync hint under recent records
-"recent.syncHealthKit.message" = "To sync HealthKit data, go to Settings and enable sync.";
-
-// Swipe actions
-"list.edit" = "Edit";
-"list.delete" = "Delete";
-
-// HealthKit permission
-"healthkit.permission.required" = "HealthKit permission required";
-"healthkit.permission.button" = "Open Settings";
-
-// Sleep Metrics Card
-"metrics.duration" = "Total Sleep Time";
-"metrics.efficiency" = "Sleep Efficiency";
-"metrics.regularity" = "Sleep Regularity";
-"metrics.latency" = "Sleep Onset Latency";
-"metrics.waso" = "WASO";
-
-// Sleep Session List View
-"session.startTime" = "Start Time";
-"session.endTime" = "End Time";
-"session.inBedTime" = "In-Bed Time";
-"session.sleepTime" = "Sleep Time";
-"nap" = "Nap";
-
-/* Sleep Log Page */
 "start_time" = "Start Time";
 "end_time" = "End Time";
 "in_bed_time" = "In Bed Time: ";
@@ -253,57 +213,30 @@
 "delete_session_title" = "Delete Sleep Log";
 "delete_session_message" = "Are you sure you want to delete this sleep log?";
 
-// Edit Sleep Record View
+
 "edit_sleep_record_title" = "Edit Sleep Record";
 "edit_sleep_record_subtitle" = "Update sleep record details";
 "score_preview" = "Score Preview";
 "sleep_analysis" = "Sleep Analysis";
 "duration" = "Duration";
 
-// Sleep Score Info Dialog
+
 "score_info_title" = "Sleep Score Calculation";
 "score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
 
-// Sleep Score Info Dialog for manual records
+
 "manual_score_info_message" = "• timeRatio weighted by 60%\n• subjectiveRatio weighted by 40%\n• Final Score = 60 × timeRatio + 40 × subjectiveRatio";
 
-// Sleep Score Info Dialog for sessions
+
 "session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
 
-// Sleep Score Info Dialog
+
 "score_info_title" = "Sleep Score Calculation";
 "score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
 
-// Manual Record Score Calculation (Table)
+
 "manual_score_info_message" = "Calculation:\nElement          | Formula\ntimeRatio         | min(duration ÷ 7h, 1.0)\nsubjectiveRatio   | quality ÷ 5.0\nFinal Score       | 60 × timeRatio + 40 × subjectiveRatio";
 
-// Session Score Calculation (Table)
+
 "session_score_info_message" = "Component   | Weight | Formula                              | Source\nDuration    | 40     | 40×min(actual/ideal,1)           | JAMA\nEfficiency  | 25     | 25×min(efficiency/0.85,1)        | 85% threshold\nRegularity  | 15     | 15×(1−SRI/100)                  | Nature\nLatency     | 10     | 10×max(0,(30−latency)/30)        | Insomnia Guide\nWASO        | 10     | 10×max(0,(30−WASO)/30)           | PMC\nFinal Score = sum of components (clamped to 0–100)\n\nNotes:\n• durationH & efficiency use existing logic\n• regularity assumed perfect (1.0)\n• latency = minutes to first SleepAnalysis segment\n• WASO = total Awake segment minutes";
 
-/* Expert Advice Section */
-"expert_advice" = "Expert Advice";
-"expert_advice_description" = "Guidance based on your sleep data";
-
-"advice.irregular_sleep_schedule.title" = "Maintain a consistent sleep schedule";
-"advice.irregular_sleep_schedule.description" = "Your sleep times vary significantly. Aim to go to bed and wake up at the same time every day to align your circadian rhythm and improve sleep quality.";
-
-"advice.sleep_debt.title" = "Catch up on sleep debt";
-"advice.sleep_debt.description" = "You are short by %1$d hour(s) compared to the ideal sleep duration. Ensure 7–9 hours of sleep each night to avoid accumulating sleep debt.";
-
-"advice.ideal_sleep_duration.title" = "Aim for recommended sleep duration";
-"advice.ideal_sleep_duration.description" = "Your sleep differs by %1$d hour(s) from the ideal duration. Although individual needs vary, targeting 7–9 hours of sleep is generally advised.";
-
-"advice.low_sleep_efficiency.title" = "Improve your sleep efficiency";
-"advice.low_sleep_efficiency.description" = "Your sleep efficiency is at %1$d%%. Reserve your bed for sleep, and if you can't sleep, leave the bed and relax before returning.";
-
-"advice.long_sleep_latency.title" = "Establish a pre-sleep routine";
-"advice.long_sleep_latency.description" = "It takes you a while to fall asleep. Start a relaxing routine 30–60 minutes before bedtime—such as a warm bath or reading—to signal your body that it's time to sleep.";
-
-"advice.frequent_wakeups.title" = "Reduce nighttime awakenings";
-"advice.frequent_wakeups.description" = "When you wake up at night, avoid checking the clock. Engage in a calming activity in low light until you feel sleepy again.";
-
-"advice.low_sleep_regularity.title" = "Enhance sleep regularity";
-"advice.low_sleep_regularity.description" = "Your sleep start and end times vary widely. Keeping a regular sleep schedule helps synchronize your internal clock.";
-
-"advice.low_subjective_quality.title" = "Boost your perceived sleep quality";
-"advice.low_subjective_quality.description" = "Your subjective sleep rating is low. Improving your pre-sleep routine or sleep environment can help enhance your sleep quality.;"
