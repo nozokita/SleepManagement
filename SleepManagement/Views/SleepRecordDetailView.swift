@@ -3,6 +3,7 @@ import SwiftUI
 struct SleepRecordDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     let record: SleepRecord
     @State private var showingEditSheet = false
@@ -36,17 +37,17 @@ struct SleepRecordDetailView: View {
                 
                 // 詳細情報
                 VStack(spacing: 16) {
-                    detailRow(title: "日付", value: record.sleepDateText, icon: "calendar")
+                    detailRow(title: localizationManager.currentLanguage == "ja" ? "日付" : "Date", value: record.sleepDateText, icon: "calendar")
                     
-                    detailRow(title: "睡眠時間", value: "\(record.startTimeText) - \(record.endTimeText)", icon: "clock")
+                    detailRow(title: localizationManager.currentLanguage == "ja" ? "睡眠時間" : "Time in Bed", value: "\(record.startTimeText) - \(record.endTimeText)", icon: "clock")
                     
-                    detailRow(title: "睡眠の長さ", value: record.durationText, icon: "bed.double")
+                    detailRow(title: localizationManager.currentLanguage == "ja" ? "睡眠の長さ" : "Duration", value: record.durationText, icon: "bed.double")
                     
-                    detailRow(title: "睡眠の質", value: "\(record.quality)/5", icon: "star")
+                    detailRow(title: localizationManager.currentLanguage == "ja" ? "睡眠の質" : "Quality", value: "\(record.quality)/5", icon: "star")
                     
                     if record.debt > 0 {
                         detailRow(
-                            title: "sleep_debt".localized,
+                            title: localizationManager.currentLanguage == "ja" ? "睡眠負債" : "Sleep Debt",
                             value: record.debtText,
                             icon: "exclamationmark.triangle",
                             color: Theme.Colors.scoreColor(score: max(0, 100 - record.debt * 10))
@@ -64,7 +65,7 @@ struct SleepRecordDetailView: View {
                         HStack {
                             Image(systemName: "note.text")
                                 .foregroundColor(Theme.Colors.primary)
-                            Text("メモ")
+                            Text(localizationManager.currentLanguage == "ja" ? "メモ" : "Memo")
                                 .font(Theme.Typography.subheadingFont)
                                 .foregroundColor(Theme.Colors.text)
                         }
@@ -91,7 +92,7 @@ struct SleepRecordDetailView: View {
                         Image(systemName: "pencil")
                             .font(.headline)
                         
-                        Text("記録を編集")
+                        Text(localizationManager.currentLanguage == "ja" ? "記録を編集" : "Edit Record")
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -110,7 +111,7 @@ struct SleepRecordDetailView: View {
             .padding()
         }
         .background(Theme.Colors.background.ignoresSafeArea())
-        .navigationTitle("睡眠詳細")
+        .navigationTitle(localizationManager.currentLanguage == "ja" ? "睡眠詳細" : "Sleep Detail")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             // レコード削除ボタン
