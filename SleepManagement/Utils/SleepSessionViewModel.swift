@@ -16,11 +16,13 @@ final class SleepSessionViewModel: ObservableObject {
             let result = try await service.fetchSessions(for: date)
             // 取得結果を一時格納
             var loaded = result
-            // シミュレーター用のダミーデータ（実データ0件の場合）
+            // シミュレーター専用のダミーデータ（実データ0件の場合）
+            #if targetEnvironment(simulator)
             if loaded.isEmpty {
                 print("SleepSessionViewModel: Adding dummy data for simulator")
                 loaded = createDummySessions(for: date)
             }
+            #endif
             // 設定に応じてフィルタ：開始>=終了（誤入力）と仮眠扱いを除外
             let filtered = loaded.filter { session in
                 // 開始時刻が終了時刻以上なら除外
