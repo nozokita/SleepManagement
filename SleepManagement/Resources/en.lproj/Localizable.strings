@@ -260,3 +260,8 @@
 "advice.low_subjective_quality.title" = "Enhance sleep satisfaction";
 "advice.low_subjective_quality.description" = "Review your sleep environment and habits for more comfortable rest.";
 
+/* AI Coach Prediction */
+"ai_coach_title" = "AI Coach Prediction";
+"ai_coach_prediction" = "Predicted sleep debt: %.1f hours";
+"ai_coach_action" = "Try going to bed 1 hour earlier tonight.";
+

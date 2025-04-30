@@ -302,4 +302,8 @@
 "advice.low_sleep_regularity.description" = "毎日同じ時間に寝起きしてリズムを整えましょう。";
 
 "advice.low_subjective_quality.title" = "睡眠の満足度を高めましょう";
-"advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。"; 
+"advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。";
+
+/* AIコーチ予測 */
+"ai_coach_title" = "AIコーチ予測";
+"ai_coach_prediction" = "予測睡眠負債: %.1f時間"; 

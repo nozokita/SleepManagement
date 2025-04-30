@@ -64,17 +64,14 @@ struct HomeView: View {
                                 // 睡眠負債カード
                                 sleepDebtCard
                                 
-                                // AI診断・アドバイスセクション
-                                aiAdviceSection
+                                // AIコーチ予測セクション（MVP）
+                                aiCoachSection
 
                                 // 専門家からのアドバイスセクション
                                 expertAdviceSection
 
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
-
-                                // AIコーチ予測を表示
-                                aiCoachSection
                             }
                             .padding(.top, 8)
                             .padding(.bottom, 80) // FABのスペース確保
@@ -388,58 +385,44 @@ struct HomeView: View {
         }
     }
     
-    // AI診断・アドバイスセクション
-    private var aiAdviceSection: some View {
-        VStack(spacing: 0) {
-            // カードヘッダー
-            HStack {
-                Label("ai_advice".localized, systemImage: "brain")
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
-                
-                Spacer()
-                
-                Text("in_development".localized)
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Theme.Colors.info.opacity(0.2))
-                    .foregroundColor(Theme.Colors.info)
-                    .cornerRadius(8)
+    // AIコーチ予測セクション（MVP）
+    private var aiCoachSection: some View {
+        Group {
+            if predictedDebtSeconds != nil {
+                VStack(spacing: 0) {
+                    HStack {
+                        Label("ai_coach_title".localized, systemImage: "brain.head.profile")
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(Theme.Colors.text)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Colors.cardGradient)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(predictedDebtText)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                        // フォールバック提案表示
+                        if let text = suggestionText {
+                            Text(text)
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(Theme.Colors.primary)
+                        }
+                    }
+                    .padding(16)
+                }
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .offset(y: animatedCards ? 0 : 50)
+                .opacity(animatedCards ? 1 : 0)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Theme.Colors.cardGradient)
-            
-            Divider()
-            
-            VStack(spacing: 20) {
-                Image(systemName: "brain.head.profile")
-                    .font(.system(size: 40))
-                    .foregroundColor(Theme.Colors.info)
-                
-                Text("ai_analysis".localized)
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
-                
-                Text("ai_description".localized)
-                    .font(Theme.Typography.bodyFont)
-                    .foregroundColor(Theme.Colors.subtext)
-                    .multilineTextAlignment(.center)
-                
-                Text("coming_soon".localized)
-                    .font(Theme.Typography.captionFont)
-                    .foregroundColor(Theme.Colors.primary)
-                    .padding(.top, 8)
-            }
-            .padding(24)
         }
-        .background(Theme.Colors.cardBackground)
-        .cornerRadius(Theme.Layout.cardCornerRadius)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        .padding(.horizontal)
-        .offset(y: animatedCards ? 0 : 50)
-        .opacity(animatedCards ? 1 : 0)
     }
     
     // MARK: - 専門家からのアドバイスセクション
@@ -482,11 +465,6 @@ struct HomeView: View {
                                     .foregroundColor(Theme.Colors.subtext)
                             }
                         }
-                        // 医療的アドバイスではない旨の注意書き
-                        Text("expert_advice_disclaimer".localized)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .padding(.top, 8)
                     }
                     .padding(16)
                 }
@@ -860,46 +838,6 @@ struct HomeView: View {
             suggestionText = "ai_coach_action".localized
         } else {
             suggestionText = nil
-        }
-    }
-    
-    // AIコーチ予測セクション
-    private var aiCoachSection: some View {
-        Group {
-            if predictedDebtSeconds != nil {
-                VStack(spacing: 0) {
-                    HStack {
-                        Label("ai_coach_title".localized, systemImage: "brain.head.profile")
-                            .font(Theme.Typography.subheadingFont)
-                            .foregroundColor(Theme.Colors.text)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Theme.Colors.cardGradient)
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(predictedDebtText)
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.subtext)
-                        // フォールバック提案表示
-                        if let text = suggestionText {
-                            Text(text)
-                                .font(Theme.Typography.captionFont)
-                                .foregroundColor(Theme.Colors.primary)
-                        }
-                    }
-                    .padding(16)
-                }
-                .background(Theme.Colors.cardBackground)
-                .cornerRadius(Theme.Layout.cardCornerRadius)
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-                .padding(.horizontal)
-                .offset(y: animatedCards ? 0 : 50)
-                .opacity(animatedCards ? 1 : 0)
-            }
         }
     }
 }
