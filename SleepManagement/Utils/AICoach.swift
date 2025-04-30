@@ -109,4 +109,15 @@ class AICoach {
         let en = "About \(percentRounded)% of your predicted sleep debt is due to long sleep latency. Try turning off screens and practicing deep breathing for 30 minutes before bed."
         return (ja, en)
     }
+
+    /// 睡眠習慣の規則性改善アドバイスを生成 (日本語・英語)
+    func generateRegularityAdvice(sleepData: SleepQualityData) -> (ja: String, en: String) {
+        guard let sleepVar = sleepData.sleepTimeVariability else {
+            return ("", "")
+        }
+        let varianceMinutes = Int((sleepVar / 60).rounded())
+        let ja = "先週の就寝時間は平均±\(varianceMinutes)分のばらつきがありました。毎晩30分以内に揃えると睡眠効率が10%改善します"
+        let en = "Your bedtime varied by ±\(varianceMinutes) minutes on average last week. Aligning your bedtime within 30 minutes each night can improve your sleep efficiency by 10%."
+        return (ja, en)
+    }
 } 
