@@ -305,5 +305,5 @@
 "advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。";
 
 /* AIコーチ予測 */
-"ai_coach_title" = "AIコーチ予測";
-"ai_coach_prediction" = "予測睡眠負債: %.1f時間"; 
+"ai_coach_title" = "AIコーチからのご提案";
+"ai_coach_prediction" = "睡眠負債は%.1f時間です。今夜1時間早く寝ると1時間返済できます。"; 

@@ -18,8 +18,6 @@ struct HomeView: View {
     @State private var selectedRecordForEdit: SleepRecord? = nil
     // 予測睡眠負債（秒）を保持
     @State private var predictedDebtSeconds: Double? = nil
-    // AIコーチ提案用テキスト
-    @State private var suggestionText: String? = nil
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
@@ -414,12 +412,6 @@ struct HomeView: View {
                 Text(predictedDebtText)
                     .font(Theme.Typography.bodyFont)
                     .foregroundColor(Theme.Colors.subtext)
-                // フォールバック提案表示
-                if let text = suggestionText {
-                    Text(text)
-                        .font(Theme.Typography.captionFont)
-                        .foregroundColor(Theme.Colors.primary)
-                }
             }
             .padding(16)
         }
@@ -820,13 +812,9 @@ struct HomeView: View {
     
     // 24時間の睡眠負債を秒単位で予測 (MVP：MLなし)
     private func updatePredictedDebt() {
-        // 最新の急性睡眠負債を取得
         loadDebt()
         // 秒換算して設定
-        let seconds = debtHours * 3600
-        predictedDebtSeconds = seconds
-        // 提案文を更新
-        updateSuggestion()
+        predictedDebtSeconds = debtHours * 3600
     }
     
     // 予測負債を表示用テキストに変換
@@ -834,15 +822,6 @@ struct HomeView: View {
         guard let sec = predictedDebtSeconds else { return "" }
         let hours = sec / 3600.0
         return String(format: "ai_coach_prediction".localized, hours)
-    }
-    
-    // AIコーチ提案を更新（負債予測後に呼び出し）
-    private func updateSuggestion() {
-        if let sec = predictedDebtSeconds, sec > 7200 {
-            suggestionText = "ai_coach_action".localized
-        } else {
-            suggestionText = nil
-        }
     }
 }
 

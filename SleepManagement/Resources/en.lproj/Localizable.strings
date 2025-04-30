@@ -261,7 +261,6 @@
 "advice.low_subjective_quality.description" = "Review your sleep environment and habits for more comfortable rest.";
 
 /* AI Coach Prediction */
-"ai_coach_title" = "AI Coach Prediction";
-"ai_coach_prediction" = "Predicted sleep debt: %.1f hours";
-"ai_coach_action" = "Try going to bed 1 hour earlier tonight.";
+"ai_coach_title" = "Sleep Coach Tip";
+"ai_coach_prediction" = "Your sleep debt is %.1f hours. Going to bed 1 hour earlier tonight will repay 1 hour.";
 
