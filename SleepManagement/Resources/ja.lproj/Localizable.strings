@@ -277,29 +277,29 @@
 
 /* Expert Advice Section */
 "expert_advice" = "睡眠の専門家のおすすめ";
-"expert_advice_description" = "睡眠データに基づいて、専門家がおすすめする改善方法をご紹介します。";
+"expert_advice_description" = "専門家のアドバイス";
 "expert_advice_disclaimer" = "これは医療アドバイスではありません。";
 
 "advice.irregular_sleep_schedule.title" = "毎日の就寝・起床時間をそろえましょう";
-"advice.irregular_sleep_schedule.description" = "起床時間や就寝時間がバラバラだと体内リズムが乱れます。毎日同じ時間に起きて、同じ時間に寝る習慣を作りましょう。";
+"advice.irregular_sleep_schedule.description" = "毎日同じ時間に寝起きしましょう。";
 
 "advice.sleep_debt.title" = "慢性的な寝不足に注意";
-"advice.sleep_debt.description" = "今日は理想の睡眠時間より%1$d時間短く眠りました。毎晩7〜9時間の睡眠を目指し、少しずつ補いましょう。";
+"advice.sleep_debt.description" = "%1$d時間の睡眠が不足しています。7〜9時間を目指しましょう。";
 
 "advice.ideal_sleep_duration.title" = "睡眠時間を調整しましょう";
-"advice.ideal_sleep_duration.description" = "実際の睡眠時間は理想から%1$d時間ずれています。自分に合った睡眠時間を見つけましょう。";
+"advice.ideal_sleep_duration.description" = "理想と%1$d時間の差があります。";
 
 "advice.low_sleep_efficiency.title" = "睡眠効率を改善しましょう";
-"advice.low_sleep_efficiency.description" = "ベッドにいる時間の割に眠れていないようです。寝床は睡眠専用にし、眠れないときは一度起きてリラックスしましょう。";
+"advice.low_sleep_efficiency.description" = "ベッドでは睡眠に集中し、眠れないときは起きてリラックスしましょう。";
 
 "advice.long_sleep_latency.title" = "寝つきを良くする習慣を";
-"advice.long_sleep_latency.description" = "入眠に30分以上かかっています。就寝前にぬるめのお風呂や軽いストレッチなどリラックスできる習慣を取り入れてみましょう。";
+"advice.long_sleep_latency.description" = "就寝前にぬるめの入浴やストレッチを試しましょう。";
 
 "advice.frequent_wakeups.title" = "夜中の目覚めを減らしましょう";
-"advice.frequent_wakeups.description" = "夜中に目が覚めたときは強い光を避け、薄暗い部屋で軽くリラックスしましょう。再び眠くなったらベッドに戻ると再入眠しやすくなります。";
+"advice.frequent_wakeups.description" = "覚醒時は暗い部屋でリラックスし、眠気が来たら戻りましょう。";
 
 "advice.low_sleep_regularity.title" = "睡眠の規則性を高めましょう";
-"advice.low_sleep_regularity.description" = "就寝や起床の時間にバラつきがあります。規則正しいリズムを作ることで睡眠の質が向上します。";
+"advice.low_sleep_regularity.description" = "毎日同じ時間に寝起きしてリズムを整えましょう。";
 
 "advice.low_subjective_quality.title" = "睡眠の満足度を高めましょう";
-"advice.low_subjective_quality.description" = "眠りの満足感が低いようです。寝室環境や寝る前の習慣を見直して、気持ちよく眠れる工夫をしてみましょう。"; 
+"advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。"; 
