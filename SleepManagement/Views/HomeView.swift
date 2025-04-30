@@ -1,7 +1,6 @@
 import SwiftUI
 import CoreData
 import HealthKit
-import CoreML
 
 // SleepDashboardViewの記述を削除
 
@@ -36,9 +35,6 @@ struct HomeView: View {
     }
     
     @State private var showSettings = false
-    
-    // Core ML LSTMモデルインスタンス化
-    private let model = try! SleepDebtLSTM(configuration: MLModelConfiguration())
     
     var body: some View {
         NavigationView {
@@ -122,12 +118,14 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showingAddSheet, onDismiss: {
                 calculateTotalDebt()
+                updatePredictedDebt()
             }) {
                 AddSleepRecordView()
                     .environment(\.managedObjectContext, viewContext)
             }
             .sheet(isPresented: $showingSleepInputSheet, onDismiss: {
                 calculateTotalDebt()
+                updatePredictedDebt()
             }) {
                 SleepInputView()
                     .environment(\.managedObjectContext, viewContext)
@@ -140,6 +138,18 @@ struct HomeView: View {
             .sheet(item: $selectedRecordForEdit) { record in
                 EditSleepRecordView(record: record)
                     .environment(\.managedObjectContext, viewContext)
+            }
+            // FetchedResultsに変化があれば予測を更新
+            .onChange(of: sleepRecords.count) { _ in
+                calculateTotalDebt()
+                loadDebt()
+                updatePredictedDebt()
+            }
+            // Core Data保存時にも予測を更新
+            .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave, object: viewContext)) { _ in
+                calculateTotalDebt()
+                loadDebt()
+                updatePredictedDebt()
             }
         }
     }
@@ -387,42 +397,38 @@ struct HomeView: View {
     
     // AIコーチ予測セクション（MVP）
     private var aiCoachSection: some View {
-        Group {
-            if predictedDebtSeconds != nil {
-                VStack(spacing: 0) {
-                    HStack {
-                        Label("ai_coach_title".localized, systemImage: "brain.head.profile")
-                            .font(Theme.Typography.subheadingFont)
-                            .foregroundColor(Theme.Colors.text)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Theme.Colors.cardGradient)
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(predictedDebtText)
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.subtext)
-                        // フォールバック提案表示
-                        if let text = suggestionText {
-                            Text(text)
-                                .font(Theme.Typography.captionFont)
-                                .foregroundColor(Theme.Colors.primary)
-                        }
-                    }
-                    .padding(16)
-                }
-                .background(Theme.Colors.cardBackground)
-                .cornerRadius(Theme.Layout.cardCornerRadius)
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-                .padding(.horizontal)
-                .offset(y: animatedCards ? 0 : 50)
-                .opacity(animatedCards ? 1 : 0)
+        VStack(spacing: 0) {
+            HStack {
+                Label("ai_coach_title".localized, systemImage: "brain.head.profile")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                Spacer()
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Theme.Colors.cardGradient)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text(predictedDebtText)
+                    .font(Theme.Typography.bodyFont)
+                    .foregroundColor(Theme.Colors.subtext)
+                // フォールバック提案表示
+                if let text = suggestionText {
+                    Text(text)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.primary)
+                }
+            }
+            .padding(16)
         }
+        .background(Theme.Colors.cardBackground)
+        .cornerRadius(Theme.Layout.cardCornerRadius)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
     }
     
     // MARK: - 専門家からのアドバイスセクション
@@ -775,6 +781,8 @@ struct HomeView: View {
     
     private func calculateTotalDebt() {
         totalDebt = sleepManager.calculateTotalDebt(context: viewContext)
+        // AIコーチ予測を更新
+        updatePredictedDebt()
     }
     
     private func refreshData() {
@@ -810,19 +818,15 @@ struct HomeView: View {
         debtHours = sleepManager.calculateAcuteDebt(context: viewContext)
     }
     
-    // 過去30夜のスコアから睡眠負債をAI予測（秒単位）
+    // 24時間の睡眠負債を秒単位で予測 (MVP：MLなし)
     private func updatePredictedDebt() {
-        let scores = validNormalRecords.prefix(30).map { $0.score }
-        guard !scores.isEmpty else { return }
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let debtSec = AICoach.shared.predictDebt(from: scores) {
-                DispatchQueue.main.async {
-                    self.predictedDebtSeconds = debtSec
-                    // フォールバック提案を更新
-                    self.updateSuggestion()
-                }
-            }
-        }
+        // 最新の急性睡眠負債を取得
+        loadDebt()
+        // 秒換算して設定
+        let seconds = debtHours * 3600
+        predictedDebtSeconds = seconds
+        // 提案文を更新
+        updateSuggestion()
     }
     
     // 予測負債を表示用テキストに変換
