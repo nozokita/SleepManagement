@@ -72,4 +72,47 @@ class AICoach {
             return nil
         }
     }
+
+    /// 睡眠負債要因の構造体
+    struct DebtFactor {
+        let id: String
+        let factorNameKey: String
+        let suggestionKey: String
+        let percentage: Double
+    }
+    
+    /// 睡眠データから負債要因とその割合を解析する
+    func analyzeDebtFactors(sleepData: SleepQualityData) -> [DebtFactor] {
+        // 各要因の閾値設定
+        let latency = sleepData.sleepLatency ?? 0
+        let variability = sleepData.sleepTimeVariability ?? 0
+        let efficiency = sleepData.sleepEfficiency ?? 1
+        let waso = sleepData.waso ?? 0
+        let shortfall = max((sleepData.idealSleepTime - sleepData.totalSleepTime), 0)
+        
+        let thresholdLatency = 30 * 60.0
+        let thresholdVariability = 3600.0
+        let thresholdInefficiency = 1 - 0.85
+        let thresholdWaso = 30 * 60.0
+        let thresholdShortfall = 3600.0
+        
+        // 正規化
+        let normLatency = min(latency / thresholdLatency, 1.0)
+        let normVariability = min(variability / thresholdVariability, 1.0)
+        let normInefficiency = min((1 - efficiency) / thresholdInefficiency, 1.0)
+        let normWaso = min(waso / thresholdWaso, 1.0)
+        let normShortfall = min(shortfall / thresholdShortfall, 1.0)
+        
+        let sumNorm = normLatency + normVariability + normInefficiency + normWaso + normShortfall
+        guard sumNorm > 0 else { return [] }
+        
+        var factors: [DebtFactor] = []
+        factors.append(DebtFactor(id: "sleep_latency", factorNameKey: "debt_factor_sleep_latency", suggestionKey: "debt_suggestion_sleep_latency", percentage: normLatency / sumNorm * 100))
+        factors.append(DebtFactor(id: "sleep_variability", factorNameKey: "debt_factor_variability", suggestionKey: "debt_suggestion_variability", percentage: normVariability / sumNorm * 100))
+        factors.append(DebtFactor(id: "low_sleep_efficiency", factorNameKey: "debt_factor_low_efficiency", suggestionKey: "debt_suggestion_low_efficiency", percentage: normInefficiency / sumNorm * 100))
+        factors.append(DebtFactor(id: "frequent_wakeups", factorNameKey: "debt_factor_waso", suggestionKey: "debt_suggestion_waso", percentage: normWaso / sumNorm * 100))
+        factors.append(DebtFactor(id: "sleep_debt", factorNameKey: "debt_factor_sleep_debt", suggestionKey: "debt_suggestion_sleep_debt", percentage: normShortfall / sumNorm * 100))
+        
+        return factors.sorted { $0.percentage > $1.percentage }
+    }
 } 

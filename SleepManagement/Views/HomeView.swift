@@ -18,6 +18,8 @@ struct HomeView: View {
     @State private var selectedRecordForEdit: SleepRecord? = nil
     // 予測睡眠負債（秒）を保持
     @State private var predictedDebtSeconds: Double? = nil
+    // AIコーチ提案用テキスト
+    @State private var suggestionText: String? = nil
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
@@ -60,6 +62,9 @@ struct HomeView: View {
                                 
                                 // AIコーチ予測セクション（MVP）
                                 aiCoachSection
+
+                                // AIコーチ自分専属アドバイス
+                                aiCoachAdviceSection
 
                                 // 専門家からのアドバイスセクション
                                 expertAdviceSection
@@ -139,12 +144,6 @@ struct HomeView: View {
             }
             // FetchedResultsに変化があれば予測を更新
             .onChange(of: sleepRecords.count) { _ in
-                calculateTotalDebt()
-                loadDebt()
-                updatePredictedDebt()
-            }
-            // Core Data保存時にも予測を更新
-            .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave, object: viewContext)) { _ in
                 calculateTotalDebt()
                 loadDebt()
                 updatePredictedDebt()
@@ -412,6 +411,30 @@ struct HomeView: View {
                 Text(predictedDebtText)
                     .font(Theme.Typography.bodyFont)
                     .foregroundColor(Theme.Colors.subtext)
+                // フォールバック提案表示
+                if suggestionText != nil {
+                    Text(suggestionText!)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.primary)
+                }
+
+                // 要因可視化
+                if let latest = sleepRecords.first {
+                    let sleepData = SleepQualityData.fromSleepEntry(
+                        latest,
+                        sleepHistoryEntries: Array(sleepRecords),
+                        idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                    )
+                    let factors = AICoach.shared.analyzeDebtFactors(sleepData: sleepData)
+                    if let top = factors.first {
+                        Text(String(format: "ai_coach_factor_summary".localized, Int(top.percentage), top.factorNameKey.localized))
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                        Text(top.suggestionKey.localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.primary)
+                    }
+                }
             }
             .padding(16)
         }
@@ -421,6 +444,60 @@ struct HomeView: View {
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+    }
+    
+    // AIコーチ自分専属アドバイス
+    private var aiCoachAdviceSection: some View {
+        Group {
+            if let latestRecord = sleepRecords.first {
+                // SleepQualityDataを生成
+                let sleepData = SleepQualityData.fromSleepEntry(
+                    latestRecord,
+                    sleepHistoryEntries: Array(sleepRecords),
+                    idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                )
+                // 専門家アドバイス生成
+                let advices = SleepAdvice.generateAdviceFrom(sleepData: sleepData)
+
+                VStack(spacing: 0) {
+                    HStack {
+                        Label("ai_coach_advice_title".localized, systemImage: "lightbulb")
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(Theme.Colors.text)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Colors.cardGradient)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("ai_coach_advice_description".localized)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+
+                        ForEach(advices.prefix(3), id: \.id) { advice in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(advice.title.localized)
+                                    .font(Theme.Typography.subheadingFont)
+                                    .foregroundColor(Theme.Colors.text)
+                                Text(advice.description.localized)
+                                    .font(Theme.Typography.captionFont)
+                                    .foregroundColor(Theme.Colors.subtext)
+                            }
+                        }
+                    }
+                    .padding(16)
+                }
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .offset(y: animatedCards ? 0 : 50)
+                .opacity(animatedCards ? 1 : 0)
+            }
+        }
     }
     
     // MARK: - 専門家からのアドバイスセクション
@@ -433,9 +510,10 @@ struct HomeView: View {
                     sleepHistoryEntries: Array(sleepRecords),
                     idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
                 )
+                // 専門家アドバイス生成
                 let advices = SleepAdvice.generateAdviceFrom(sleepData: sleepData)
+
                 VStack(spacing: 0) {
-                    // カードヘッダー
                     HStack {
                         Label("expert_advice".localized, systemImage: "lightbulb")
                             .font(Theme.Typography.subheadingFont)
@@ -812,9 +890,13 @@ struct HomeView: View {
     
     // 24時間の睡眠負債を秒単位で予測 (MVP：MLなし)
     private func updatePredictedDebt() {
+        // 最新の急性睡眠負債を取得
         loadDebt()
         // 秒換算して設定
-        predictedDebtSeconds = debtHours * 3600
+        let seconds = debtHours * 3600
+        predictedDebtSeconds = seconds
+        // 提案文を更新
+        updateSuggestion()
     }
     
     // 予測負債を表示用テキストに変換
@@ -822,6 +904,15 @@ struct HomeView: View {
         guard let sec = predictedDebtSeconds else { return "" }
         let hours = sec / 3600.0
         return String(format: "ai_coach_prediction".localized, hours)
+    }
+    
+    // AIコーチ提案を更新（負債予測後に呼び出し）
+    private func updateSuggestion() {
+        if let sec = predictedDebtSeconds, sec > 7200 {
+            suggestionText = "ai_coach_action".localized
+        } else {
+            suggestionText = nil
+        }
     }
 }
 

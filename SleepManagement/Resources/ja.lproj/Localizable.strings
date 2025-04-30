@@ -306,4 +306,23 @@
 
 /* AIコーチ予測 */
 "ai_coach_title" = "AIコーチからのご提案";
-"ai_coach_prediction" = "睡眠負債は%.1f時間です。今夜1時間早く寝ると1時間返済できます。"; 
+"ai_coach_prediction" = "睡眠負債は%.1f時間です。今夜1時間早く寝ると1時間返済できます。";
+
+/* AIコーチ負債要因可視化 */
+"ai_coach_factor_summary" = "予測睡眠負債の%d%%は%@が要因です。";
+
+/* 要因名と改善提案 */
+"debt_factor_sleep_latency" = "入眠までの覚醒時間（入眠潜時）が長い";
+"debt_suggestion_sleep_latency" = "就寝前30分は画面オフ・深呼吸習慣を取り入れましょう。";
+
+"debt_factor_variability" = "睡眠スケジュールのばらつき";
+"debt_suggestion_variability" = "週を通して就寝時間を一定に保つよう心がけましょう。";
+
+"debt_factor_low_efficiency" = "睡眠効率の低下";
+"debt_suggestion_low_efficiency" = "睡眠環境を改善して中断を減らし、効率を高めましょう。";
+
+"debt_factor_waso" = "入眠後覚醒";
+"debt_suggestion_waso" = "寝室の騒音や光を最小限にして夜間の覚醒を減らしましょう。";
+
+"debt_factor_sleep_debt" = "睡眠負債全体";
+"debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。"; 

@@ -264,3 +264,22 @@
 "ai_coach_title" = "Sleep Coach Tip";
 "ai_coach_prediction" = "Your sleep debt is %.1f hours. Going to bed 1 hour earlier tonight will repay 1 hour.";
 
+/* AIコーチ負債要因可視化 */
+"ai_coach_factor_summary" = "%d%% of your predicted sleep debt is due to %@.";
+
+/* 要因名と改善提案 */
+"debt_factor_sleep_latency" = "long sleep latency";
+"debt_suggestion_sleep_latency" = "Consider turning off screens and practicing deep breathing for 30 minutes before bed.";
+
+"debt_factor_variability" = "sleep schedule variability";
+"debt_suggestion_variability" = "Try to maintain consistent bedtimes throughout the week.";
+
+"debt_factor_low_efficiency" = "low sleep efficiency";
+"debt_suggestion_low_efficiency" = "Improve sleep environment to reduce disruptions and enhance efficiency.";
+
+"debt_factor_waso" = "wake after sleep onset";
+"debt_suggestion_waso" = "Limit nighttime awakenings by minimizing noise and light in bedroom.";
+
+"debt_factor_sleep_debt" = "overall sleep debt";
+"debt_suggestion_sleep_debt" = "Aim to go to bed earlier or take short naps to repay your sleep debt.";
+
