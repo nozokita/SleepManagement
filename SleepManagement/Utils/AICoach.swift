@@ -120,4 +120,24 @@ class AICoach {
         let en = "Your bedtime varied by ±\(varianceMinutes) minutes on average last week. Aligning your bedtime within 30 minutes each night can improve your sleep efficiency by 10%."
         return (ja, en)
     }
+
+    /// クロノタイプに合わせた就寝時刻シフトアドバイスを生成 (日本語・英語)
+    func generateChronotypeShiftAdvice(sleepRecords: [SleepRecord]) -> (ja: String, en: String) {
+        let bedTimes = sleepRecords.compactMap { $0.startAt }
+        guard !bedTimes.isEmpty else {
+            return ("", "")
+        }
+        let totalMinutes = bedTimes.map { Calendar.current.component(.hour, from: $0) * 60 + Calendar.current.component(.minute, from: $0) }.reduce(0, +)
+        let avgMinutes = totalMinutes / bedTimes.count
+        let avgHour = avgMinutes / 60
+        if avgHour < 22 {
+            let ja = "朝型の予定が続く今週は、夜21時台に就寝を徐々に早めると体内時計が整いやすくなります。初日は20分だけシフトしましょう"
+            let en = "With morning commitments this week, gradually shift your bedtime to the 9 PM hour to support your circadian rhythm. Start by shifting by 20 minutes on the first day."
+            return (ja, en)
+        } else {
+            let ja = "夜型の傾向が続く今週は、就寝時間を夜21時台から20時台に徐々に早めることをおすすめします。初日は15分だけシフトしましょう"
+            let en = "Since you've been going to bed late this week, consider gradually moving your bedtime from the 10 PM hour to the 9 PM hour. Start by shifting by 15 minutes on the first night."
+            return (ja, en)
+        }
+    }
 } 
