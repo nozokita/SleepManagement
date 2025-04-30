@@ -453,23 +453,19 @@ struct HomeView: View {
 
                     Divider()
 
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("expert_advice_description".localized)
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.subtext)
-
-                        ForEach(advices.prefix(3), id: \.id) { advice in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(advice.title.localized)
-                                    .font(Theme.Typography.subheadingFont)
-                                    .foregroundColor(Theme.Colors.text)
-                                Text(advice.description.localized)
-                                    .font(Theme.Typography.captionFont)
-                                    .foregroundColor(Theme.Colors.subtext)
-                            }
+                    VStack(alignment: .leading, spacing: 8) {
+                        // アドバイスタイトルのみを簡潔に表示
+                        ForEach(advices.prefix(2), id: \.id) { advice in
+                            Text("• " + advice.title.localized)
+                                .font(Theme.Typography.bodyFont)
+                                .foregroundColor(Theme.Colors.text)
                         }
+                        // 免責事項
+                        Text("expert_advice_disclaimer".localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                            .padding(.top, 8)
                     }
-                    .padding(16)
                 }
                 .background(Theme.Colors.cardBackground)
                 .cornerRadius(Theme.Layout.cardCornerRadius)

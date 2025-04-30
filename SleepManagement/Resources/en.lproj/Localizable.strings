@@ -230,3 +230,7 @@
 
 "session_score_info_message" = "Your sleep score breakdown:\n- Duration (up to 40 points): Based on how long you sleep compared to the ideal\n- Efficiency (up to 25 points): Ratio of actual sleep time to time in bed\n- Regularity (up to 15 points): Consistency of your bed/wake times\n- Sleep onset latency (up to 10 points): Time it takes you to fall asleep\n- WASO (up to 10 points): Total awake time during your sleep period\nAll components add up to 100 points";
 
+
+/* Expert Advice Section */
+"expert_advice_disclaimer" = "This is not medical advice.";
+

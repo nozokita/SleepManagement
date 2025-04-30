@@ -278,6 +278,7 @@
 /* Expert Advice Section */
 "expert_advice" = "睡眠の専門家のおすすめ";
 "expert_advice_description" = "睡眠データに基づいて、専門家がおすすめする改善方法をご紹介します。";
+"expert_advice_disclaimer" = "これは医療アドバイスではありません。";
 
 "advice.irregular_sleep_schedule.title" = "毎日の就寝・起床時間をそろえましょう";
 "advice.irregular_sleep_schedule.description" = "起床時間や就寝時間がバラバラだと体内リズムが乱れます。毎日同じ時間に起きて、同じ時間に寝る習慣を作りましょう。";
