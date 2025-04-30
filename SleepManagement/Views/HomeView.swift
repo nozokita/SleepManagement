@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreData
 import HealthKit
+import CoreML
 
 // SleepDashboardViewの記述を削除
 
@@ -16,6 +17,10 @@ struct HomeView: View {
     
     // 編集用・削除用状態
     @State private var selectedRecordForEdit: SleepRecord? = nil
+    // 予測睡眠負債（秒）を保持
+    @State private var predictedDebtSeconds: Double? = nil
+    // AIコーチ提案用テキスト
+    @State private var suggestionText: String? = nil
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
@@ -31,6 +36,9 @@ struct HomeView: View {
     }
     
     @State private var showSettings = false
+    
+    // Core ML LSTMモデルインスタンス化
+    private let model = try! SleepDebtLSTM(configuration: MLModelConfiguration())
     
     var body: some View {
         NavigationView {
@@ -64,6 +72,9 @@ struct HomeView: View {
 
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
+
+                                // AIコーチ予測を表示
+                                aiCoachSection
                             }
                             .padding(.top, 8)
                             .padding(.bottom, 80) // FABのスペース確保
@@ -103,6 +114,9 @@ struct HomeView: View {
                 
                 // 過去24時間の負債をロード
                 loadDebt()
+                
+                // AIモデルで睡眠負債を予測
+                updatePredictedDebt()
                 
                 // アニメーション
                 withAnimation(Theme.Animations.springy.delay(0.3)) {
@@ -792,6 +806,9 @@ struct HomeView: View {
         // 最新の負債を再計算
         loadDebt()
         
+        // AIモデルで睡眠負債を再予測
+        updatePredictedDebt()
+        
         // リフレッシュアニメーション用の遅延
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             refreshing = false
@@ -813,6 +830,77 @@ struct HomeView: View {
     /// 24時間分の急性睡眠負債（ローリング24h）を計算して更新
     private func loadDebt() {
         debtHours = sleepManager.calculateAcuteDebt(context: viewContext)
+    }
+    
+    // 過去30夜のスコアから睡眠負債をAI予測（秒単位）
+    private func updatePredictedDebt() {
+        let scores = validNormalRecords.prefix(30).map { $0.score }
+        guard !scores.isEmpty else { return }
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let debtSec = AICoach.shared.predictDebt(from: scores) {
+                DispatchQueue.main.async {
+                    self.predictedDebtSeconds = debtSec
+                    // フォールバック提案を更新
+                    self.updateSuggestion()
+                }
+            }
+        }
+    }
+    
+    // 予測負債を表示用テキストに変換
+    private var predictedDebtText: String {
+        guard let sec = predictedDebtSeconds else { return "" }
+        let hours = sec / 3600.0
+        return String(format: "ai_coach_prediction".localized, hours)
+    }
+    
+    // AIコーチ提案を更新（負債予測後に呼び出し）
+    private func updateSuggestion() {
+        if let sec = predictedDebtSeconds, sec > 7200 {
+            suggestionText = "ai_coach_action".localized
+        } else {
+            suggestionText = nil
+        }
+    }
+    
+    // AIコーチ予測セクション
+    private var aiCoachSection: some View {
+        Group {
+            if predictedDebtSeconds != nil {
+                VStack(spacing: 0) {
+                    HStack {
+                        Label("ai_coach_title".localized, systemImage: "brain.head.profile")
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(Theme.Colors.text)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Colors.cardGradient)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(predictedDebtText)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                        // フォールバック提案表示
+                        if let text = suggestionText {
+                            Text(text)
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(Theme.Colors.primary)
+                        }
+                    }
+                    .padding(16)
+                }
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .offset(y: animatedCards ? 0 : 50)
+                .opacity(animatedCards ? 1 : 0)
+            }
+        }
     }
 }
 
