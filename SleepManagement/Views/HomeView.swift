@@ -184,7 +184,7 @@ struct HomeView: View {
                     }
                 }
                 
-                if let latestRecord = sleepRecords.first, !sleepRecords.isEmpty {
+                if let latestRecord = validNormalRecords.first, !validNormalRecords.isEmpty {
                     // 最新の睡眠サマリー
                     HStack(spacing: 12) {
                         HStack(spacing: 8) {
