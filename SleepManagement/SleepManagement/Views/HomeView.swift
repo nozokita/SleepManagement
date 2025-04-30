@@ -23,22 +23,14 @@ private var expertAdviceSection: some View {
 
                 Divider()
 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("expert_advice_description".localized)
-                        .font(Theme.Typography.bodyFont)
-                        .foregroundColor(Theme.Colors.subtext)
-
-                    ForEach(advices.prefix(3), id: \.id) { advice in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(advice.title.localized)
-                                .font(Theme.Typography.subheadingFont)
-                                .foregroundColor(Theme.Colors.text)
-                            Text(advice.description.localized)
-                                .font(Theme.Typography.captionFont)
-                                .foregroundColor(Theme.Colors.subtext)
-                        }
+                // 端的な箇条書き表示
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(advices.prefix(2), id: \.id) { advice in
+                        Text("• " + advice.title.localized)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.text)
                     }
-                    // 医療的アドバイスではない旨の注意書き
+                    // 免責事項
                     Text("expert_advice_disclaimer".localized)
                         .font(Theme.Typography.captionFont)
                         .foregroundColor(Theme.Colors.subtext)
@@ -54,4 +46,109 @@ private var expertAdviceSection: some View {
             .opacity(animatedCards ? 1 : 0)
         }
     }
+}
+
+// ヘッダービュー
+private var headerView: some View {
+    ZStack {
+        // 背景グラデーション
+        Theme.Colors.primaryGradient
+            .ignoresSafeArea(edges: .top)
+        
+        VStack(spacing: 10) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(localizationManager.localizedAppName)
+                        .font(Theme.Typography.headingFont)
+                        .foregroundColor(.white)
+                    
+                    Text("home_subtitle".localized)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(.white.opacity(0.8))
+                }
+                
+                Spacer()
+                
+                // 言語切り替えボタン
+                Button(action: {
+                    localizationManager.toggleLanguage()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "globe")
+                            .font(.body)
+                        Text("switch_language".localized)
+                            .font(.caption)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.2))
+                    .cornerRadius(20)
+                }
+                
+                // 設定ボタン
+                Button(action: {
+                    showSettings = true
+                }) {
+                    Image(systemName: "gearshape")
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                        .background(Color.white.opacity(0.2))
+                        .clipShape(Circle())
+                }
+            }
+            
+            if let latestRecord = validNormalRecords.first, !validNormalRecords.isEmpty {
+                // 最新の通常睡眠サマリー
+                HStack(spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "moon.stars")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                        
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("last_sleep".localized)
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(.white.opacity(0.8))
+                            
+                            Text(latestRecord.durationText)
+                                .font(.subheadline.bold())
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.15))
+                    .cornerRadius(10)
+                    
+                    HStack(spacing: 8) {
+                        Image(systemName: "chart.bar.fill")
+                            .font(.caption)
+                            .foregroundColor(.white)
+
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("sleep_score".localized)
+                                .font(Theme.Typography.captionFont)
+                                .foregroundColor(.white.opacity(0.8))
+
+                            Text("\(Int(latestRecord.score))" + "points".localized)
+                                .font(.subheadline.bold())
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.15))
+                    .cornerRadius(10)
+                    
+                    Spacer()
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top, 45)
+        .padding(.bottom, 15)
+    }
+    .frame(height: 150)
 } 
