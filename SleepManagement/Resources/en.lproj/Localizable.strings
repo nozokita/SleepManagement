@@ -301,3 +301,28 @@
 "power_nap_action" = "Take a short power nap";
 "reinforce_routine_action" = "Strengthen your pre-sleep routine";
 
+/* High sleep debt (>2h) title */
+"suggest_highDebt_title" = "High sleep debt";
+/* High sleep debt message: debt hours, usual bed hour, limit hour, repay minutes */
+"suggest_highDebt_message" = "You have %1$d hours of sleep debt. You usually go to bed at %2$d:00, but if you sleep by %3$d:00 tonight, you can repay %4$d minutes!";
+
+/* Moderate sleep debt + free time */
+"suggest_moderateDebt_title" = "Try a power nap";
+/* Moderate debt message: nap duration */
+"suggest_moderateDebt_message" = "A %1$d-minute power nap in the afternoon is recommended. NASA studies show a 34%% increase in reaction time.";
+
+/* Weekend rhythm shift */
+"suggest_rhythm_title" = "Maintain sleep rhythm";
+/* Rhythm shift message: shift hours, wake hour */
+"suggest_rhythm_message" = "If your weekend sleep pattern shifts by %1$d hours from weekdays, your performance on Monday may decrease by 15%%. Try waking up by %2$d:00 on Saturday.";
+
+/* Future sleep debt warning */
+"suggest_futureHigh_title" = "Upcoming sleep debt warning";
+/* Future debt message: date string, future debt hours */
+"suggest_futureHigh_message" = "Your sleep debt is predicted to reach %2$d hours on %1$@. Going to bed 30 minutes earlier today and tomorrow can help mitigate this.";
+
+/* Default suggestion title */
+"suggest_default_title" = "Suggested action";
+/* Default suggestion message */
+"suggest_default_message" = "Try sleep improvement actions based on your current situation.";
+

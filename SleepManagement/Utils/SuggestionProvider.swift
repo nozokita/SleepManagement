@@ -1,0 +1,76 @@
+import Foundation
+
+struct Suggestion {
+    let title: String
+    let message: String
+}
+
+struct SleepSuggestionContext {
+    let debtMinutes: Int
+    let freeMinutes: Int
+    let chronoNormalized: Double
+    let weekendShiftMinutes: Int
+    let futureDebtMinutes: [Date: Int]
+    let usualBedHour: Int
+    let usualWakeHour: Int
+}
+
+enum SleepActionArm { case earlyBedtime, powerNap, reinforceRoutine }
+
+class SuggestionProvider {
+    static func generate(context: SleepSuggestionContext, arm: SleepActionArm) -> Suggestion {
+        // 大きな負債 (>120分)
+        if context.debtMinutes >= 120 {
+            let hours = context.debtMinutes / 60
+            let repay = 60
+            return Suggestion(
+                title: NSLocalizedString("suggest_highDebt_title", comment: ""),
+                message: String(
+                    format: NSLocalizedString("suggest_highDebt_message", comment: ""),
+                    hours, context.usualBedHour, 22, repay
+                )
+            )
+        }
+        // 中度負債 (30〜119) & 空き時間
+        if (30..<120).contains(context.debtMinutes), context.freeMinutes >= 20 {
+            let nap = 20
+            return Suggestion(
+                title: NSLocalizedString("suggest_moderateDebt_title", comment: ""),
+                message: String(
+                    format: NSLocalizedString("suggest_moderateDebt_message", comment: ""),
+                    nap
+                )
+            )
+        }
+        // リズム乱れ (週末ズレ >=120)
+        if context.weekendShiftMinutes >= 120 {
+            let shiftHours = context.weekendShiftMinutes / 60
+            let wakeHour = context.usualWakeHour
+            return Suggestion(
+                title: NSLocalizedString("suggest_rhythm_title", comment: ""),
+                message: String(
+                    format: NSLocalizedString("suggest_rhythm_message", comment: ""),
+                    shiftHours, wakeHour
+                )
+            )
+        }
+        // 将来負債予測 (>=180)
+        if let (date, debt) = context.futureDebtMinutes.first(where: { $0.value >= 180 }) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "M月d日"
+            let strDate = formatter.string(from: date)
+            return Suggestion(
+                title: NSLocalizedString("suggest_futureHigh_title", comment: ""),
+                message: String(
+                    format: NSLocalizedString("suggest_futureHigh_message", comment: ""),
+                    strDate, debt / 60
+                )
+            )
+        }
+        // デフォルト
+        return Suggestion(
+            title: NSLocalizedString("suggest_default_title", comment: ""),
+            message: NSLocalizedString("suggest_default_message", comment: "")
+        )
+    }
+}
