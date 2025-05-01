@@ -1,6 +1,22 @@
 import Foundation
 import Combine
 
+/// ユーザーのクロノタイプ
+enum Chronotype: Int, CaseIterable {
+    case morning    // 朝型
+    case neutral    // 中間型
+    case evening    // 夜型
+
+    /// 表示用テキスト (ローカライズ)
+    var displayName: String {
+        switch self {
+        case .morning: return "chronotype_morning".localized
+        case .neutral: return "chronotype_neutral".localized
+        case .evening: return "chronotype_evening".localized
+        }
+    }
+}
+
 final class SettingsManager: ObservableObject {
     static let shared = SettingsManager()
 
@@ -21,6 +37,7 @@ final class SettingsManager: ObservableObject {
     @Published var shortSleepThreshold: TimeInterval = 90 * 60
     /// 睡眠セッションの区切り時間（秒）
     @Published var sleepGapThreshold: TimeInterval = 30 * 60
+    @Published var chronotype: Chronotype = .neutral
 
     private init() {
         let storedYear = UserDefaults.standard.integer(forKey: "birthYear")
@@ -45,6 +62,8 @@ final class SettingsManager: ObservableObject {
         self.darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
         self.showSleepDebt = UserDefaults.standard.bool(forKey: "showSleepDebt")
         self.showSleepScore = UserDefaults.standard.bool(forKey: "showSleepScore")
+        let storedChrono = UserDefaults.standard.integer(forKey: "chronotype")
+        self.chronotype = Chronotype(rawValue: storedChrono) ?? .neutral
     }
 
     func save() {
@@ -62,6 +81,16 @@ final class SettingsManager: ObservableObject {
         UserDefaults.standard.set(treatShortSleepAsNap, forKey: "treatShortSleepAsNap")
         UserDefaults.standard.set(shortSleepThreshold, forKey: "shortSleepThreshold")
         UserDefaults.standard.set(sleepGapThreshold, forKey: "sleepGapThreshold")
+        UserDefaults.standard.set(chronotype.rawValue, forKey: "chronotype")
+    }
+
+    /// クロノタイプを数値化 (Morning=0.0, Neutral=0.5, Evening=1.0)
+    var chronotypeValue: Double {
+        switch chronotype {
+        case .morning: return 0.0
+        case .neutral: return 0.5
+        case .evening: return 1.0
+        }
     }
 
     var appVersion: String {
