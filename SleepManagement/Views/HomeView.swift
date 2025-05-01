@@ -400,6 +400,13 @@ struct HomeView: View {
                 .environmentObject(localizationManager)
             }
         }
+        .padding(16)
+        .background(Theme.Colors.cardBackground)
+        .cornerRadius(Theme.Layout.cardCornerRadius)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
     }
     
     // AIコーチ予測セクション（MVP）
