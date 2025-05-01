@@ -485,12 +485,32 @@ struct HomeView: View {
                 let hours = records.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
                 return hours.isEmpty ? averageBedHour : hours.reduce(0, +) / hours.count
             }()
+            // 週末リズム乱れの検知（過去7日間）
+            let now = Date()
+            let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+            let weekendRecords = validNormalRecords.filter { rec in
+                guard let sd = rec.startAt else { return false }
+                return sd >= start7 && Calendar.current.isDateInWeekend(sd)
+            }
+            let weekdayRecords = validNormalRecords.filter { rec in
+                guard let sd = rec.startAt else { return false }
+                return sd >= start7 && !Calendar.current.isDateInWeekend(sd)
+            }
+            let avgWeekendBedHour: Int = {
+                let hrs = weekendRecords.compactMap { rec in rec.startAt.map { Calendar.current.component(.hour, from: $0) } }
+                return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+            }()
+            let avgWeekdayBedHour: Int = {
+                let hrs = weekdayRecords.compactMap { rec in rec.startAt.map { Calendar.current.component(.hour, from: $0) } }
+                return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+            }()
+            let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
             // SuggestionProviderに渡す文脈
             let suggestionContext = SleepSuggestionContext(
                 debtMinutes: debtMinutes,
                 freeMinutes: freeMinutes,
                 chronoNormalized: chronoNorm,
-                weekendShiftMinutes: 0,
+                weekendShiftMinutes: weekendShiftMinutes,
                 futureDebtMinutes: [:],
                 usualBedHour: averageBedHour,
                 usualWakeHour: averageWakeHour
