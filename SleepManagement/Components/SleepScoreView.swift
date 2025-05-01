@@ -42,7 +42,7 @@ struct SleepScoreView: View {
                         .font(.system(size: size / 2.5, weight: .bold, design: .rounded))
                         .foregroundColor(Theme.Colors.text)
                     
-                    Text("points".localized)
+                    Text("score_points".localized)
                         .font(.system(size: size / 6, design: .rounded))
                         .foregroundColor(Theme.Colors.subtext)
                 }
