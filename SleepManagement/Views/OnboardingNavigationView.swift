@@ -73,15 +73,17 @@ struct OnboardingNavigationView: View {
                                     .background(Color.blue).foregroundColor(.white)
                                     .cornerRadius(8)
                             }
-                            Button(action: {
-                                // HealthKit自動取得を選択
-                                SettingsManager.shared.autoSyncHealthKit = true
-                                withAnimation { currentStep = .healthAndWatchSettings }
-                            }) {
-                                Text("onboarding.selectSource.healthkit")
-                                    .padding().frame(maxWidth: .infinity)
-                                    .background(Color.gray.opacity(0.2)).foregroundColor(.primary)
+                            // HealthKit連携は開発中（選択不可）
+                            HStack(spacing: 8) {
+                                Text("onboarding.selectSource.healthkit".localized)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.gray.opacity(0.2))
+                                    .foregroundColor(.primary)
                                     .cornerRadius(8)
+                                Text("in_development".localized)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
                         }
                         .padding(.horizontal, 40)
