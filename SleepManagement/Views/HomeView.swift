@@ -29,6 +29,9 @@ struct HomeView: View {
     
     // 過去24時間の睡眠負債（時間）
     @State private var debtHours: Double = 0
+    // フィードバックシート表示
+    @State private var showingFeedbackSheet: Bool = false
+    @State private var feedbackMinutesInput: String = ""
     
     // タブアイテム
     private var tabs: [String] {
@@ -73,6 +76,20 @@ struct HomeView: View {
                                 // 専門家からのアドバイスセクション
                                 // expertAdviceSection を非表示
 
+                                // フィードバックボタン
+                                Button(action: {
+                                    showingFeedbackSheet = true
+                                }) {
+                                    Text("feedback_button".localized)
+                                        .font(Theme.Typography.bodyFont.bold())
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Theme.Colors.primary)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
+                                }
+                                .padding(.horizontal)
+                                
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
                             }
@@ -145,6 +162,42 @@ struct HomeView: View {
             .sheet(item: $selectedRecordForEdit) { record in
                 EditSleepRecordView(record: record)
                     .environment(\.managedObjectContext, viewContext)
+            }
+            // フィードバックシート
+            .sheet(isPresented: $showingFeedbackSheet) {
+                VStack(spacing: 16) {
+                    Text("feedback_prompt".localized)
+                        .font(Theme.Typography.subheadingFont)
+                    HStack {
+                        TextField("", text: $feedbackMinutesInput)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                        Text("minutes".localized)
+                            .font(Theme.Typography.bodyFont)
+                    }
+                    Button(action: {
+                        if let m = Int(feedbackMinutesInput) {
+                            let reward = Double(m) / 60.0
+                            banditManager.recordReward(reward,
+                                viewContext: viewContext,
+                                predictedDebtSec: predictedDebtSeconds)
+                        }
+                        showingFeedbackSheet = false
+                        feedbackMinutesInput = ""
+                    }) {
+                        Text("feedback_send".localized)
+                            .font(Theme.Typography.bodyFont.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Theme.Colors.primary)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    Spacer()
+                }
+                .padding()
             }
             // FetchedResultsに変化があれば予測を更新
             .onChange(of: sleepRecords.count) { _ in
