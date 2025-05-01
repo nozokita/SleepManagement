@@ -59,47 +59,19 @@ struct OnboardingView: View {
                     }
                     .padding(.top, 20)
 
-                    // HealthKit設定カード
+                    // HealthKit設定カード（開発中）
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("onboarding.requiredSettingsTitle")
+                        Text("onboarding.requiredSettingsTitle".localized)
                             .font(.headline)
                             .padding(.bottom, 4)
-                        
-                        VStack(spacing: 16) {
-                            HStack {
-                                Label("onboarding.sleepDataLabel", systemImage: "moon.zzz.fill")
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Text(statusText(for: hkSleepStatus))
-                                    .foregroundColor(statusColor(for: hkSleepStatus))
-                                    .fontWeight(.bold)
-                            }
-                            
-                            HStack {
-                                Label("onboarding.heartRateLabel", systemImage: "heart.fill")
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Text(statusText(for: hkHeartRateStatus))
-                                    .foregroundColor(statusColor(for: hkHeartRateStatus))
-                                    .fontWeight(.bold)
-                            }
-                        }
-                        
                         HStack {
-                            Button(LocalizedStringKey("onboarding.updateStatusButton")) { 
-                                updateStatuses() 
-                            }
-                            .buttonStyle(.bordered)
-                            
+                            Label("settings.healthkit.sync".localized, systemImage: "heart.fill")
+                                .foregroundColor(.primary)
                             Spacer()
-                            
-                            Button(isHealthAuthorized ? LocalizedStringKey("onboarding.healthKitButton.authorized") : LocalizedStringKey("onboarding.healthKitButton.request")) {
-                                requestHealthKit()
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .fixedSize(horizontal: false, vertical: true)
+                            Text("in_development".localized)
+                                .foregroundColor(.secondary)
+                                .fontWeight(.bold)
                         }
-                        .padding(.top, 4)
                     }
                     .padding(20)
                     .background(
