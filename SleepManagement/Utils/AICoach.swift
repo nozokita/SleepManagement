@@ -1,5 +1,6 @@
 import Foundation
 import CoreML
+import CoreData
 
 class AICoach {
     static let shared = AICoach()
@@ -71,6 +72,16 @@ class AICoach {
             print("AICoach prediction error: \(error)")
             return nil
         }
+    }
+
+    /// 過去指定件数分の睡眠スコアを取得し、モデルで予測を実行する
+    /// - Parameters:
+    ///   - context: Core Data context
+    ///   - limit: 取得件数（デフォルト30）
+    /// - Returns: 予測された睡眠負債（秒単位）
+    func predictDebtFromRecentScores(context: NSManagedObjectContext, limit: Int = 30) -> Double? {
+        let scores = SleepManager.shared.fetchRecentSleepScores(context: context, limit: limit)
+        return predictDebt(from: scores)
     }
 
     /// 睡眠負債要因の構造体
