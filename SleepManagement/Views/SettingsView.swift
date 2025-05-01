@@ -35,7 +35,7 @@ struct SettingsView: View {
                                         HStack(spacing: 4) {
                                             Image(systemName: "globe")
                                                 .font(.body)
-                                            Text(localizationManager.currentLanguage == "ja" ? "English" : "日本語")
+                                            Text(localizationManager.currentLanguage == "ja" ? "日本語" : "English")
                                                 .font(.subheadline)
                                         }
                                         .foregroundColor(.white)
