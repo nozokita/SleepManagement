@@ -335,7 +335,7 @@
 /* フィードバックボタン */
 "feedback_button" = "フィードバックを送る";
 /* フィードバックプロンプト */
-"feedback_prompt" = "アクションの効果を教えてください";
+"feedback_prompt" = "このアクションを実行して、何分睡眠負債を返済できましたか？";
 /* フィードバック入力分数 */
 "feedback_minutes" = "%d分改善しました";
 /* フィードバック送信 */
@@ -344,4 +344,13 @@
 /* アクション説明 */
 "early_bedtime_action" = "いつもより早く寝る";
 "power_nap_action" = "短時間のパワーナップをとる";
-"reinforce_routine_action" = "就寝前のルーティンを強化する"; 
+"reinforce_routine_action" = "就寝前のルーティンを強化する";
+
+/* フィードバックシートタイトル */
+"feedback_sheet_title" = "アクションの効果を報告";
+/* フィードバック説明 */
+"feedback_prompt" = "このアクションを実行して、何分睡眠負債を返済できましたか？";
+/* 入力プレースホルダー */
+"feedback_placeholder" = "分数を入力";
+/* フィードバック注釈 */
+"feedback_note" = "フィードバックは今後の提案改善に活用されます。"; 

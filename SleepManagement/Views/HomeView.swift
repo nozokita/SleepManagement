@@ -166,10 +166,14 @@ struct HomeView: View {
             // フィードバックシート
             .sheet(isPresented: $showingFeedbackSheet) {
                 VStack(spacing: 16) {
+                    Text("feedback_sheet_title".localized)
+                        .font(Theme.Typography.headingFont)
                     Text("feedback_prompt".localized)
-                        .font(Theme.Typography.subheadingFont)
+                        .font(Theme.Typography.bodyFont)
+                        .multilineTextAlignment(.center)
+
                     HStack {
-                        TextField("", text: $feedbackMinutesInput)
+                        TextField("feedback_placeholder".localized, text: $feedbackMinutesInput)
                             .keyboardType(.numberPad)
                             .padding()
                             .background(Color(.systemGray6))
@@ -177,12 +181,20 @@ struct HomeView: View {
                         Text("minutes".localized)
                             .font(Theme.Typography.bodyFont)
                     }
+
+                    Text("feedback_note".localized)
+                        .font(Theme.Typography.captionFont)
+                        .foregroundColor(Theme.Colors.subtext)
+                        .multilineTextAlignment(.center)
+
                     Button(action: {
                         if let m = Int(feedbackMinutesInput) {
                             let reward = Double(m) / 60.0
-                            banditManager.recordReward(reward,
+                            banditManager.recordReward(
+                                reward,
                                 viewContext: viewContext,
-                                predictedDebtSec: predictedDebtSeconds)
+                                predictedDebtSec: predictedDebtSeconds
+                            )
                         }
                         showingFeedbackSheet = false
                         feedbackMinutesInput = ""
