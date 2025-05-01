@@ -20,7 +20,7 @@ struct HomeView: View {
     // 予測睡眠負債（秒）を保持
     @State private var predictedDebtSeconds: Double? = nil
     // AIコーチ提案用テキスト
-    @State private var suggestionText: String? = nil
+    // @State private var suggestionText: String? = nil  // フォールバック提案を削除
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
@@ -419,12 +419,7 @@ struct HomeView: View {
                 Text(predictedDebtText)
                     .font(Theme.Typography.bodyFont)
                     .foregroundColor(Theme.Colors.subtext)
-                // フォールバック提案表示
-                if suggestionText != nil {
-                    Text(suggestionText!)
-                        .font(Theme.Typography.captionFont)
-                        .foregroundColor(Theme.Colors.primary)
-                }
+                // フォールバック提案は削除（おすすめアクションに集約）
 
                 // 要因可視化
                 if let latest = sleepRecords.first {
@@ -942,31 +937,19 @@ struct HomeView: View {
         let seconds = debtHours * 3600
         predictedDebtSeconds = seconds
         banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: seconds)
-        // AIコーチのフォールバック提案更新
-        updateSuggestion()
+        // フォールバック提案は削除したので何もしない
     }
     
-    // 予測負債を表示用テキストに変換
+    // 予測負債を表示用テキストに変換（フォールバック提案を含めず純粋に数値のみ表示）
     private var predictedDebtText: String {
         guard let sec = predictedDebtSeconds else { return "" }
         let totalSeconds = Int(sec)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
-        let timeText: String
         if localizationManager.currentLanguage == "ja" {
-            timeText = "\(hours)時間\(minutes)分"
+            return "睡眠負債は\(hours)時間\(minutes)分です。"
         } else {
-            timeText = "\(hours)h \(minutes)m"
-        }
-        return String(format: "ai_coach_prediction_time_fmt".localized, timeText)
-    }
-    
-    // AIコーチ提案を更新（負債予測後に呼び出し）
-    private func updateSuggestion() {
-        if let sec = predictedDebtSeconds, sec > 7200 {
-            suggestionText = "ai_coach_action".localized
-        } else {
-            suggestionText = nil
+            return "Sleep debt: \(hours)h \(minutes)m"
         }
     }
     
