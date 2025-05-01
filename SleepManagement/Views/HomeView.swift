@@ -64,10 +64,10 @@ struct HomeView: View {
                                 aiCoachSection
 
                                 // AIコーチ自分専属アドバイス
-                                aiCoachAdviceSection
+                                // aiCoachAdviceSection を非表示
 
                                 // 専門家からのアドバイスセクション
-                                expertAdviceSection
+                                // expertAdviceSection を非表示
 
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
@@ -363,19 +363,8 @@ struct HomeView: View {
         let window24hStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
         let window7dStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
         return VStack(spacing: 32) {
-            // 過去24時間表示
-            VStack(spacing: 8) {
-                Text(localizationManager.currentLanguage == "ja" ? "過去24時間表示" : "Past 24 Hours")
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
-                SleepDebtView(
-                    totalDebt: debtHours,
-                    windowStart: window24hStart,
-                    windowEnd: now,
-                    detailTitle: localizationManager.currentLanguage == "ja" ? "過去24時間の計算過程" : "24-Hour Calculation Detail"
-                )
-                .environmentObject(localizationManager)
-            }
+            // 過去24時間睡眠負債グラフを非表示
+
             // 7日間固定集計
             VStack(spacing: 8) {
                 Text(localizationManager.currentLanguage == "ja" ? "７日間固定集計" : "7-Day Fixed")
