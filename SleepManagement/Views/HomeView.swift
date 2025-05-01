@@ -29,9 +29,8 @@ struct HomeView: View {
     
     // 過去24時間の睡眠負債（時間）
     @State private var debtHours: Double = 0
-    // フィードバックシート表示
-    @State private var showingFeedbackSheet: Bool = false
-    @State private var feedbackMinutesInput: String = ""
+    // 過去予測値保持（自動フィードバック用）
+    @State private var lastPredictedDebtSec: Double? = nil
     
     // タブアイテム
     private var tabs: [String] {
@@ -76,20 +75,6 @@ struct HomeView: View {
                                 // 専門家からのアドバイスセクション
                                 // expertAdviceSection を非表示
 
-                                // フィードバックボタン
-                                Button(action: {
-                                    showingFeedbackSheet = true
-                                }) {
-                                    Text("feedback_button".localized)
-                                        .font(Theme.Typography.bodyFont.bold())
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Theme.Colors.primary)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                }
-                                .padding(.horizontal)
-                                
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
                             }
@@ -163,59 +148,24 @@ struct HomeView: View {
                 EditSleepRecordView(record: record)
                     .environment(\.managedObjectContext, viewContext)
             }
-            // フィードバックシート
-            .sheet(isPresented: $showingFeedbackSheet) {
-                VStack(spacing: 16) {
-                    Text("feedback_sheet_title".localized)
-                        .font(Theme.Typography.headingFont)
-                    Text("feedback_prompt".localized)
-                        .font(Theme.Typography.bodyFont)
-                        .multilineTextAlignment(.center)
-
-                    HStack {
-                        TextField("feedback_placeholder".localized, text: $feedbackMinutesInput)
-                            .keyboardType(.numberPad)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                        Text("minutes".localized)
-                            .font(Theme.Typography.bodyFont)
-                    }
-
-                    Text("feedback_note".localized)
-                        .font(Theme.Typography.captionFont)
-                        .foregroundColor(Theme.Colors.subtext)
-                        .multilineTextAlignment(.center)
-
-                    Button(action: {
-                        if let m = Int(feedbackMinutesInput) {
-                            let reward = Double(m) / 60.0
-                            banditManager.recordReward(
-                                reward,
-                                viewContext: viewContext,
-                                predictedDebtSec: predictedDebtSeconds
-                            )
-                        }
-                        showingFeedbackSheet = false
-                        feedbackMinutesInput = ""
-                    }) {
-                        Text("feedback_send".localized)
-                            .font(Theme.Typography.bodyFont.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Theme.Colors.primary)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    Spacer()
-                }
-                .padding()
-            }
+            // フィードバックUIを削除しました
             // FetchedResultsに変化があれば予測を更新
             .onChange(of: sleepRecords.count) { _ in
-                calculateTotalDebt()
-                loadDebt()
+                // 自動フィードバック：前回予測値と新しい実績値の差分を報酬として登録
+                let prevSec = lastPredictedDebtSec
+                // 更新＆再予測
                 updatePredictedDebt()
+                if let prev = prevSec, let newSec = predictedDebtSeconds {
+                    let improved = max(prev - newSec, 0)
+                    let rewardHours = improved / 3600.0
+                    if rewardHours > 0 {
+                        banditManager.recordReward(
+                            rewardHours,
+                            viewContext: viewContext,
+                            predictedDebtSec: prev
+                        )
+                    }
+                }
             }
         }
     }
@@ -1013,14 +963,14 @@ struct HomeView: View {
     
     // 24時間の睡眠負債を秒単位で予測 (MVP：MLなし)
     private func updatePredictedDebt() {
-        // 最新の急性睡眠負債を取得
+        // 古い予測値を保持（自動フィードバック用）
+        lastPredictedDebtSec = predictedDebtSeconds
+        // 最新の負債をロード＆予測更新
         loadDebt()
-        // 秒換算して設定
         let seconds = debtHours * 3600
         predictedDebtSeconds = seconds
-        // Banditによるおすすめアクションを更新
-        banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: predictedDebtSeconds)
-        // 提案文を更新
+        banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: seconds)
+        // AIコーチのフォールバック提案更新
         updateSuggestion()
     }
     
