@@ -517,7 +517,7 @@ struct HomeView: View {
             .padding(.vertical, 12)
             .background(Theme.Colors.cardGradient)
 
-            // Context取得
+            // 文脈取得 & 30日平均の就寝/起床時刻計算
             let contextVec = SleepContextProvider.getContext(
                 viewContext: viewContext,
                 predictedDebtSec: predictedDebtSeconds
@@ -525,15 +525,16 @@ struct HomeView: View {
             let debtMinutes = Int((contextVec[0] * 60).rounded())
             let freeMinutes = Int((contextVec[1] * 60).rounded())
             let chronoNorm = contextVec[2]
-            // ユーザー設定から通常の就寝・起床時刻
-            let sleepReminderHour = Calendar.current.component(
-                .hour,
-                from: SettingsManager.shared.sleepReminderTime
-            )
-            let summaryHour = Calendar.current.component(
-                .hour,
-                from: SettingsManager.shared.morningSummaryTime
-            )
+            // 過去30日分の平均就寝・起床時刻
+            let records = Array(validNormalRecords.prefix(30))
+            let averageBedHour: Int = {
+                let hours = records.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+                return hours.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hours.reduce(0, +) / hours.count
+            }()
+            let averageWakeHour: Int = {
+                let hours = records.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
+                return hours.isEmpty ? averageBedHour : hours.reduce(0, +) / hours.count
+            }()
             // SuggestionProviderに渡す文脈
             let suggestionContext = SleepSuggestionContext(
                 debtMinutes: debtMinutes,
@@ -541,8 +542,8 @@ struct HomeView: View {
                 chronoNormalized: chronoNorm,
                 weekendShiftMinutes: 0,
                 futureDebtMinutes: [:],
-                usualBedHour: sleepReminderHour,
-                usualWakeHour: summaryHour
+                usualBedHour: averageBedHour,
+                usualWakeHour: averageWakeHour
             )
             // 提案生成
             let suggestion = SuggestionProvider.generate(

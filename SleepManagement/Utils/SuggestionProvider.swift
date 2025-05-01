@@ -22,12 +22,14 @@ class SuggestionProvider {
         // 大きな負債 (>120分)
         if context.debtMinutes >= 120 {
             let hours = context.debtMinutes / 60
-            let repay = 60
+            // 1時間早く寝ることで1時間返済できる想定
+            let repayHours = 1
+            let suggestionLimitHour = context.usualBedHour - repayHours
             return Suggestion(
                 title: NSLocalizedString("suggest_highDebt_title", comment: ""),
                 message: String(
                     format: NSLocalizedString("suggest_highDebt_message", comment: ""),
-                    hours, context.usualBedHour, 22, repay
+                    hours, context.usualBedHour, suggestionLimitHour, repayHours
                 )
             )
         }

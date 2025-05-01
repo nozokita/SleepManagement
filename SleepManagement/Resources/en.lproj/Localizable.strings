@@ -303,8 +303,8 @@
 
 /* High sleep debt (>2h) title */
 "suggest_highDebt_title" = "High sleep debt";
-/* High sleep debt message: debt hours, usual bed hour, limit hour, repay minutes */
-"suggest_highDebt_message" = "You have %1$d hours of sleep debt. You usually go to bed at %2$d:00, but if you sleep by %3$d:00 tonight, you can repay %4$d minutes!";
+/* High sleep debt message: debt hours, usual bed hour, limit hour, repay hours */
+"suggest_highDebt_message" = "You have %1$d hours of sleep debt. You usually go to bed at %2$d:00, but if you sleep by %3$d:00 tonight, you can repay %4$d hours!";
 
 /* Moderate sleep debt + free time */
 "suggest_moderateDebt_title" = "Try a power nap";
