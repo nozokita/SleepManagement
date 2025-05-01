@@ -7,13 +7,28 @@ struct SleepInputView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var localizationManager: LocalizationManager
     
-    @State private var sleepStart: Date = Date().addingTimeInterval(-8 * 3600) // 初期就寝日時(8時間前)
-    @State private var sleepEnd: Date = Date()                        // 初期起床日時(現在)
+    @State private var sleepStart: Date
+    @State private var sleepEnd: Date
     @State private var quality: Double = 3
     @State private var selectedSleepType: SleepRecordType = .normalSleep
     @State private var showingAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
+    
+    // イニシャライザでデフォルト値を設定（固定値：就寝22時、起床6時）
+    init() {
+        let calendar = Calendar.current
+        let now = Date()
+
+        // 就寝時刻: 前日の22:00をデフォルトに
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: now)!
+        let defaultStart = calendar.date(bySettingHour: 22, minute: 0, second: 0, of: yesterday)!
+        _sleepStart = State(initialValue: defaultStart)
+
+        // 起床時刻: 当日の6:00をデフォルトに
+        let defaultEnd = calendar.date(bySettingHour: 6, minute: 0, second: 0, of: now)!
+        _sleepEnd = State(initialValue: defaultEnd)
+    }
     
     var body: some View {
         NavigationView {
