@@ -284,3 +284,14 @@
 "debt_factor_sleep_debt" = "overall sleep debt";
 "debt_suggestion_sleep_debt" = "Aim to go to bed earlier or take short naps to repay your sleep debt.";
 
+/* Bandit suggested action */
+"suggested_action" = "Suggested Action";
+/* Feedback button */
+"feedback_button" = "Send Feedback";
+/* Feedback prompt */
+"feedback_prompt" = "How effective was this action?";
+/* Feedback minutes input */
+"feedback_minutes" = "%d min improvement";
+/* Feedback send */
+"feedback_send" = "Submit";
+

@@ -10,6 +10,7 @@ struct HomeView: View {
     @FetchRequest(fetchRequest: SleepRecord.allRecordsFetchRequest()) private var sleepRecords: FetchedResults<SleepRecord>
     
     @StateObject private var sleepManager = SleepManager.shared
+    @StateObject private var banditManager = BanditManager.shared
     @State private var showingAddSheet = false
     @State private var showingSleepInputSheet = false
     @State private var totalDebt: Double = 0
@@ -62,6 +63,9 @@ struct HomeView: View {
                                 
                                 // AIコーチ予測セクション（MVP）
                                 aiCoachSection
+
+                                // おすすめアクションセクション
+                                suggestedActionSection
 
                                 // AIコーチ自分専属アドバイス
                                 // aiCoachAdviceSection を非表示
@@ -426,6 +430,32 @@ struct HomeView: View {
                 }
             }
             .padding(16)
+        }
+        .background(Theme.Colors.cardBackground)
+        .cornerRadius(Theme.Layout.cardCornerRadius)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
+    }
+    
+    // おすすめアクションセクション
+    private var suggestedActionSection: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Label("suggested_action".localized, systemImage: "lightbulb")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Theme.Colors.cardGradient)
+
+            Text(banditManager.suggestedArm.description)
+                .font(Theme.Typography.bodyFont)
+                .foregroundColor(Theme.Colors.subtext)
+                .padding(16)
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
@@ -884,6 +914,8 @@ struct HomeView: View {
         // 秒換算して設定
         let seconds = debtHours * 3600
         predictedDebtSeconds = seconds
+        // Banditによるおすすめアクションを更新
+        banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: predictedDebtSeconds)
         // 提案文を更新
         updateSuggestion()
     }

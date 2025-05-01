@@ -326,4 +326,15 @@
 "debt_suggestion_waso" = "寝室の騒音や光を最小限にして夜間の覚醒を減らしましょう。";
 
 "debt_factor_sleep_debt" = "睡眠負債全体";
-"debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。"; 
+"debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。";
+
+/* Bandit 推薦アクション */
+"suggested_action" = "おすすめアクション";
+/* フィードバックボタン */
+"feedback_button" = "フィードバックを送る";
+/* フィードバックプロンプト */
+"feedback_prompt" = "アクションの効果を教えてください";
+/* フィードバック入力分数 */
+"feedback_minutes" = "%d分改善しました";
+/* フィードバック送信 */
+"feedback_send" = "送信"; 
