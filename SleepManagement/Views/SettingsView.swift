@@ -222,110 +222,68 @@ struct SettingsView: View {
         }
     }
     
-    // アプリ表示設定
+    // アプリ表示設定（ダークモードのみ）
     private var appDisplaySettingsSection: some View {
         SettingsSectionCard(title: "settings.display.title".localized, icon: "paintbrush.circle") {
             VStack(spacing: 16) {
-                // テーマの設定
+                // ダークモード
+                SettingsRow(icon: "moon.circle", title: "settings.display.dark".localized) {
+                    Toggle("", isOn: $settings.darkModeEnabled)
+                        .labelsHidden()
+                }
+                // 将来のテーマ切替用のコード
+                /*
+                // テーマ設定トグル
                 SettingsRow(icon: "circle.lefthalf.filled", title: "settings.display.system".localized) {
                     Toggle("", isOn: $settings.useSystemTheme)
                         .labelsHidden()
                 }
-                
-                if !settings.useSystemTheme {
-                    SettingsRow(icon: "moon.circle", title: "settings.display.dark".localized) {
-                        Toggle("", isOn: $settings.darkModeEnabled)
-                            .labelsHidden()
-                    }
-                }
-                
-                // 睡眠負債の表示
+                // 睡眠負債表示
                 SettingsRow(icon: "chart.bar", title: "settings.display.debt".localized) {
                     Toggle("", isOn: $settings.showSleepDebt)
                         .labelsHidden()
                 }
-                
-                // 睡眠スコアの表示
+                // 睡眠スコア表示
                 SettingsRow(icon: "chart.bar.fill", title: "settings.display.score".localized) {
                     Toggle("", isOn: $settings.showSleepScore)
                         .labelsHidden()
                 }
+                */
             }
         }
     }
     
-    // ヘルスケア連携
+    // ヘルスケア連携（自動同期のみ、他は開発中）
     private var healthKitIntegrationSection: some View {
         SettingsSectionCard(title: "settings.healthkit.title".localized, icon: "heart.circle") {
             VStack(spacing: 16) {
                 // HealthKit自動同期
                 SettingsRow(icon: "arrow.clockwise", title: "settings.healthkit.sync".localized) {
-                    Toggle("", isOn: $settings.autoSyncHealthKit)
-                        .labelsHidden()
-                        .onChange(of: settings.autoSyncHealthKit) { oldValue, newValue in
-                            if newValue {
-                                // 設定を保存
-                                settings.save()
-                                // HealthKit権限をリクエストしてから同期を開始
-                                let store = HKHealthStore()
-                                let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-                                let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate)!
-                                let respiratoryType = HKObjectType.quantityType(forIdentifier: .respiratoryRate)!
-                                let readTypes: Set<HKObjectType> = [sleepType, heartRateType, respiratoryType]
-                                let shareTypes: Set<HKSampleType> = [sleepType, heartRateType, respiratoryType]
-                                store.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
-                                    DispatchQueue.main.async {
-                                        if let error = error {
-                                            print("HealthKit authorization error: \(error)")
-                                        } else if success {
-                                            // 権限取得後に同期開始
-                                            SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
-                                                if let error = error {
-                                                    print("HealthKit sync error: \(error)")
-                                                } else {
-                                                    NotificationCenter.default.post(name: Notification.Name("HealthKitDataSynced"), object: nil)
-                                                }
-                                            }
-                                        } else {
-                                            print("HealthKit authorization denied")
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    HStack {
+                        Text("in_development".localized)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
                 }
-                
-                // 短い睡眠を仮眠扱いにする
+                // 以下は開発中の機能（将来実装用）
+                /*
+                // 仮眠扱い
                 SettingsRow(icon: "bed.double", title: "settings.healthkit.treatShortSleepAsNap".localized) {
                     Toggle("", isOn: $settings.treatShortSleepAsNap)
                         .labelsHidden()
                 }
-                
                 // 閾値設定
                 if settings.treatShortSleepAsNap {
                     SettingsRow(icon: "timer", title: "settings.healthkit.shortSleepThreshold".localized) {
-                        Picker("", selection: $settings.shortSleepThreshold) {
-                            ForEach([30, 60, 90, 120], id: \.self) { minutes in
-                                Text(localizationManager.currentLanguage == "ja" ? "\(minutes)分" : "\(minutes) min")
-                                    .tag(TimeInterval(minutes * 60))
-                            }
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                        .labelsHidden()
+                        Picker(...)
                     }
                 }
-                
-                // 睡眠セッションの区切り時間
+                // セッション区切り
                 SettingsRow(icon: "clock", title: "settings.healthkit.sleepGapThreshold".localized) {
-                    Picker("", selection: $settings.sleepGapThreshold) {
-                        ForEach([15, 30, 45, 60], id: \.self) { minutes in
-                            Text(localizationManager.currentLanguage == "ja" ? "\(minutes)分" : "\(minutes) min")
-                                .tag(TimeInterval(minutes * 60))
-                        }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .labelsHidden()
+                    Picker(...)
                 }
+                */
             }
         }
     }
