@@ -264,7 +264,8 @@
 "ai_coach_title" = "Sleep Coach Tip";
 "ai_coach_prediction" = "Your sleep debt is %.1f hours. Going to bed 1 hour earlier tonight will repay 1 hour.";
 "ai_coach_prediction_time_fmt" = "Your sleep debt is %@. Going to bed 1 hour earlier tonight will repay 1 hour.";
-
+/* AI Coach Action Recommendation */
+"ai_coach_action" = "Go to bed one hour earlier tonight to reduce your sleep debt.";
 /* AIコーチ負債要因可視化 */
 "ai_coach_factor_summary" = "%d%% of your predicted sleep debt is due to %@.";
 
