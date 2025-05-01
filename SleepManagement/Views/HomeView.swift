@@ -947,9 +947,9 @@ struct HomeView: View {
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         if localizationManager.currentLanguage == "ja" {
-            return "睡眠負債は\(hours)時間\(minutes)分です。"
+            return "予測される睡眠負債は\(hours)時間\(minutes)分です。"
         } else {
-            return "Sleep debt: \(hours)h \(minutes)m"
+            return "Predicted sleep debt: \(hours)h \(minutes)m"
         }
     }
     
