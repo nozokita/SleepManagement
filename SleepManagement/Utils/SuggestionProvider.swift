@@ -15,7 +15,7 @@ struct SleepSuggestionContext {
     let usualWakeHour: Int
 }
 
-enum SleepActionArm { case earlyBedtime, powerNap, reinforceRoutine }
+// Removed duplicate SleepActionArm enum; using the one defined in LinUCB.swift
 
 class SuggestionProvider {
     static func generate(context: SleepSuggestionContext, arm: SleepActionArm) -> Suggestion {
