@@ -496,21 +496,21 @@ class SleepManager: ObservableObject {
         healthStore.execute(query)
     }
     
-    /// 過去指定件数分の睡眠スコアを取得（最新順）
-    /// Fetch recent sleep scores (most recent first)
+    /// 過去指定件数分の睡眠時間（時間単位）を取得（最新順）
+    /// Fetch recent sleep durations in hours (most recent first)
     /// - Parameters:
-    ///   - context: Core Data のコンテキスト
-    ///   - limit: 取得件数（デフォルト30）
-    /// - Returns: 取得した睡眠スコアの配列
-    func fetchRecentSleepScores(context: NSManagedObjectContext, limit: Int = 30) -> [Double] {
+    ///   - context: Core Data context
+    ///   - limit: number of records (default 30)
+    /// - Returns: array of durations in hours
+    func fetchRecentSleepDurations(context: NSManagedObjectContext, limit: Int = 30) -> [Double] {
         let fetchRequest: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.startAt, ascending: false)]
         fetchRequest.fetchLimit = limit
         do {
             let records = try context.fetch(fetchRequest)
-            return records.map { $0.score }
+            return records.map { $0.durationInHours }
         } catch {
-            print("睡眠スコア取得に失敗しました: \(error)")
+            print("睡眠時間取得に失敗しました: \(error)")
             return []
         }
     }
