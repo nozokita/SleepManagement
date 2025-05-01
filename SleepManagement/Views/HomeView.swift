@@ -454,9 +454,10 @@ struct HomeView: View {
         .opacity(animatedCards ? 1 : 0)
     }
     
-    // おすすめアクションセクション
-    private var suggestedActionSection: some View {
-        VStack(spacing: 0) {
+    // MARK: - 提案セクションビルダー
+    private func suggestionSectionView() -> some View {
+        let suggestion = makeSuggestion()
+        return VStack(spacing: 0) {
             HStack {
                 Label("suggested_action".localized, systemImage: "lightbulb")
                     .font(Theme.Typography.subheadingFont)
@@ -467,68 +468,6 @@ struct HomeView: View {
             .padding(.vertical, 12)
             .background(Theme.Colors.cardGradient)
 
-            // 文脈取得 & 30日平均の就寝/起床時刻計算
-            let contextVec = SleepContextProvider.getContext(
-                viewContext: viewContext,
-                predictedDebtSec: predictedDebtSeconds
-            )
-            let debtMinutes = Int((contextVec[0] * 60).rounded())
-            let freeMinutes = Int((contextVec[1] * 60).rounded())
-            let chronoNorm = contextVec[2]
-            // 過去30日分の平均就寝・起床時刻
-            let records = Array(validNormalRecords.prefix(30))
-            let averageBedHour: Int = {
-                let hours = records.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
-                return hours.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hours.reduce(0, +) / hours.count
-            }()
-            let averageWakeHour: Int = {
-                let hours = records.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
-                return hours.isEmpty ? averageBedHour : hours.reduce(0, +) / hours.count
-            }()
-            // 週末リズム乱れの検知（過去7日間）
-            let now = Date()
-            let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
-            let weekendRecords = validNormalRecords.filter { rec in
-                guard let sd = rec.startAt else { return false }
-                return sd >= start7 && Calendar.current.isDateInWeekend(sd)
-            }
-            let weekdayRecords = validNormalRecords.filter { rec in
-                guard let sd = rec.startAt else { return false }
-                return sd >= start7 && !Calendar.current.isDateInWeekend(sd)
-            }
-            let avgWeekendBedHour: Int = {
-                let hrs = weekendRecords.compactMap { rec in rec.startAt.map { Calendar.current.component(.hour, from: $0) } }
-                return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
-            }()
-            let avgWeekdayBedHour: Int = {
-                let hrs = weekdayRecords.compactMap { rec in rec.startAt.map { Calendar.current.component(.hour, from: $0) } }
-                return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
-            }()
-            let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
-            // 将来負債予測（2日後まで）
-            var futureDebt: [Date: Int] = [:]
-            for offset in 1...2 {
-                if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
-                    let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
-                    futureDebt[date] = Int(sec / 60)
-                }
-            }
-            // SuggestionProviderに渡す文脈
-            let suggestionContext = SleepSuggestionContext(
-                debtMinutes: debtMinutes,
-                freeMinutes: freeMinutes,
-                chronoNormalized: chronoNorm,
-                weekendShiftMinutes: weekendShiftMinutes,
-                futureDebtMinutes: futureDebt,
-                usualBedHour: averageBedHour,
-                usualWakeHour: averageWakeHour
-            )
-            // 提案生成
-            let suggestion = SuggestionProvider.generate(
-                context: suggestionContext,
-                arm: banditManager.suggestedArm
-            )
-            // タイトルとメッセージを表示
             VStack(alignment: .leading, spacing: 4) {
                 Text(suggestion.title)
                     .font(Theme.Typography.subheadingFont)
@@ -545,6 +484,10 @@ struct HomeView: View {
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+    }
+    
+    private var suggestedActionSection: some View {
+        suggestionSectionView()
     }
     
     // AIコーチ自分専属アドバイス
