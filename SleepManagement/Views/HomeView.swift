@@ -517,10 +517,48 @@ struct HomeView: View {
             .padding(.vertical, 12)
             .background(Theme.Colors.cardGradient)
 
-            Text(banditManager.suggestedArm.description)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .padding(16)
+            // Context取得
+            let contextVec = SleepContextProvider.getContext(
+                viewContext: viewContext,
+                predictedDebtSec: predictedDebtSeconds
+            )
+            let debtMinutes = Int((contextVec[0] * 60).rounded())
+            let freeMinutes = Int((contextVec[1] * 60).rounded())
+            let chronoNorm = contextVec[2]
+            // ユーザー設定から通常の就寝・起床時刻
+            let sleepReminderHour = Calendar.current.component(
+                .hour,
+                from: SettingsManager.shared.sleepReminderTime
+            )
+            let summaryHour = Calendar.current.component(
+                .hour,
+                from: SettingsManager.shared.morningSummaryTime
+            )
+            // SuggestionProviderに渡す文脈
+            let suggestionContext = SleepSuggestionContext(
+                debtMinutes: debtMinutes,
+                freeMinutes: freeMinutes,
+                chronoNormalized: chronoNorm,
+                weekendShiftMinutes: 0,
+                futureDebtMinutes: [:],
+                usualBedHour: sleepReminderHour,
+                usualWakeHour: summaryHour
+            )
+            // 提案生成
+            let suggestion = SuggestionProvider.generate(
+                context: suggestionContext,
+                arm: banditManager.suggestedArm
+            )
+            // タイトルとメッセージを表示
+            VStack(alignment: .leading, spacing: 4) {
+                Text(suggestion.title)
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                Text(suggestion.message)
+                    .font(Theme.Typography.bodyFont)
+                    .foregroundColor(Theme.Colors.subtext)
+            }
+            .padding(16)
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
