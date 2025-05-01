@@ -505,13 +505,21 @@ struct HomeView: View {
                 return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
             }()
             let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
+            // 将来負債予測（2日後まで）
+            var futureDebt: [Date: Int] = [:]
+            for offset in 1...2 {
+                if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
+                    let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
+                    futureDebt[date] = Int(sec / 60)
+                }
+            }
             // SuggestionProviderに渡す文脈
             let suggestionContext = SleepSuggestionContext(
                 debtMinutes: debtMinutes,
                 freeMinutes: freeMinutes,
                 chronoNormalized: chronoNorm,
                 weekendShiftMinutes: weekendShiftMinutes,
-                futureDebtMinutes: [:],
+                futureDebtMinutes: futureDebt,
                 usualBedHour: averageBedHour,
                 usualWakeHour: averageWakeHour
             )
