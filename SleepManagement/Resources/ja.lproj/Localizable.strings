@@ -337,4 +337,9 @@
 /* フィードバック入力分数 */
 "feedback_minutes" = "%d分改善しました";
 /* フィードバック送信 */
-"feedback_send" = "送信"; 
+"feedback_send" = "送信";
+
+/* アクション説明 */
+"early_bedtime_action" = "いつもより早く寝る";
+"power_nap_action" = "短時間のパワーナップをとる";
+"reinforce_routine_action" = "就寝前のルーティンを強化する"; 

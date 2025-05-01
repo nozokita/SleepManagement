@@ -295,3 +295,8 @@
 /* Feedback send */
 "feedback_send" = "Submit";
 
+/* Action descriptions */
+"early_bedtime_action" = "Go to bed earlier than usual";
+"power_nap_action" = "Take a short power nap";
+"reinforce_routine_action" = "Strengthen your pre-sleep routine";
+
