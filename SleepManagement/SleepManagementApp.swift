@@ -59,30 +59,25 @@ struct SleepManagementApp: App {
     
     var body: some Scene {
         WindowGroup {
-            // デバッグ情報を表示
-            let _ = print("SleepManagementApp: オンボーディング表示条件: \(!appState.hasCompletedOnboarding || forceOnboarding)")
-            
-            if !appState.hasCompletedOnboarding || forceOnboarding {
-                // 初回起動時のオンボーディングフロー
-                OnboardingNavigationView()
-                    .environmentObject(appState)
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                    .environmentObject(localizationManager)
-                    .onAppear {
-                        print("オンボーディングフローを表示: オンボーディング完了状態 = \(appState.hasCompletedOnboarding)")
-                    }
-            } else {
-                // 通常起動時のメインフロー
-                ContentView()
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                    .environmentObject(localizationManager)
-                    .onAppear {
-                        print("メインフローを表示: オンボーディング完了状態 = \(appState.hasCompletedOnboarding)")
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: Notification.Name("LanguageChanged"))) { _ in
-                        // 言語変更通知を受け取った時の処理（必要に応じて）
-                    }
+            ZStack {
+                // 背景を白基調に戻す
+                Theme.Colors.background
+                    .ignoresSafeArea()
+
+                // オンボーディング or メイン画面を表示
+                if !appState.hasCompletedOnboarding || forceOnboarding {
+                    OnboardingNavigationView()
+                } else {
+                    ContentView()
+                }
             }
+            // グローバルな環境設定
+            .environmentObject(appState)
+            .environmentObject(localizationManager)
+            .environmentObject(SettingsManager.shared)
+            .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            .environment(\.locale, Locale(identifier: localizationManager.currentLanguage))
+            .preferredColorScheme(.dark) // ダークモード実験用
         }
     }
 }

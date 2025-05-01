@@ -1,5 +1,8 @@
 import SwiftUI
 import CoreData
+import HealthKit
+
+// SleepDashboardViewの記述を削除
 
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -7,21 +10,40 @@ struct HomeView: View {
     @FetchRequest(fetchRequest: SleepRecord.allRecordsFetchRequest()) private var sleepRecords: FetchedResults<SleepRecord>
     
     @StateObject private var sleepManager = SleepManager.shared
+    @StateObject private var banditManager = BanditManager.shared
     @State private var showingAddSheet = false
     @State private var showingSleepInputSheet = false
     @State private var totalDebt: Double = 0
+    
+    // 編集用・削除用状態
+    @State private var selectedRecordForEdit: SleepRecord? = nil
+    // 予測睡眠負債（秒）を保持
+    @State private var predictedDebtSeconds: Double? = nil
+    // AIコーチ提案用テキスト
+    // @State private var suggestionText: String? = nil  // フォールバック提案を削除
     
     // アニメーション用の状態
     @State private var animatedCards: Bool = false
     @State private var selectedTab: Int = 0
     @State private var refreshing: Bool = false
     
+    // 過去24時間の睡眠負債（時間）
+    @State private var debtHours: Double = 0
+    // 過去予測値保持（自動フィードバック用）
+    @State private var lastPredictedDebtSec: Double? = nil
+    
     // タブアイテム
     private var tabs: [String] {
-        return ["home_tab", "stats_tab", "records_tab"].map { $0.localized }
+        return [
+            "home_tab",
+            "stats_tab",
+            // "sleep_log_tab"
+        ].map { $0.localized }
     }
     
     @State private var showSettings = false
+    @State private var showAICoachInfo: Bool = false
+    @State private var showActionInfo: Bool = false
     
     var body: some View {
         NavigationView {
@@ -37,9 +59,9 @@ struct HomeView: View {
                     customTabView
                     
                     // メインコンテンツ（サイズ拡大）
-                    ScrollView {
-                        if selectedTab == 0 {
-                            // ホームタブのコンテンツ
+                    if selectedTab == 0 {
+                        // ホームタブのコンテンツ
+                        ScrollView {
                             VStack(spacing: 16) {
                                 // 睡眠サマリーカード
                                 sleepSummaryCard
@@ -47,22 +69,36 @@ struct HomeView: View {
                                 // 睡眠負債カード
                                 sleepDebtCard
                                 
-                                // AI診断・アドバイスセクション
-                                aiAdviceSection
-                                
+                                // AIコーチ予測セクション（MVP）
+                                aiCoachSection
+
+                                // おすすめアクションセクション
+                                suggestedActionSection
+
+                                // AIコーチ自分専属アドバイス
+                                // aiCoachAdviceSection を非表示
+
+                                // 専門家からのアドバイスセクション
+                                // expertAdviceSection を非表示
+
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
                             }
                             .padding(.top, 8)
                             .padding(.bottom, 80) // FABのスペース確保
-                        } else {
-                            // 開発中のタブ（統計と記録）
-                            developingTabView(tabName: tabs[selectedTab])
-                                .padding(.bottom, 80) // FABのスペース確保
                         }
-                    }
-                    .refreshable {
-                        refreshData()
+                        .refreshable {
+                            refreshData()
+                        }
+                    } else if selectedTab == 1 {
+                        // 統計タブ - 睡眠ダッシュボード
+                        SleepDashboardView()
+                            .environmentObject(localizationManager)
+                            .environment(\.managedObjectContext, viewContext)
+                    } else {
+                        // 睡眠セッション一覧タブ
+                        SleepSessionListView()
+                            .padding(.bottom, 80) // FABのスペース確保
                     }
                 }
                 
@@ -71,8 +107,24 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
+                // HealthKit自動同期（設定でオンなら起動時に同期を実行）
+                if SettingsManager.shared.autoSyncHealthKit && HKHealthStore.isHealthDataAvailable() {
+                    SleepManager.shared.syncSleepDataFromHealthKit(context: viewContext) { error in
+                        if let error = error {
+                            print("HomeView HealthKit sync error: \(error)")
+                        } else {
+                            print("HomeView HealthKit sync completed")
+                        }
+                    }
+                }
                 calculateTotalDebt()
                 sleepManager.requestNotificationPermission()
+                
+                // 過去24時間の負債をロード
+                loadDebt()
+                
+                // AIモデルで睡眠負債を予測
+                updatePredictedDebt()
                 
                 // アニメーション
                 withAnimation(Theme.Animations.springy.delay(0.3)) {
@@ -81,12 +133,14 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showingAddSheet, onDismiss: {
                 calculateTotalDebt()
+                updatePredictedDebt()
             }) {
                 AddSleepRecordView()
                     .environment(\.managedObjectContext, viewContext)
             }
             .sheet(isPresented: $showingSleepInputSheet, onDismiss: {
                 calculateTotalDebt()
+                updatePredictedDebt()
             }) {
                 SleepInputView()
                     .environment(\.managedObjectContext, viewContext)
@@ -94,6 +148,30 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
                     .environmentObject(localizationManager)
+            }
+            // 編集シート表示
+            .sheet(item: $selectedRecordForEdit) { record in
+                EditSleepRecordView(record: record)
+                    .environment(\.managedObjectContext, viewContext)
+            }
+            // フィードバックUIを削除しました
+            // FetchedResultsに変化があれば予測を更新
+            .onChange(of: sleepRecords.count) { _ in
+                // 自動フィードバック：前回予測値と新しい実績値の差分を報酬として登録
+                let prevSec = lastPredictedDebtSec
+                // 更新＆再予測
+                updatePredictedDebt()
+                if let prev = prevSec, let newSec = predictedDebtSeconds {
+                    let improved = max(prev - newSec, 0)
+                    let rewardHours = improved / 3600.0
+                    if rewardHours > 0 {
+                        banditManager.recordReward(
+                            rewardHours,
+                            viewContext: viewContext,
+                            predictedDebtSec: prev
+                        )
+                    }
+                }
             }
         }
     }
@@ -149,7 +227,7 @@ struct HomeView: View {
                     }
                 }
                 
-                if let latestRecord = sleepRecords.first, !sleepRecords.isEmpty {
+                if let latestRecord = validNormalRecords.first, !validNormalRecords.isEmpty {
                     // 最新の睡眠サマリー
                     HStack(spacing: 12) {
                         HStack(spacing: 8) {
@@ -176,12 +254,12 @@ struct HomeView: View {
                             Image(systemName: "chart.bar.fill")
                                 .font(.caption)
                                 .foregroundColor(.white)
-                            
+
                             VStack(alignment: .leading, spacing: 1) {
                                 Text("sleep_score".localized)
                                     .font(.caption)
                                     .foregroundColor(.white.opacity(0.8))
-                                
+
                                 Text("\(Int(latestRecord.score))" + "points".localized)
                                     .font(.subheadline.bold())
                                     .foregroundColor(.white)
@@ -229,7 +307,7 @@ struct HomeView: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color.white)
+        .background(Theme.Colors.cardBackground)
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 5)
         .frame(height: 40) // タブの高さを増やす
     }
@@ -304,136 +382,79 @@ struct HomeView: View {
         .opacity(animatedCards ? 1 : 0)
     }
     
-    // 睡眠負債カード
+    // 睡眠負債カード（過去24h と 7日間固定集計 を並べて表示）
     private var sleepDebtCard: some View {
-        VStack(spacing: 0) {
-            // カードヘッダー
-            HStack {
-                Label("sleep_debt".localized, systemImage: "exclamationmark.triangle")
+        let now = Date()
+        let window24hStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
+        let window7dStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        return VStack(spacing: 32) {
+            // 過去24時間睡眠負債グラフを非表示
+
+            // 7日間固定集計
+            VStack(spacing: 8) {
+                Text(localizationManager.currentLanguage == "ja" ? "７日間固定集計" : "7-Day Fixed")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
-                
-                Spacer()
-                
-                Text(totalDebt > 2 ? "danger".localized : (totalDebt > 1 ? "warning".localized : "good".localized))
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(debtStatusColor.opacity(0.2))
-                    .foregroundColor(debtStatusColor)
-                    .cornerRadius(8)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Theme.Colors.cardGradient)
-            
-            Divider()
-            
-            VStack(spacing: 12) {
-                // 睡眠負債ゲージ
-                VStack(spacing: 8) {
-                    HStack {
-                        Text("current_debt".localized)
-                            .font(Theme.Typography.bodyFont)
-                            .foregroundColor(Theme.Colors.text)
-                        
-                        Spacer()
-                        
-                        Text(String(format: "%.1f", totalDebt) + "hours".localized)
-                            .font(Theme.Typography.headingFont)
-                            .foregroundColor(debtStatusColor)
-                    }
-                    
-                    // ゲージ
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            // 背景
-                            RoundedRectangle(cornerRadius: 8)
-                                .frame(width: geometry.size.width, height: 12)
-                                .foregroundColor(Color.gray.opacity(0.2))
-                            
-                            // 負債の量を表すバー
-                            RoundedRectangle(cornerRadius: 8)
-                                .frame(width: min(CGFloat(totalDebt / 12) * geometry.size.width, geometry.size.width), height: 12)
-                                .foregroundColor(debtStatusColor)
-                                .animation(.easeOut, value: totalDebt)
-                        }
-                    }
-                    .frame(height: 12)
-                    
-                    // 負債メッセージ
-                    HStack {
-                        Image(systemName: "info.circle")
-                            .foregroundColor(debtStatusColor)
-                        
-                        Text(debtMessage)
-                            .font(Theme.Typography.captionFont)
-                            .foregroundColor(Theme.Colors.subtext)
-                            .fixedSize(horizontal: false, vertical: true)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.05))
-                    .cornerRadius(8)
-                }
-                .padding(16)
+                SleepDebtView(
+                    totalDebt: totalDebt,
+                    windowStart: window7dStart,
+                    windowEnd: now,
+                    detailTitle: localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail"
+                )
+                .environmentObject(localizationManager)
             }
         }
+        .padding(16)
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
-        .transition(.opacity.combined(with: .move(edge: .bottom)))
     }
     
-    // AI診断・アドバイスセクション
-    private var aiAdviceSection: some View {
+    // AIコーチ予測セクション（MVP）
+    private var aiCoachSection: some View {
         VStack(spacing: 0) {
-            // カードヘッダー
             HStack {
-                Label("ai_advice".localized, systemImage: "brain")
+                Label("ai_coach_title".localized, systemImage: "brain.head.profile")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
-                
                 Spacer()
-                
-                Text("in_development".localized)
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Theme.Colors.info.opacity(0.2))
-                    .foregroundColor(Theme.Colors.info)
-                    .cornerRadius(8)
+                Button(action: {
+                    showAICoachInfo = true
+                }) {
+                    Image(systemName: "info.circle")
+                        .font(.body)
+                        .foregroundColor(Theme.Colors.primary)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(Theme.Colors.cardGradient)
-            
+
             Divider()
-            
-            VStack(spacing: 20) {
-                Image(systemName: "brain.head.profile")
-                    .font(.system(size: 40))
-                    .foregroundColor(Theme.Colors.info)
-                
-                Text("ai_analysis".localized)
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
-                
-                Text("ai_description".localized)
-                    .font(Theme.Typography.bodyFont)
-                    .foregroundColor(Theme.Colors.subtext)
-                    .multilineTextAlignment(.center)
-                
-                Text("coming_soon".localized)
-                    .font(Theme.Typography.captionFont)
-                    .foregroundColor(Theme.Colors.primary)
-                    .padding(.top, 8)
+
+            VStack(alignment: .leading, spacing: 12) {
+                // 要因可視化
+                if let latest = sleepRecords.first {
+                    let sleepData = SleepQualityData.fromSleepEntry(
+                        latest,
+                        sleepHistoryEntries: Array(sleepRecords),
+                        idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                    )
+                    let factors = AICoach.shared.analyzeDebtFactors(sleepData: sleepData)
+                    if let top = factors.first {
+                        Text(String(format: "ai_coach_factor_summary".localized, Int(top.percentage), top.factorNameKey.localized))
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                        Text(top.suggestionKey.localized)
+                            .font(Theme.Typography.captionFont)
+                            .foregroundColor(Theme.Colors.primary)
+                    }
+                }
             }
-            .padding(24)
+            .padding(16)
         }
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
@@ -441,6 +462,221 @@ struct HomeView: View {
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+        .alert(isPresented: $showAICoachInfo) {
+            Alert(
+                title: Text("ai_coach_info_title".localized),
+                message: Text("ai_coach_info_message".localized),
+                dismissButton: .default(Text("common.okButton".localized))
+            )
+        }
+    }
+    
+    // MARK: - 提案セクションビルダー
+    private func suggestionSectionView() -> some View {
+        // 文脈取得
+        let contextVec = SleepContextProvider.getContext(
+            viewContext: viewContext,
+            predictedDebtSec: predictedDebtSeconds
+        )
+        let debtMinutes = Int((contextVec[0] * 60).rounded())
+        let freeMinutes = Int((contextVec[1] * 60).rounded())
+        let chronoNorm = contextVec[2]
+        // 過去30日平均の就寝・起床時刻
+        let recs = Array(validNormalRecords.prefix(30))
+        let averageBedHour: Int = {
+            let hrs = recs.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hrs.reduce(0, +) / hrs.count
+        }()
+        let averageWakeHour: Int = {
+            let hrs = recs.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        // 週末リズム乱れ（過去7日間）
+        let now = Date()
+        let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        let weekend = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && Calendar.current.isDateInWeekend($0) } ?? false }
+        let weekday = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && !Calendar.current.isDateInWeekend($0) } ?? false }
+        let avgWeekendBedHour: Int = {
+            let hrs = weekend.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let avgWeekdayBedHour: Int = {
+            let hrs = weekday.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
+        // 将来負債予測（2日先）
+        var futureDebt: [Date: Int] = [:]
+        for offset in 1...2 {
+            if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
+                let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
+                futureDebt[date] = Int(sec / 60)
+            }
+        }
+        // 提案生成
+        let ctx = SleepSuggestionContext(
+            debtMinutes: debtMinutes,
+            freeMinutes: freeMinutes,
+            chronoNormalized: chronoNorm,
+            weekendShiftMinutes: weekendShiftMinutes,
+            futureDebtMinutes: futureDebt,
+            usualBedHour: averageBedHour,
+            usualWakeHour: averageWakeHour
+        )
+        let suggestion = SuggestionProvider.generate(context: ctx, arm: banditManager.suggestedArm)
+        return VStack(spacing: 0) {
+            HStack {
+                Label("suggested_action".localized, systemImage: "lightbulb")
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                Spacer()
+                Button(action: {
+                    showActionInfo = true
+                }) {
+                    Image(systemName: "info.circle")
+                        .font(.body)
+                        .foregroundColor(Theme.Colors.primary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Theme.Colors.cardGradient)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(suggestion.title)
+                    .font(Theme.Typography.subheadingFont)
+                    .foregroundColor(Theme.Colors.text)
+                Text(suggestion.message)
+                    .font(Theme.Typography.bodyFont)
+                    .foregroundColor(Theme.Colors.subtext)
+            }
+            .padding(16)
+        }
+        .background(Theme.Colors.cardBackground)
+        .cornerRadius(Theme.Layout.cardCornerRadius)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(.horizontal)
+        .offset(y: animatedCards ? 0 : 50)
+        .opacity(animatedCards ? 1 : 0)
+        .alert(isPresented: $showActionInfo) {
+            Alert(
+                title: Text("action_info_title".localized),
+                message: Text("action_info_message".localized),
+                dismissButton: .default(Text("common.okButton".localized))
+            )
+        }
+    }
+    
+    private var suggestedActionSection: some View {
+        suggestionSectionView()
+    }
+    
+    // AIコーチ自分専属アドバイス
+    private var aiCoachAdviceSection: some View {
+        Group {
+            if let latestRecord = sleepRecords.first {
+                // SleepQualityDataを生成
+                let sleepData = SleepQualityData.fromSleepEntry(
+                    latestRecord,
+                    sleepHistoryEntries: Array(sleepRecords),
+                    idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                )
+                // 専門家アドバイス生成
+                let advices = SleepAdvice.generateAdviceFrom(sleepData: sleepData)
+
+                VStack(spacing: 0) {
+                    HStack {
+                        Label("ai_coach_advice_title".localized, systemImage: "lightbulb")
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(Theme.Colors.text)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Colors.cardGradient)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("ai_coach_advice_description".localized)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+
+                        ForEach(advices.prefix(3), id: \.id) { advice in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(advice.title.localized)
+                                    .font(Theme.Typography.subheadingFont)
+                                    .foregroundColor(Theme.Colors.text)
+                                Text(advice.description.localized)
+                                    .font(Theme.Typography.captionFont)
+                                    .foregroundColor(Theme.Colors.subtext)
+                            }
+                        }
+                    }
+                    .padding(16)
+                }
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .offset(y: animatedCards ? 0 : 50)
+                .opacity(animatedCards ? 1 : 0)
+            }
+        }
+    }
+    
+    // MARK: - 専門家からのアドバイスセクション
+    private var expertAdviceSection: some View {
+        Group {
+            if let latestRecord = sleepRecords.first {
+                // SleepQualityDataを生成
+                let sleepData = SleepQualityData.fromSleepEntry(
+                    latestRecord,
+                    sleepHistoryEntries: Array(sleepRecords),
+                    idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                )
+                // 専門家アドバイス生成
+                let advices = SleepAdvice.generateAdviceFrom(sleepData: sleepData)
+
+                VStack(spacing: 0) {
+                    HStack {
+                        Label("expert_advice".localized, systemImage: "lightbulb")
+                            .font(Theme.Typography.subheadingFont)
+                            .foregroundColor(Theme.Colors.text)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Colors.cardGradient)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("expert_advice_description".localized)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+
+                        ForEach(advices.prefix(3), id: \.id) { advice in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(advice.title.localized)
+                                    .font(Theme.Typography.subheadingFont)
+                                    .foregroundColor(Theme.Colors.text)
+                                Text(advice.description.localized)
+                                    .font(Theme.Typography.captionFont)
+                                    .foregroundColor(Theme.Colors.subtext)
+                            }
+                        }
+                    }
+                    .padding(16)
+                }
+                .background(Theme.Colors.cardBackground)
+                .cornerRadius(Theme.Layout.cardCornerRadius)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                .padding(.horizontal)
+                .offset(y: animatedCards ? 0 : 50)
+                .opacity(animatedCards ? 1 : 0)
+            }
+        }
     }
     
     // 最近の睡眠記録セクション
@@ -453,7 +689,7 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: Text("睡眠記録一覧")) {
+                NavigationLink(destination: SleepRecordListView()) {
                     HStack(spacing: 4) {
                         Text("view_all".localized)
                             .font(Theme.Typography.captionFont)
@@ -481,6 +717,23 @@ struct HomeView: View {
                         sleepRecordRow(record: record, index: index)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    // 長押しで削除メニューを表示
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            deleteRecord(record)
+                        } label: {
+                            Label("list.delete".localized, systemImage: "trash")
+                        }
+                    }
+                    .swipeActions(edge: .trailing) {
+                        // 編集
+                        Button {
+                            selectedRecordForEdit = record
+                        } label: {
+                            Label("list.edit".localized, systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                    }
                 }
             }
         }
@@ -491,34 +744,28 @@ struct HomeView: View {
     // 睡眠記録の行アイテム
     private func sleepRecordRow(record: SleepRecord, index: Int) -> some View {
         HStack(spacing: 16) {
-            // スコア表示
-            SleepScoreView(score: record.score, size: 60, showAnimation: false)
+            // 仮眠時はスコアを非表示にして空欄を表示
+            if record.sleepType == SleepRecordType.nap.rawValue {
+                // 仮眠ラベルをサークルアイコンで表示
+                ZStack {
+                    Circle()
+                        .stroke(Theme.Colors.subtext, lineWidth: 1)
+                        .frame(width: 60, height: 60)
+                    Text("nap".localized)
+                        .font(.subheadline)
+                        .foregroundColor(Theme.Colors.subtext)
+                        .multilineTextAlignment(.center)
+                }
+            } else {
+                // スコア表示
+                SleepScoreView(score: record.score, size: 60, showAnimation: false)
+            }
             
             VStack(alignment: .leading, spacing: 4) {
                 // 日付
                 Text(record.sleepDateText)
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
-                
-                // 睡眠時間
-                HStack(spacing: 8) {
-                    Image(systemName: "clock")
-                        .foregroundColor(Theme.Colors.primary)
-                    
-                    Text("\(record.startTimeText) - \(record.endTimeText)")
-                        .font(Theme.Typography.bodyFont)
-                        .foregroundColor(Theme.Colors.text)
-                }
-                
-                // 睡眠の長さ
-                HStack(spacing: 8) {
-                    Image(systemName: "bed.double")
-                        .foregroundColor(Theme.Colors.primary)
-                    
-                    Text(record.durationText)
-                        .font(Theme.Typography.bodyFont)
-                        .foregroundColor(Theme.Colors.text)
-                }
             }
             
             Spacer()
@@ -641,23 +888,42 @@ struct HomeView: View {
     
     // MARK: - 計算プロパティ
     
+    // 有効な通常睡眠レコード（仮眠や不正入力を除外）
+    private var validNormalRecords: [SleepRecord] {
+        sleepRecords.filter { record in
+            // 通常睡眠のみ
+            record.sleepType == SleepRecordType.normalSleep.rawValue &&
+            // 開始/終了時刻の正当性チェック
+            record.startAt != nil && record.endAt != nil && record.endAt! > record.startAt!
+        }
+    }
+    
     // 平均睡眠時間
     private var averageSleepDuration: TimeInterval {
-        guard !sleepRecords.isEmpty else { return 0 }
-        let durations = sleepRecords.map { $0.endAt!.timeIntervalSince($0.startAt!) }
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let durations = records.compactMap { record -> TimeInterval? in
+            guard let start = record.startAt, let end = record.endAt else { return nil }
+            return end.timeIntervalSince(start)
+        }
         return durations.reduce(0, +) / Double(durations.count)
     }
     
     private var averageSleepDurationText: String {
         let hours = Int(averageSleepDuration / 3600)
         let minutes = Int((averageSleepDuration.truncatingRemainder(dividingBy: 3600)) / 60)
-        return "\(hours)時間\(minutes)分"
+        if localizationManager.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 平均睡眠スコア
     private var averageSleepScore: Double {
-        guard !sleepRecords.isEmpty else { return 0 }
-        let scores = sleepRecords.map { $0.score }
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let scores = records.map { $0.score }
         return scores.reduce(0, +) / Double(scores.count)
     }
     
@@ -667,74 +933,62 @@ struct HomeView: View {
     
     // 最長睡眠時間
     private var longestSleepDuration: TimeInterval {
-        guard !sleepRecords.isEmpty else { return 0 }
-        return sleepRecords.map { $0.endAt!.timeIntervalSince($0.startAt!) }.max() ?? 0
+        let records = validNormalRecords
+        guard !records.isEmpty else { return 0 }
+        let durations = records.compactMap { record -> TimeInterval? in
+            guard let start = record.startAt, let end = record.endAt else { return nil }
+            return end.timeIntervalSince(start)
+        }
+        return durations.max() ?? 0
     }
     
     private var longestSleepText: String {
         let hours = Int(longestSleepDuration / 3600)
         let minutes = Int((longestSleepDuration.truncatingRemainder(dividingBy: 3600)) / 60)
-        return "\(hours)時間\(minutes)分"
+        if localizationManager.currentLanguage == "ja" {
+            return "\(hours)時間\(minutes)分"
+        } else {
+            return "\(hours)h \(minutes)m"
+        }
     }
     
     // 平均就寝時間
     private var averageBedTimeText: String {
-        guard !sleepRecords.isEmpty else { return "00:00" }
-        
+        let records = validNormalRecords
+        guard !records.isEmpty else { return "00:00" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
-        
-        // 就寝時間の時間と分を取得
-        let bedTimes = sleepRecords.compactMap { record -> Int? in
+        let bedTimes = records.compactMap { record -> Int? in
             guard let startAt = record.startAt else { return nil }
             let calendar = Calendar.current
             let hour = calendar.component(.hour, from: startAt)
             let minute = calendar.component(.minute, from: startAt)
-            // 分単位に変換（0-1439）
             return hour * 60 + minute
         }
-        
         guard !bedTimes.isEmpty else { return "00:00" }
-        
-        // 平均値を計算
         let averageMinutes = bedTimes.reduce(0, +) / bedTimes.count
         let averageHour = averageMinutes / 60
         let averageMinute = averageMinutes % 60
-        
         return String(format: "%02d:%02d", averageHour, averageMinute)
-    }
-    
-    // 睡眠負債ステータスの色
-    private var debtStatusColor: Color {
-        if totalDebt > 2 {
-            return Theme.Colors.danger
-        } else if totalDebt > 1 {
-            return Theme.Colors.warning
-        } else {
-            return Theme.Colors.success
-        }
-    }
-    
-    // 睡眠負債メッセージ
-    private var debtMessage: String {
-        if totalDebt > 2 {
-            return "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。"
-        } else if totalDebt > 1 {
-            return "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。"
-        } else {
-            return "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。"
-        }
     }
     
     // MARK: - メソッド
     
     private func calculateTotalDebt() {
         totalDebt = sleepManager.calculateTotalDebt(context: viewContext)
+        // AIコーチ予測を更新
+        updatePredictedDebt()
     }
     
     private func refreshData() {
         refreshing = true
         calculateTotalDebt()
+        
+        // 最新の負債を再計算
+        loadDebt()
+        
+        // AIモデルで睡眠負債を再予測
+        updatePredictedDebt()
         
         // リフレッシュアニメーション用の遅延
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -742,50 +996,88 @@ struct HomeView: View {
         }
     }
     
-    // 開発中のタブビュー
-    private func developingTabView(tabName: String) -> some View {
-        VStack(spacing: 24) {
-            Spacer()
-                .frame(height: 40)
-            
-            Image(systemName: tabName == "統計" ? "chart.bar.xaxis" : "list.bullet.clipboard")
-                .font(.system(size: 60))
-                .foregroundColor(Theme.Colors.primary.opacity(0.6))
-            
-            Text(tabName)
-                .font(Theme.Typography.headingFont)
-                .foregroundColor(Theme.Colors.text)
-            
-            Text("developing_feature".localized)
-                .font(Theme.Typography.subheadingFont)
-                .foregroundColor(Theme.Colors.subtext)
-            
-            Text("stay_tuned".localized)
-                .font(Theme.Typography.bodyFont)
-                .foregroundColor(Theme.Colors.subtext)
-                .padding(.top, 8)
-            
-            HStack {
-                Spacer()
-                
-                Text("in_development".localized)
-                    .font(Theme.Typography.captionFont.bold())
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Theme.Colors.info.opacity(0.2))
-                    .foregroundColor(Theme.Colors.info)
-                    .cornerRadius(20)
-                
-                Spacer()
-            }
-            .padding(.top, 16)
-            
-            Spacer()
+    // 削除関数
+    private func deleteRecord(_ record: SleepRecord) {
+        viewContext.delete(record)
+        do {
+            try viewContext.save()
+            calculateTotalDebt()
+        } catch {
+            print("削除エラー: \(error)")
         }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .offset(y: animatedCards ? 0 : 50)
-        .opacity(animatedCards ? 1 : 0)
+    }
+    
+    // MARK: - データ処理
+    /// 24時間分の急性睡眠負債（ローリング24h）を計算して更新
+    private func loadDebt() {
+        debtHours = sleepManager.calculateAcuteDebt(context: viewContext)
+    }
+    
+    // 24時間の睡眠負債を秒単位で予測 (MVP：MLなし)
+    private func updatePredictedDebt() {
+        // 古い予測値を保持（自動フィードバック用）
+        lastPredictedDebtSec = predictedDebtSeconds
+        // 最新の負債をロード＆予測更新
+        loadDebt()
+        let seconds = debtHours * 3600
+        predictedDebtSeconds = seconds
+        banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: seconds)
+        // フォールバック提案は削除したので何もしない
+    }
+    
+    // MARK: - 提案ロジック
+    private func makeSuggestion() -> Suggestion {
+        // 文脈取得
+        let contextVec = SleepContextProvider.getContext(
+            viewContext: viewContext,
+            predictedDebtSec: predictedDebtSeconds
+        )
+        let debtMinutes = Int((contextVec[0] * 60).rounded())
+        let freeMinutes = Int((contextVec[1] * 60).rounded())
+        let chronoNorm = contextVec[2]
+        // 過去30日平均の就寝・起床時刻
+        let recs = Array(validNormalRecords.prefix(30))
+        let averageBedHour: Int = {
+            let hrs = recs.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hrs.reduce(0, +) / hrs.count
+        }()
+        let averageWakeHour: Int = {
+            let hrs = recs.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        // 週末リズム乱れ（過去7日間）
+        let now = Date()
+        let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        let weekend = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && Calendar.current.isDateInWeekend($0) } ?? false }
+        let weekday = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && !Calendar.current.isDateInWeekend($0) } ?? false }
+        let avgWeekendBedHour: Int = {
+            let hrs = weekend.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let avgWeekdayBedHour: Int = {
+            let hrs = weekday.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
+        // 将来負債予測（2日先）
+        var futureDebt: [Date: Int] = [:]
+        for offset in 1...2 {
+            if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
+                let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
+                futureDebt[date] = Int(sec / 60)
+            }
+        }
+        // 提案生成
+        let ctx = SleepSuggestionContext(
+            debtMinutes: debtMinutes,
+            freeMinutes: freeMinutes,
+            chronoNormalized: chronoNorm,
+            weekendShiftMinutes: weekendShiftMinutes,
+            futureDebtMinutes: futureDebt,
+            usualBedHour: averageBedHour,
+            usualWakeHour: averageWakeHour
+        )
+        return SuggestionProvider.generate(context: ctx, arm: banditManager.suggestedArm)
     }
 }
 
