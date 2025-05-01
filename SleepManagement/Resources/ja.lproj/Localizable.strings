@@ -1,0 +1,389 @@
+/* 
+  Localizable.strings
+  SleepManagement
+
+  Japanese localization
+*/
+
+// App Name
+"app_name" = "眠りログAI";
+
+// Home Screen
+"home_tab" = "ホーム";
+"stats_tab" = "統計";
+"records_tab" = "記録";
+"sleep_log_tab" = "睡眠ログ";
+"home_title" = "睡眠管理";
+"home_subtitle" = "あなたの睡眠を最適化";
+"add_record" = "記録を追加";
+"settings" = "設定";
+"language" = "言語";
+"switch_language" = "英語に切り替え";
+
+// Sleep Summary
+"sleep_summary" = "睡眠サマリー";
+"records" = "件の記録";
+"avg_duration" = "平均睡眠時間";
+"avg_score" = "平均睡眠スコア";
+"longest_sleep" = "最長睡眠";
+"avg_bedtime" = "平均就寝時間";
+"points" = "点";
+"last_sleep" = "最終睡眠";
+"sleep_score" = "睡眠スコア";
+
+// Sleep Debt
+"sleep_debt" = "睡眠負債";
+"current_debt" = "現在の睡眠負債";
+"hours" = "時間";
+"danger" = "危険";
+"warning" = "注意";
+"good" = "良好";
+"debt_high_message" = "睡眠負債が2時間を超えています。できるだけ早く睡眠時間を増やし、負債を解消しましょう。";
+"debt_medium_message" = "軽度の睡眠負債があります。今夜は少し早めに就寝することをお勧めします。";
+"debt_low_message" = "現在、睡眠負債はほとんどありません。良好な睡眠サイクルを維持しています。";
+
+// Recent Records
+"recent_records" = "最近の睡眠記録";
+"view_all" = "すべて見る";
+"no_records" = "睡眠記録がありません";
+"add_first_record" = "右下の+ボタンから最初の睡眠記録を追加しましょう";
+"add_record_button" = "記録を追加する";
+
+// Sync hint under recent records
+"recent.syncHealthKit.message" = "ヘルスケアデータを同期したい場合は、設定画面で実施してください。";
+
+// Sleep Input
+"sleep_recording" = "睡眠記録";
+"checking_device" = "デバイス確認中...";
+"watch_integration" = "Apple Watch連携";
+"in_development" = "開発中";
+"watch_description" = "Apple Watchの睡眠データを自動で取得し、より正確な睡眠分析を提供します。";
+"manual_record" = "手動で睡眠を記録する";
+"record_sleep_time" = "睡眠時間を記録";
+"record_sleep_instruction" = "就寝時間と起床時間を記録して、睡眠状態を把握しましょう";
+"sleep_time" = "就寝時間";
+"bedtime" = "就寝時間";
+"wake_time" = "起床時間";
+"sleep_quality" = "睡眠の質 (1〜5)";
+"bad" = "悪い";
+"good_quality" = "良い";
+"memo_optional" = "メモ (任意)";
+"sleep_duration" = "睡眠時間: ";
+"watch_required" = "※正確な睡眠データにはApple Watchが必要です";
+"save_record" = "睡眠記録を保存";
+"cancel" = "キャンセル";
+"date" = "日付";
+"sleep_input_title" = "睡眠入力";
+"sleep_record_instruction" = "睡眠を記録する";
+"sleep_input_description" = "就寝時間と起床時間を記録して、睡眠パターンを追跡しましょう。";
+"sleep_start_datetime" = "就寝時間";
+"wake_datetime" = "起床時間";
+"error_invalid_time_title" = "入力エラー";
+"error_invalid_time_message" = "起床時間は就寝時間より後になるように入力してください。";
+"input_mode" = "入力モード";
+"total_duration" = "総睡眠時間";
+"deep_sleep" = "深い睡眠";
+"heart_rate" = "心拍数";
+"use_this_data" = "このデータを使用";
+"requesting_watch_data" = "Apple Watchからデータを取得中...";
+"open_watch_app" = "Apple Watchが近くにあり、ロックが解除されていることを確認してください。";
+"watch_not_paired" = "Apple Watchが接続されていません";
+"use_manual_input" = "Apple Watchが見つかりません。手動入力をご利用ください。";
+"switch_to_manual" = "手動入力に切り替え";
+"save" = "保存";
+"poor" = "悪い";
+"excellent" = "とても良い";
+"minutes" = "分";
+"sleep_type" = "睡眠タイプ";
+"normal_sleep" = "通常睡眠";
+"nap" = "仮眠";
+
+// AI Advice
+"ai_advice" = "AI診断・アドバイス";
+"ai_analysis" = "AIによる睡眠分析・アドバイス";
+"ai_description" = "あなたの睡眠データをAIが分析し、パーソナライズされたアドバイスを提供します。";
+"coming_soon" = "近日公開予定";
+
+// Developing Features
+"developing_feature" = "この機能は現在開発中です";
+"stay_tuned" = "今後のアップデートをお楽しみに";
+
+// Common
+"common.okButton" = "OK";
+"common.cancelButton" = "キャンセル";
+"common.error.unknown" = "不明なエラーが発生しました。";
+"common.error.format" = "エラー: %@";
+
+// Onboarding
+"onboarding.welcomeTitle" = "ようこそ！";
+"onboarding.welcomeMessage" = "設定はあとで変更できます。まずはアプリを始めましょう！";
+"onboarding.requiredSettingsTitle" = "必須設定";
+"onboarding.sleepDataLabel" = "睡眠データ";
+"onboarding.heartRateLabel" = "心拍数";
+"onboarding.status.notDetermined" = "未確認";
+"onboarding.status.authorized" = "許可済み";
+"onboarding.status.denied" = "拒否済み";
+"onboarding.status.simulatorNotDetermined" = "シミュレータ / 未確認";
+"onboarding.status.unknown" = "不明";
+"onboarding.updateStatusButton" = "ステータス更新";
+"onboarding.healthKitButton.authorized" = "許可済み";
+"onboarding.healthKitButton.request" = "HealthKit を許可する";
+"onboarding.optionalSettingsTitle" = "オプション設定";
+"onboarding.watchConnectionLabel" = "Apple Watch 接続";
+"onboarding.watchStatus.connected" = "接続済み";
+"onboarding.watchStatus.notConnected" = "未接続";
+"onboarding.watchButton.connected" = "Watch 接続済み";
+"onboarding.watchButton.detect" = "Watch を検出する";
+"onboarding.skipButton" = "スキップ";
+"onboarding.nextButton" = "次へ進む";
+"onboarding.navigationTitle" = "オンボーディング";
+"onboarding.alert.healthDenied.title" = "HealthKit アクセスが拒否されました";
+"onboarding.alert.openSettingsButton" = "設定を開く";
+"onboarding.alert.healthDenied.message" = "睡眠データの取得には HealthKit のアクセスが必要です。\n\n設定アプリを開き、「プライバシーとセキュリティ」→「健康」で、このアプリに対して「睡眠」と「心拍数」の項目を「許可」に設定してください。";
+"onboarding.alert.watchError.title" = "Apple Watch 接続エラー";
+"onboarding.alert.watchError.message" = "Apple Watchとの接続に問題があります。iPhoneとWatchが正しくペアリングされていることを確認してください。シミュレータ環境ではWatchConnectivityは正常に動作しません。";
+"onboarding.error.healthKitUnavailable" = "このデバイスではHealthKitが利用できません";
+"onboarding.error.simulatorLimitation" = "シミュレータ環境では完全な動作保証ができません";
+"onboarding.error.watchConnectivityUnsupported" = "このデバイスはWatchConnectivityをサポートしていません。";
+"onboarding.error.watchNotPaired" = "Apple Watchがペアリングされていません。";
+"onboarding.error.watchAppNotInstalled" = "Watchアプリがインストールされていません。";
+"onboarding.step.deviceSettings" = "デバイス設定";
+"onboarding.step.sleepSettings" = "睡眠設定";
+"onboarding.step.sourceSelection" = "データ取得方法";
+"onboarding.selectSource.title" = "睡眠データの取得方法を選択してください";
+"onboarding.selectSource.manual" = "手動入力";
+"onboarding.selectSource.healthkit" = "HealthKitから自動取得";
+"onboarding.usage.title" = "利用方法";
+"onboarding.usage.healthkit.title" = "HealthKitとの自動同期";
+"onboarding.usage.healthkit.description" = "既存の睡眠データを自動的に同期して分析します";
+"onboarding.usage.manual.title" = "手動で睡眠を記録";
+"onboarding.usage.manual.description" = "就寝時間と起床時間を手動で記録することもできます";
+
+// Settings
+"settings.title" = "設定";
+"settings.language.title" = "言語";
+"settings.language.current" = "現在の言語";
+"settings.user.title" = "ユーザー";
+"settings.user.age" = "年齢";
+"settings.user.guideline" = "年齢別推奨睡眠時間";
+"settings.sleep.title" = "睡眠";
+"settings.sleep.ideal" = "理想の睡眠時間";
+"settings.notification.title" = "通知";
+"settings.notification.bedtime" = "就寝リマインダー";
+"settings.notification.bedtime.time" = "就寝通知時刻";
+"settings.notification.morning" = "朝のサマリー";
+"settings.notification.morning.time" = "朝の通知時刻";
+"settings.display.title" = "表示";
+"settings.display.system" = "システム設定に合わせる";
+"settings.display.dark" = "ダークモード";
+"settings.display.debt" = "睡眠負債を表示";
+"settings.display.score" = "睡眠スコアを表示";
+"settings.healthkit.title" = "ヘルスケア";
+"settings.healthkit.sync" = "ヘルスケアと同期";
+"settings.healthkit.description" = "ヘルスケアから睡眠データを自動取得";
+"settings.healthkit.sleepGapThreshold" = "睡眠ログの区切り時間";
+"settings.healthkit.treatShortSleepAsNap" = "短い睡眠を仮眠として記録する";
+"settings.healthkit.shortSleepThreshold" = "仮眠とみなす最小睡眠時間";
+"settings.info.title" = "情報";
+"settings.info.version" = "バージョン";
+"settings.data.title" = "データ";
+"settings.data.reset" = "設定をリセット";
+"settings.data.reset.confirm" = "設定を初期値に戻しますか？この操作は元に戻せません。";
+"settings.data.reset.title" = "リセット確認";
+"settings.data.reset.cancel" = "キャンセル";
+"settings.data.reset.confirm.button" = "リセットする";
+"settings.close" = "閉じる";
+"settings.save" = "保存";
+"settings.save.home" = "保存してホームへ";
+
+// Dashboard View
+"dashboard_title" = "睡眠ダッシュボード";
+"sleep_pattern" = "睡眠パターン";
+"data_overview" = "データ概要";
+"week_period" = "週間";
+"month_period" = "月間";
+"days_of_data" = "日分のデータ";
+"shortest_sleep_day" = "最短睡眠日";
+"goal" = "目標";
+"recommended" = "推奨睡眠時間";
+"fair" = "普通";
+"needs_improvement" = "改善が必要";
+"score_points" = "点数";
+"no_data_available" = "データがありません";
+"add_sleep_records" = "睡眠記録を追加してください";
+"sleep_debt_explanation" = "睡眠負債は、理想的な睡眠時間に対して不足している睡眠時間の累積です。定期的に十分な睡眠をとることで解消できます。";
+
+// HealthKitモデル用睡眠スコア
+"healthkit.score.title" = "HealthKit睡眠スコア (100点満点)"; 
+
+/* Sleep Record List View */
+"sleep_record_list_title" = "睡眠記録一覧";
+
+/* Sleep Session */
+"start_time" = "開始時刻";
+"end_time" = "終了時刻";
+"in_bed_time" = "入床時間: ";
+
+// Swipe actions
+"list.edit" = "編集";
+"list.delete" = "削除";
+
+// HealthKit permission banner
+"healthkit.permission.required" = "HealthKit の権限が必要です";
+"healthkit.permission.button" = "設定を開く";
+
+// Sleep Metrics Card
+"metrics.duration" = "総睡眠時間";
+"metrics.efficiency" = "睡眠効率";
+"metrics.regularity" = "睡眠規則性";
+"metrics.latency" = "入眠潜時";
+"metrics.waso" = "中途覚醒時間";
+"metrics.title" = "睡眠指標";
+
+/* Sleep Session Localization */
+"sleep_log_tab" = "睡眠ログ";
+"sleep_log_edit" = "睡眠ログを編集";
+"session.startTime" = "開始時刻";
+"session.endTime" = "終了時刻";
+"session.inBedTime" = "入床時間";
+"session.sleepTime" = "睡眠時間";
+"nap" = "仮眠";
+
+/* Sleep Log Page */
+"start_time" = "開始時刻";
+"end_time" = "終了時刻";
+"in_bed_time" = "入床時間: ";
+"sleep_log_edit" = "睡眠ログを編集";
+"sleep_log_no_data" = "該当日の睡眠ログはありません";
+"delete_session_title" = "睡眠ログを削除";
+"delete_session_message" = "この睡眠ログを削除してもよろしいですか？";
+
+// Edit Sleep Record View
+"edit_sleep_record_title" = "睡眠記録の編集";
+"edit_sleep_record_subtitle" = "睡眠の詳細を更新します";
+"score_preview" = "スコアプレビュー";
+"sleep_analysis" = "睡眠分析";
+"duration" = "睡眠時間";
+
+// Sleep Score Info Dialog
+"score_info_title" = "睡眠スコアの計算方法";
+"score_info_message" = "睡眠スコアは、睡眠時間と睡眠の質に基づき0～100点で算出されます。スコアが高いほど良質な睡眠を示します。";
+
+// Sleep Score Info Dialog for manual records
+"manual_score_info_message" = "睡眠スコアは次の3つの要素で計算されます：\n- 睡眠時間（最大60点）：理想睡眠時間（7時間）に対する実際の睡眠時間の割合で評価\n- 主観評価（最大40点）：眠りの深さや目覚めの感覚を自己評価\n- 合計スコア（100点満点）：上記2つを合わせて算出";
+
+// Sleep Score Info Dialog for sessions
+"session_score_info_message" = "睡眠スコアの内訳：\n- 睡眠時間（最大40点）：理想時間との比率で評価\n- 睡眠効率（最大25点）：ベッドにいる時間に対する実際の睡眠時間の割合\n- 睡眠規則性（最大15点）：就寝・起床時間のばらつきで評価\n- 入眠潜時（最大10点）：寝つくまでの時間で評価\n- 中途覚醒（最大10点）：夜間の目覚め時間で評価\n合計で100点満点です";
+
+/* Expert Advice Section */
+"expert_advice" = "睡眠の専門家のおすすめ";
+"expert_advice_description" = "専門家のアドバイス";
+"expert_advice_disclaimer" = "これは医療アドバイスではありません。";
+
+"advice.irregular_sleep_schedule.title" = "毎日の就寝・起床時間をそろえましょう";
+"advice.irregular_sleep_schedule.description" = "毎日同じ時間に寝起きしましょう。";
+
+"advice.sleep_debt.title" = "慢性的な寝不足に注意";
+"advice.sleep_debt.description" = "%1$d時間の睡眠が不足しています。7〜9時間を目指しましょう。";
+
+"advice.ideal_sleep_duration.title" = "睡眠時間を調整しましょう";
+"advice.ideal_sleep_duration.description" = "理想と%1$d時間の差があります。";
+
+"advice.low_sleep_efficiency.title" = "睡眠効率を改善しましょう";
+"advice.low_sleep_efficiency.description" = "ベッドでは睡眠に集中し、眠れないときは起きてリラックスしましょう。";
+
+"advice.long_sleep_latency.title" = "寝つきを良くする習慣を";
+"advice.long_sleep_latency.description" = "就寝前にぬるめの入浴やストレッチを試しましょう。";
+
+"advice.frequent_wakeups.title" = "夜中の目覚めを減らしましょう";
+"advice.frequent_wakeups.description" = "覚醒時は暗い部屋でリラックスし、眠気が来たら戻りましょう。";
+
+"advice.low_sleep_regularity.title" = "睡眠の規則性を高めましょう";
+"advice.low_sleep_regularity.description" = "毎日同じ時間に寝起きしてリズムを整えましょう。";
+
+"advice.low_subjective_quality.title" = "睡眠の満足度を高めましょう";
+"advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。";
+
+/* AIコーチ予測 */
+"ai_coach_title" = "AIからの提案";
+"ai_coach_prediction" = "睡眠負債は%.1f時間です。今夜1時間早く寝ると1時間返済できます。";
+"ai_coach_prediction_time_fmt" = "睡眠負債は%@です。今夜1時間早く寝ると1時間返済できます。";
+/* AIコーチアクション推奨 */
+"ai_coach_action" = "今夜は1時間早く就寝し、睡眠負債を減らしましょう。";
+
+/* AIコーチ負債要因可視化 */
+"ai_coach_factor_summary" = "予測睡眠負債の%d%%は%@が要因です。";
+
+/* 要因名と改善提案 */
+"debt_factor_sleep_latency" = "入眠までの覚醒時間（入眠潜時）が長い";
+"debt_suggestion_sleep_latency" = "就寝前30分は画面オフ・深呼吸習慣を取り入れましょう。";
+
+"debt_factor_variability" = "睡眠スケジュールのばらつき";
+"debt_suggestion_variability" = "週を通して就寝時間を一定に保つよう心がけましょう。";
+
+"debt_factor_low_efficiency" = "睡眠効率の低下";
+"debt_suggestion_low_efficiency" = "睡眠環境を改善して中断を減らし、効率を高めましょう。";
+
+"debt_factor_waso" = "入眠後覚醒";
+"debt_suggestion_waso" = "寝室の騒音や光を最小限にして夜間の覚醒を減らしましょう。";
+
+"debt_factor_sleep_debt" = "睡眠負債全体";
+"debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。";
+
+/* Bandit 推薦アクション */
+"suggested_action" = "AIからのおすすめアクション";
+/* フィードバックボタン */
+"feedback_button" = "フィードバックを送る";
+/* フィードバックプロンプト */
+"feedback_prompt" = "このアクションを実行して、何分睡眠負債を返済できましたか？";
+/* フィードバック入力分数 */
+"feedback_minutes" = "%d分改善しました";
+/* フィードバック送信 */
+"feedback_send" = "送信";
+
+/* アクション説明 */
+"early_bedtime_action" = "いつもより早く寝る";
+"power_nap_action" = "短時間のパワーナップをとる";
+"reinforce_routine_action" = "就寝前のルーティンを強化する";
+
+/* フィードバックシートタイトル */
+"feedback_sheet_title" = "アクションの効果を報告";
+/* フィードバック説明 */
+"feedback_prompt" = "このアクションを実行して、何分睡眠負債を返済できましたか？";
+/* 入力プレースホルダー */
+"feedback_placeholder" = "分数を入力";
+/* フィードバック注釈 */
+"feedback_note" = "フィードバックは今後の提案改善に活用されます。";
+
+/* 大きな睡眠負債（2時間以上）のタイトル */
+"suggest_highDebt_title" = "睡眠負債が大きいです";
+/* 大きな睡眠負債メッセージ：負債時間、通常就寝時刻、就寝リミット、返済分 */
+"suggest_highDebt_message" = "睡眠負債が%1$d時間あります。いつもは%2$d時に寝ていますが、今夜%3$d時までに寝ると%4$d時間返済できます！";
+
+/* 中程度の睡眠負債＋空き時間 */
+"suggest_moderateDebt_title" = "パワーナップがおすすめ";
+/* 中度負債メッセージ：ナップ時間 */
+"suggest_moderateDebt_message" = "午後に%1$d分のパワーナップがおすすめです。NASA実験で反応速度+34％向上が確認されています。";
+
+/* 週末リズム乱れ */
+"suggest_rhythm_title" = "睡眠リズムを整えましょう";
+/* リズム乱れメッセージ：週末ズレ時間、起床時刻 */
+"suggest_rhythm_message" = "週末の睡眠パターンが平日と%1$d時間ずれていると、月曜日のパフォーマンスが15％低下します。土曜も%2$d時までに起きることをおすすめします。";
+
+/* 将来の睡眠負債予測 */
+"suggest_futureHigh_title" = "将来の睡眠負債に注意";
+/* 将来の負債メッセージ：日付文字列、将来負債時間 */
+"suggest_futureHigh_message" = "%1$@に睡眠負債が%2$d時間に達する予測です。今日と明日は30分早く就寝すると対策できます。";
+
+/* デフォルトのおすすめ */
+"suggest_default_title" = "おすすめアクション";
+/* デフォルトメッセージ */
+"suggest_default_message" = "状況に合わせて睡眠改善アクションを試してみましょう。";
+
+/* Info alert for AI Coach section */
+"ai_coach_info_title" = "AIからの提案について";
+"ai_coach_info_message" = "直近の睡眠データから機械学習モデルを用いて将来の睡眠負債を予測し、主要な要因を可視化しています。";
+
+/* Info alert for Recommended Actions section */
+"action_info_title" = "AIからのおすすめアクションについて";
+"action_info_message" = "LinUCBバンディットアルゴリズムをベースに、過去の行動と結果からパーソナライズされた提案を行っています。"; 

@@ -1,0 +1,336 @@
+"app_name" = "DreamLogAI";
+
+
+"home_tab" = "Home";
+"stats_tab" = "Stats";
+"records_tab" = "Records";
+"sleep_log_tab" = "Sleep Log";
+"home_title" = "Sleep Management";
+"home_subtitle" = "Optimize your sleep";
+"add_record" = "Add Record";
+"settings" = "Settings";
+"language" = "Language";
+"switch_language" = "Switch to Japanese";
+
+
+"sleep_summary" = "Sleep Summary";
+"records" = "records";
+"avg_duration" = "Avg Sleep Time";
+"avg_score" = "Avg Sleep Score";
+"longest_sleep" = "Longest Sleep";
+"avg_bedtime" = "Avg Bedtime";
+"points" = "points";
+"last_sleep" = "Last Sleep";
+"sleep_score" = "Sleep Score";
+
+
+"sleep_debt" = "Sleep Debt";
+"current_debt" = "Current Sleep Debt";
+"hours" = "hours";
+"danger" = "Danger";
+"warning" = "Warning";
+"good" = "Good";
+"debt_high_message" = "Your sleep debt exceeds 2 hours. Try to increase your sleep time to reduce debt.";
+"debt_medium_message" = "You have a mild sleep debt. It is recommended to go to bed a little earlier tonight.";
+"debt_low_message" = "Currently, you have almost no sleep debt. You are maintaining a good sleep cycle.";
+
+
+"recent_records" = "Recent Sleep Records";
+"view_all" = "View all";
+"no_records" = "No Sleep Records";
+"add_first_record" = "Add your first sleep record using the + button below";
+"add_record_button" = "Add a Record";
+
+
+"sleep_recording" = "Sleep Recording";
+"checking_device" = "Checking device...";
+"watch_integration" = "Apple Watch Integration";
+"in_development" = "In Development";
+"watch_description" = "Automatically collect sleep data from your Apple Watch for more accurate sleep analysis.";
+"manual_record" = "Record sleep manually";
+"record_sleep_time" = "Record Sleep Time";
+"record_sleep_instruction" = "Record your bedtime and wake-up time to track your sleep status";
+"sleep_time" = "Sleep Time";
+"bedtime" = "Bedtime";
+"wake_time" = "Wake Time";
+"sleep_quality" = "Sleep Quality (1-5)";
+"bad" = "Bad";
+"good_quality" = "Good";
+"memo_optional" = "Memo (Optional)";
+"sleep_duration" = "Sleep Duration: ";
+"watch_required" = "* Apple Watch is required for accurate sleep data";
+"save_record" = "Save Sleep Record";
+"cancel" = "Cancel";
+"date" = "Date";
+"sleep_input_title" = "Sleep Input";
+"sleep_record_instruction" = "Record Your Sleep";
+"sleep_input_description" = "Track your sleep patterns by recording when you go to bed and when you wake up.";
+"sleep_start_datetime" = "Bedtime";
+"wake_datetime" = "Wake Time";
+"error_invalid_time_title" = "Invalid Input";
+"error_invalid_time_message" = "Wake time must be later than bedtime.";
+"input_mode" = "Input Mode";
+"total_duration" = "Total Duration";
+"deep_sleep" = "Deep Sleep";
+"heart_rate" = "Heart Rate";
+"use_this_data" = "Use This Data";
+"requesting_watch_data" = "Requesting data from Apple Watch...";
+"open_watch_app" = "Please make sure your Apple Watch is nearby and unlocked.";
+"watch_not_paired" = "Apple Watch Not Connected";
+"use_manual_input" = "No Apple Watch detected. Please use manual input instead.";
+"switch_to_manual" = "Switch to Manual Input";
+"save" = "Save";
+"poor" = "Poor";
+"excellent" = "Excellent";
+"minutes" = " min";
+"sleep_type" = "Sleep Type";
+"normal_sleep" = "Normal Sleep";
+"nap" = "Nap";
+
+
+"ai_advice" = "AI Advice";
+"ai_analysis" = "AI Sleep Analysis & Advice";
+"ai_description" = "AI analyzes your sleep data and offers personalized advice.";
+"coming_soon" = "Coming Soon";
+
+
+"developing_feature" = "This feature is currently in development";
+"stay_tuned" = "Look forward to future updates";
+
+
+"common.okButton" = "OK";
+"common.cancelButton" = "Cancel";
+"common.error.unknown" = "An unknown error occurred.";
+"common.error.format" = "Error: %@";
+
+
+"onboarding.welcomeTitle" = "Welcome!";
+"onboarding.welcomeMessage" = "Settings can be changed later. Let's start the app first!";
+"onboarding.requiredSettingsTitle" = "Required Settings";
+"onboarding.sleepDataLabel" = "Sleep Data";
+"onboarding.heartRateLabel" = "Heart Rate";
+"onboarding.status.notDetermined" = "Not Determined";
+"onboarding.status.authorized" = "Authorized";
+"onboarding.status.denied" = "Denied";
+"onboarding.status.simulatorNotDetermined" = "Simulator / Not Determined";
+"onboarding.status.unknown" = "Unknown";
+"onboarding.updateStatusButton" = "Update Status";
+"onboarding.healthKitButton.authorized" = "Authorized";
+"onboarding.healthKitButton.request" = "Authorize HealthKit";
+"onboarding.optionalSettingsTitle" = "Optional Settings";
+"onboarding.watchConnectionLabel" = "Apple Watch Connection";
+"onboarding.watchStatus.connected" = "Connected";
+"onboarding.watchStatus.notConnected" = "Not Connected";
+"onboarding.watchButton.connected" = "Watch Connected";
+"onboarding.watchButton.detect" = "Detect Watch";
+"onboarding.skipButton" = "Skip";
+"onboarding.nextButton" = "Next";
+"onboarding.navigationTitle" = "Onboarding";
+"onboarding.alert.healthDenied.title" = "HealthKit Access Denied";
+"onboarding.alert.openSettingsButton" = "Open Settings";
+"onboarding.alert.healthDenied.message" = "Access to HealthKit is required to retrieve sleep data.\n\nPlease open the Settings app, go to Privacy & Security > Health, and set 'Sleep' and 'Heart Rate' permissions for this app to 'Allow'.";
+"onboarding.alert.watchError.title" = "Apple Watch Connection Error";
+"onboarding.alert.watchError.message" = "There is a problem connecting to Apple Watch. Please ensure your iPhone and Watch are paired correctly. WatchConnectivity may not function correctly in the simulator environment.";
+"onboarding.error.healthKitUnavailable" = "HealthKit is not available on this device";
+"onboarding.error.simulatorLimitation" = "Full functionality cannot be guaranteed in the simulator environment";
+"onboarding.error.watchConnectivityUnsupported" = "This device does not support WatchConnectivity.";
+"onboarding.error.watchNotPaired" = "Apple Watch is not paired.";
+"onboarding.error.watchAppNotInstalled" = "Watch app is not installed.";
+"onboarding.step.deviceSettings" = "Device Settings";
+"onboarding.step.sleepSettings" = "Sleep Settings";
+"onboarding.step.sourceSelection" = "Data Source";
+"onboarding.selectSource.title" = "Select Sleep Data Source";
+"onboarding.selectSource.manual" = "Manual Entry";
+"onboarding.selectSource.healthkit" = "Auto-sync from HealthKit";
+"onboarding.usage.title" = "How to Use";
+"onboarding.usage.healthkit.title" = "Auto-sync with HealthKit";
+"onboarding.usage.healthkit.description" = "Automatically sync and analyze your existing sleep data";
+"onboarding.usage.manual.title" = "Record sleep manually";
+"onboarding.usage.manual.description" = "You can also manually record your bedtime and wake time";
+
+
+"settings.title" = "Settings";
+"settings.language.title" = "Language";
+"settings.language.current" = "Current Language";
+"settings.user.title" = "User";
+"settings.user.age" = "Age";
+"settings.user.guideline" = "Recommended Sleep Duration by Age";
+"settings.sleep.title" = "Sleep";
+"settings.sleep.ideal" = "Ideal Sleep Duration";
+"settings.notification.title" = "Notifications";
+"settings.notification.bedtime" = "Bedtime Reminder";
+"settings.notification.bedtime.time" = "Reminder Time";
+"settings.notification.morning" = "Morning Summary";
+"settings.notification.morning.time" = "Summary Time";
+"settings.display.title" = "Display";
+"settings.display.system" = "Use System Theme";
+"settings.display.dark" = "Dark Mode";
+"settings.display.debt" = "Show Sleep Debt";
+"settings.display.score" = "Show Sleep Score";
+"settings.healthkit.title" = "HealthKit";
+"settings.healthkit.sync" = "Sync with HealthKit";
+"settings.healthkit.description" = "Automatically fetch sleep data from Apple Health";
+"settings.healthkit.sleepGapThreshold" = "Sleep Log Gap Threshold";
+"settings.healthkit.treatShortSleepAsNap" = "Record short sleep as a nap";
+"settings.healthkit.shortSleepThreshold" = "Minimum duration to count as a nap";
+"settings.info.title" = "Info";
+"settings.info.version" = "Version";
+"settings.data.title" = "Data";
+"settings.data.reset" = "Reset Settings";
+"settings.data.reset.confirm" = "Reset all settings to default? This cannot be undone.";
+"settings.data.reset.title" = "Reset Confirmation";
+"settings.data.reset.cancel" = "Cancel";
+"settings.data.reset.confirm.button" = "Reset";
+"settings.close" = "Close";
+"settings.save" = "Save";
+"settings.save.home" = "Save & Go Home";
+
+
+"dashboard_title" = "Sleep Dashboard";
+"sleep_pattern" = "Sleep Pattern";
+"data_overview" = "Data Overview";
+"week_period" = "Week";
+"month_period" = "Month";
+"days_of_data" = " days of data";
+"shortest_sleep_day" = "Shortest Sleep Day";
+"goal" = "Goal";
+"recommended" = "Recommended";
+"fair" = "Fair";
+"needs_improvement" = "Needs Improvement";
+"score_points" = " points";
+"no_data_available" = "No Data Available";
+"add_sleep_records" = "Add sleep records to see your data";
+"sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt.";
+
+
+"healthkit.score.title" = "HealthKit Sleep Score (100 pts)"; 
+
+"start_time" = "Start Time";
+"end_time" = "End Time";
+"in_bed_time" = "In Bed Time: ";
+"sleep_log_edit" = "Edit Sleep Log";
+"sleep_log_no_data" = "No sleep logs for this day";
+"delete_session_title" = "Delete Sleep Log";
+"delete_session_message" = "Are you sure you want to delete this sleep log?";
+
+
+"edit_sleep_record_title" = "Edit Sleep Record";
+"edit_sleep_record_subtitle" = "Update sleep record details";
+"score_preview" = "Score Preview";
+"sleep_analysis" = "Sleep Analysis";
+"duration" = "Duration";
+
+
+"score_info_title" = "Sleep Score Calculation";
+"score_info_message" = "The sleep score is calculated on a scale of 0 to 100 based on sleep duration and quality. A higher score indicates better sleep.";
+
+
+"manual_score_info_message" = "Your sleep score is calculated using three components:\n- Sleep duration (up to 60 points): How your actual sleep compares to a 7-hour goal\n- Subjective feedback (up to 40 points): Your personal rating of sleep quality\n- Total score (out of 100): Sum of the above two metrics";
+
+
+"session_score_info_message" = "Your sleep score breakdown:\n- Duration (up to 40 points): Based on how long you sleep compared to the ideal\n- Efficiency (up to 25 points): Ratio of actual sleep time to time in bed\n- Regularity (up to 15 points): Consistency of your bed/wake times\n- Sleep onset latency (up to 10 points): Time it takes you to fall asleep\n- WASO (up to 10 points): Total awake time during your sleep period\nAll components add up to 100 points";
+
+
+/* Expert Advice Section */
+"expert_advice" = "Expert Advice";
+"expert_advice_description" = "Tips from experts based on your sleep data.";
+"expert_advice_disclaimer" = "This is not medical advice.";
+
+"advice.irregular_sleep_schedule.title" = "Maintain a consistent sleep schedule";
+"advice.irregular_sleep_schedule.description" = "Go to bed and wake up at the same time daily.";
+
+"advice.sleep_debt.title" = "Watch out for sleep debt";
+"advice.sleep_debt.description" = "You're %1$d hours short of your ideal sleep. Aim for 7-9 hours.";
+
+"advice.ideal_sleep_duration.title" = "Adjust your sleep duration";
+"advice.ideal_sleep_duration.description" = "You're %1$d hours off from your ideal sleep.";
+
+"advice.low_sleep_efficiency.title" = "Improve your sleep efficiency";
+"advice.low_sleep_efficiency.description" = "Focus on sleeping when in bed and get up if you can't sleep.";
+
+"advice.long_sleep_latency.title" = "Ease your sleep onset";
+"advice.long_sleep_latency.description" = "Try a warm bath or light stretching before bed.";
+
+"advice.frequent_wakeups.title" = "Reduce nighttime awakenings";
+"advice.frequent_wakeups.description" = "Relax in dim light when awake and return when sleepy.";
+
+"advice.low_sleep_regularity.title" = "Increase sleep regularity";
+"advice.low_sleep_regularity.description" = "Align your bedtime and wake time daily for better sleep.";
+
+"advice.low_subjective_quality.title" = "Enhance sleep satisfaction";
+"advice.low_subjective_quality.description" = "Review your sleep environment and habits for more comfortable rest.";
+
+/* AI Coach Prediction */
+"ai_coach_title" = "AI Suggestions";
+"ai_coach_prediction" = "Your sleep debt is %.1f hours. Going to bed 1 hour earlier tonight will repay 1 hour.";
+"ai_coach_prediction_time_fmt" = "Your sleep debt is %@. Going to bed 1 hour earlier tonight will repay 1 hour.";
+/* AI Coach Action Recommendation */
+"ai_coach_action" = "Go to bed one hour earlier tonight to reduce your sleep debt.";
+/* AIコーチ負債要因可視化 */
+"ai_coach_factor_summary" = "%d%% of your predicted sleep debt is due to %@.";
+
+/* 要因名と改善提案 */
+"debt_factor_sleep_latency" = "long sleep latency";
+"debt_suggestion_sleep_latency" = "Consider turning off screens and practicing deep breathing for 30 minutes before bed.";
+
+"debt_factor_variability" = "sleep schedule variability";
+"debt_suggestion_variability" = "Try to maintain consistent bedtimes throughout the week.";
+
+"debt_factor_low_efficiency" = "low sleep efficiency";
+"debt_suggestion_low_efficiency" = "Improve sleep environment to reduce disruptions and enhance efficiency.";
+
+"debt_factor_waso" = "wake after sleep onset";
+"debt_suggestion_waso" = "Limit nighttime awakenings by minimizing noise and light in bedroom.";
+
+"debt_factor_sleep_debt" = "overall sleep debt";
+"debt_suggestion_sleep_debt" = "Aim to go to bed earlier or take short naps to repay your sleep debt.";
+
+/* Bandit suggested action */
+"suggested_action" = "AI Recommended Action";
+/* Feedback button */
+"feedback_button" = "Send Feedback";
+/* Feedback prompt */
+"feedback_prompt" = "How effective was this action?";
+/* Feedback minutes input */
+"feedback_minutes" = "%d min improvement";
+/* Feedback send */
+"feedback_send" = "Submit";
+
+/* Action descriptions */
+"early_bedtime_action" = "Go to bed earlier than usual";
+"power_nap_action" = "Take a short power nap";
+"reinforce_routine_action" = "Strengthen your pre-sleep routine";
+
+/* High sleep debt (>2h) title */
+"suggest_highDebt_title" = "High sleep debt";
+/* High sleep debt message: debt hours, usual bed hour, limit hour, repay hours */
+"suggest_highDebt_message" = "You have %1$d hours of sleep debt. You usually go to bed at %2$d:00, but if you sleep by %3$d:00 tonight, you can repay %4$d hours!";
+
+/* Moderate sleep debt + free time */
+"suggest_moderateDebt_title" = "Try a power nap";
+/* Moderate debt message: nap duration */
+"suggest_moderateDebt_message" = "A %1$d-minute power nap in the afternoon is recommended. NASA studies show a 34%% increase in reaction time.";
+
+/* Weekend rhythm shift */
+"suggest_rhythm_title" = "Maintain sleep rhythm";
+/* Rhythm shift message: shift hours, wake hour */
+"suggest_rhythm_message" = "If your weekend sleep pattern shifts by %1$d hours from weekdays, your performance on Monday may decrease by 15%%. Try waking up by %2$d:00 on Saturday.";
+
+/* Future sleep debt warning */
+"suggest_futureHigh_title" = "Upcoming sleep debt warning";
+/* Future debt message: date string, future debt hours */
+"suggest_futureHigh_message" = "Your sleep debt is predicted to reach %2$d hours on %1$@. Going to bed 30 minutes earlier today and tomorrow can help mitigate this.";
+
+/* Default suggestion title */
+"suggest_default_title" = "Suggested action";
+/* Default suggestion message */
+"suggest_default_message" = "Try sleep improvement actions based on your current situation.";
+
+/* Info alert for AI Coach section */
+"ai_coach_info_title" = "About AI Suggestions";
+"ai_coach_info_message" = "We use a machine learning model on your recent sleep data to predict future sleep debt and visualize key factors.";
+
+/* Info alert for Recommended Actions section */
+"action_info_title" = "About AI Recommended Action";
+"action_info_message" = "We use a LinUCB bandit algorithm to personalize suggestions based on past actions and outcomes.";
+
