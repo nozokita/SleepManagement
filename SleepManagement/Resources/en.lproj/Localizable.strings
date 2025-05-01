@@ -326,3 +326,11 @@
 /* Default suggestion message */
 "suggest_default_message" = "Try sleep improvement actions based on your current situation.";
 
+/* Info alert for AI Coach section */
+"ai_coach_info_title" = "About AI Coach suggestions";
+"ai_coach_info_message" = "We use a machine learning model on your recent sleep data to predict future sleep debt and visualize key factors.";
+
+/* Info alert for Recommended Actions section */
+"action_info_title" = "About Recommended Actions";
+"action_info_message" = "We use a LinUCB bandit algorithm to personalize suggestions based on past actions and outcomes.";
+

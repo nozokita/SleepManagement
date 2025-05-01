@@ -38,6 +38,8 @@ struct HomeView: View {
     }
     
     @State private var showSettings = false
+    @State private var showAICoachInfo: Bool = false
+    @State private var showActionInfo: Bool = false
     
     var body: some View {
         NavigationView {
@@ -408,6 +410,13 @@ struct HomeView: View {
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 Spacer()
+                Button(action: {
+                    showAICoachInfo = true
+                }) {
+                    Image(systemName: "info.circle")
+                        .font(.body)
+                        .foregroundColor(Theme.Colors.primary)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -416,11 +425,6 @@ struct HomeView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 12) {
-                Text(predictedDebtText)
-                    .font(Theme.Typography.bodyFont)
-                    .foregroundColor(Theme.Colors.subtext)
-                // フォールバック提案は削除（おすすめアクションに集約）
-
                 // 要因可視化
                 if let latest = sleepRecords.first {
                     let sleepData = SleepQualityData.fromSleepEntry(
@@ -447,18 +451,81 @@ struct HomeView: View {
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+        .alert(isPresented: $showAICoachInfo) {
+            Alert(
+                title: Text("ai_coach_info_title".localized),
+                message: Text("ai_coach_info_message".localized),
+                dismissButton: .default(Text("common.okButton".localized))
+            )
+        }
     }
     
     // MARK: - 提案セクションビルダー
     private func suggestionSectionView() -> some View {
-        // makeSuggestion() を呼び出して提案を生成
-        let suggestion = makeSuggestion()
+        // 文脈取得
+        let contextVec = SleepContextProvider.getContext(
+            viewContext: viewContext,
+            predictedDebtSec: predictedDebtSeconds
+        )
+        let debtMinutes = Int((contextVec[0] * 60).rounded())
+        let freeMinutes = Int((contextVec[1] * 60).rounded())
+        let chronoNorm = contextVec[2]
+        // 過去30日平均の就寝・起床時刻
+        let recs = Array(validNormalRecords.prefix(30))
+        let averageBedHour: Int = {
+            let hrs = recs.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hrs.reduce(0, +) / hrs.count
+        }()
+        let averageWakeHour: Int = {
+            let hrs = recs.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        // 週末リズム乱れ（過去7日間）
+        let now = Date()
+        let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        let weekend = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && Calendar.current.isDateInWeekend($0) } ?? false }
+        let weekday = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && !Calendar.current.isDateInWeekend($0) } ?? false }
+        let avgWeekendBedHour: Int = {
+            let hrs = weekend.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let avgWeekdayBedHour: Int = {
+            let hrs = weekday.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
+        // 将来負債予測（2日先）
+        var futureDebt: [Date: Int] = [:]
+        for offset in 1...2 {
+            if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
+                let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
+                futureDebt[date] = Int(sec / 60)
+            }
+        }
+        // 提案生成
+        let ctx = SleepSuggestionContext(
+            debtMinutes: debtMinutes,
+            freeMinutes: freeMinutes,
+            chronoNormalized: chronoNorm,
+            weekendShiftMinutes: weekendShiftMinutes,
+            futureDebtMinutes: futureDebt,
+            usualBedHour: averageBedHour,
+            usualWakeHour: averageWakeHour
+        )
+        let suggestion = SuggestionProvider.generate(context: ctx, arm: banditManager.suggestedArm)
         return VStack(spacing: 0) {
             HStack {
                 Label("suggested_action".localized, systemImage: "lightbulb")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 Spacer()
+                Button(action: {
+                    showActionInfo = true
+                }) {
+                    Image(systemName: "info.circle")
+                        .font(.body)
+                        .foregroundColor(Theme.Colors.primary)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -480,6 +547,13 @@ struct HomeView: View {
         .padding(.horizontal)
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
+        .alert(isPresented: $showActionInfo) {
+            Alert(
+                title: Text("action_info_title".localized),
+                message: Text("action_info_message".localized),
+                dismissButton: .default(Text("common.okButton".localized))
+            )
+        }
     }
     
     private var suggestedActionSection: some View {
@@ -938,19 +1012,6 @@ struct HomeView: View {
         predictedDebtSeconds = seconds
         banditManager.updateSuggestion(viewContext: viewContext, predictedDebtSec: seconds)
         // フォールバック提案は削除したので何もしない
-    }
-    
-    // 予測負債を表示用テキストに変換（フォールバック提案を含めず純粋に数値のみ表示）
-    private var predictedDebtText: String {
-        guard let sec = predictedDebtSeconds else { return "" }
-        let totalSeconds = Int(sec)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        if localizationManager.currentLanguage == "ja" {
-            return "予測される睡眠負債は\(hours)時間\(minutes)分です。"
-        } else {
-            return "Predicted sleep debt: \(hours)h \(minutes)m"
-        }
     }
     
     // MARK: - 提案ロジック
