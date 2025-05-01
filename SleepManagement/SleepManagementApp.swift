@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import UIKit
 
 // アプリの状態を管理するクラス
 class AppState: ObservableObject {
@@ -53,6 +54,8 @@ struct SleepManagementApp: App {
     
     // アプリの状態を管理
     @StateObject private var appState = AppState()
+    // ユーザー設定管理
+    @StateObject private var settingsManager = SettingsManager.shared
     
     // 開発用：強制的にオンボーディングを表示するフラグ
     private let forceOnboarding = false
@@ -60,25 +63,30 @@ struct SleepManagementApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                // 背景を白基調に戻す
                 Theme.Colors.background
                     .ignoresSafeArea()
 
-                // オンボーディング or メイン画面を表示
                 if !appState.hasCompletedOnboarding || forceOnboarding {
                     OnboardingNavigationView()
                 } else {
                     ContentView()
                 }
             }
+            // 設定トグルで変更があったら即時 overrideUserInterfaceStyle を反映
+            .onChange(of: settingsManager.darkModeEnabled) { value in
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let win = scene.windows.first {
+                    win.overrideUserInterfaceStyle = value ? .dark : .light
+                }
+            }
+            // ユーザー設定に基づくカラースキーム切り替え
+            .preferredColorScheme(settingsManager.darkModeEnabled ? .dark : .light)
             // グローバルな環境設定
             .environmentObject(appState)
             .environmentObject(localizationManager)
-            .environmentObject(SettingsManager.shared)
+            .environmentObject(settingsManager)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
             .environment(\.locale, Locale(identifier: localizationManager.currentLanguage))
-            // ユーザー設定に基づくカラースキーム切り替え
-            .preferredColorScheme(SettingsManager.shared.darkModeEnabled ? .dark : .light)
         }
     }
 }
