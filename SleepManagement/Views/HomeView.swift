@@ -456,6 +456,7 @@ struct HomeView: View {
     
     // MARK: - 提案セクションビルダー
     private func suggestionSectionView() -> some View {
+        // makeSuggestion() を呼び出して提案を生成
         let suggestion = makeSuggestion()
         return VStack(spacing: 0) {
             HStack {
@@ -967,6 +968,61 @@ struct HomeView: View {
         } else {
             suggestionText = nil
         }
+    }
+    
+    // MARK: - 提案ロジック
+    private func makeSuggestion() -> Suggestion {
+        // 文脈取得
+        let contextVec = SleepContextProvider.getContext(
+            viewContext: viewContext,
+            predictedDebtSec: predictedDebtSeconds
+        )
+        let debtMinutes = Int((contextVec[0] * 60).rounded())
+        let freeMinutes = Int((contextVec[1] * 60).rounded())
+        let chronoNorm = contextVec[2]
+        // 過去30日平均の就寝・起床時刻
+        let recs = Array(validNormalRecords.prefix(30))
+        let averageBedHour: Int = {
+            let hrs = recs.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? Calendar.current.component(.hour, from: SettingsManager.shared.sleepReminderTime) : hrs.reduce(0, +) / hrs.count
+        }()
+        let averageWakeHour: Int = {
+            let hrs = recs.compactMap { $0.endAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        // 週末リズム乱れ（過去7日間）
+        let now = Date()
+        let start7 = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        let weekend = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && Calendar.current.isDateInWeekend($0) } ?? false }
+        let weekday = validNormalRecords.filter { rec in rec.startAt.map { $0 >= start7 && !Calendar.current.isDateInWeekend($0) } ?? false }
+        let avgWeekendBedHour: Int = {
+            let hrs = weekend.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let avgWeekdayBedHour: Int = {
+            let hrs = weekday.compactMap { $0.startAt }.map { Calendar.current.component(.hour, from: $0) }
+            return hrs.isEmpty ? averageBedHour : hrs.reduce(0, +) / hrs.count
+        }()
+        let weekendShiftMinutes = abs(avgWeekendBedHour - avgWeekdayBedHour) * 60
+        // 将来負債予測（2日先）
+        var futureDebt: [Date: Int] = [:]
+        for offset in 1...2 {
+            if let sec = AICoach.shared.predictDebtFromRecentScores(context: viewContext) {
+                let date = Calendar.current.date(byAdding: .day, value: offset, to: now)!
+                futureDebt[date] = Int(sec / 60)
+            }
+        }
+        // 提案生成
+        let ctx = SleepSuggestionContext(
+            debtMinutes: debtMinutes,
+            freeMinutes: freeMinutes,
+            chronoNormalized: chronoNorm,
+            weekendShiftMinutes: weekendShiftMinutes,
+            futureDebtMinutes: futureDebt,
+            usualBedHour: averageBedHour,
+            usualWakeHour: averageWakeHour
+        )
+        return SuggestionProvider.generate(context: ctx, arm: banditManager.suggestedArm)
     }
 }
 
