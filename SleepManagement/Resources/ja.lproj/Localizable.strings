@@ -305,7 +305,7 @@
 "advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。";
 
 /* AIコーチ予測 */
-"ai_coach_title" = "AIコーチからのご提案";
+"ai_coach_title" = "AIからの提案";
 "ai_coach_prediction" = "睡眠負債は%.1f時間です。今夜1時間早く寝ると1時間返済できます。";
 "ai_coach_prediction_time_fmt" = "睡眠負債は%@です。今夜1時間早く寝ると1時間返済できます。";
 /* AIコーチアクション推奨 */
@@ -331,7 +331,7 @@
 "debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。";
 
 /* Bandit 推薦アクション */
-"suggested_action" = "おすすめアクション";
+"suggested_action" = "AIからのおすすめアクション";
 /* フィードバックボタン */
 "feedback_button" = "フィードバックを送る";
 /* フィードバックプロンプト */
