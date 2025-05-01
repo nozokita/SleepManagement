@@ -77,7 +77,8 @@ struct SleepManagementApp: App {
             .environmentObject(SettingsManager.shared)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
             .environment(\.locale, Locale(identifier: localizationManager.currentLanguage))
-            .preferredColorScheme(.dark) // ダークモード実験用
+            // ユーザー設定に基づくカラースキーム切り替え
+            .preferredColorScheme(SettingsManager.shared.darkModeEnabled ? .dark : .light)
         }
     }
 }
