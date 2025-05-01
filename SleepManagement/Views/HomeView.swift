@@ -891,8 +891,16 @@ struct HomeView: View {
     // 予測負債を表示用テキストに変換
     private var predictedDebtText: String {
         guard let sec = predictedDebtSeconds else { return "" }
-        let hours = sec / 3600.0
-        return String(format: "ai_coach_prediction".localized, hours)
+        let totalSeconds = Int(sec)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let timeText: String
+        if localizationManager.currentLanguage == "ja" {
+            timeText = "\(hours)時間\(minutes)分"
+        } else {
+            timeText = "\(hours)h \(minutes)m"
+        }
+        return String(format: "ai_coach_prediction_time_fmt".localized, timeText)
     }
     
     // AIコーチ提案を更新（負債予測後に呼び出し）
