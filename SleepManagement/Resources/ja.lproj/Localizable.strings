@@ -381,9 +381,9 @@
 "suggest_default_message" = "状況に合わせて睡眠改善アクションを試してみましょう。";
 
 /* Info alert for AI Coach section */
-"ai_coach_info_title" = "AIコーチの提案について";
+"ai_coach_info_title" = "AIからの提案について";
 "ai_coach_info_message" = "直近の睡眠データから機械学習モデルを用いて将来の睡眠負債を予測し、主要な要因を可視化しています。";
 
 /* Info alert for Recommended Actions section */
-"action_info_title" = "おすすめアクションについて";
+"action_info_title" = "AIからのおすすめアクションについて";
 "action_info_message" = "LinUCBバンディットアルゴリズムをベースに、過去の行動と結果からパーソナライズされた提案を行っています。"; 
