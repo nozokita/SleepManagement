@@ -7,10 +7,13 @@ struct Theme {
         static let primary = Color(UIColor(named: "AppPrimaryColor") ?? UIColor(hex: "4A6FA5"))
         static let secondary = Color(UIColor(named: "AppSecondaryColor") ?? UIColor(hex: "166088"))
         static let accent = Color(UIColor(named: "AccentColor") ?? UIColor(hex: "4DAAAB"))
-        static let background = Color(UIColor(named: "BackgroundColor") ?? UIColor(hex: "F5F6FA"))
-        static let cardBackground = Color(UIColor(named: "CardBackground") ?? .white)
-        static let text = Color(UIColor(named: "TextColor") ?? UIColor(hex: "2D3142"))
-        static let subtext = Color(UIColor(named: "SubtextColor") ?? UIColor(hex: "9C9EB9"))
+        // 動的にライト／ダーク双方の背景色を使用
+        static let background = Color(UIColor.systemBackground)
+        // カード背景もダーク／ライト双方で見やすいシステムカラーを使用
+        static let cardBackground = Color(UIColor.secondarySystemBackground)
+        // テキストはダーク／ライトに応じたシステムカラーを使用
+        static let text = Color.primary
+        static let subtext = Color.secondary
         
         // 追加カラー
         static let success = Color(hex: "57B894")  // 緑

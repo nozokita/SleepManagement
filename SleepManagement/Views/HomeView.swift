@@ -307,7 +307,7 @@ struct HomeView: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color.white)
+        .background(Theme.Colors.cardBackground)
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 5)
         .frame(height: 40) // タブの高さを増やす
     }
