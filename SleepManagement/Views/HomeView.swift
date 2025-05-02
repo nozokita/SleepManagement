@@ -71,14 +71,16 @@ struct HomeView: View {
                                 // AIコーチ予測セクション（MVP）
                                 aiCoachSection
 
-                                // おすすめアクションセクション
-                                suggestedActionSection
+                                // バンディットで選択されたアームに応じたアクションセクション
+                                if banditManager.suggestedArm == .expertAdvice {
+                                    // 専門家からのアドバイス
+                                    expertAdviceSection
+                                } else {
+                                    // 通常のおすすめアクション
+                                    suggestedActionSection
+                                }
 
-                                // AIコーチ自分専属アドバイス
-                                // aiCoachAdviceSection を非表示
-
-                                // 専門家からのアドバイスセクション
-                                // expertAdviceSection を非表示
+                                // （AIコーチ自分専属アドバイスは開発中のため非表示）
 
                                 // 最近の睡眠記録
                                 recentSleepRecordsSection
