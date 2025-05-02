@@ -42,7 +42,7 @@ struct SleepScoreView: View {
                         .font(.system(size: size / 2.5, weight: .bold, design: .rounded))
                         .foregroundColor(Theme.Colors.text)
                     
-                    Text("score_points".localized)
+                    Text("score_points")
                         .font(.system(size: size / 6, design: .rounded))
                         .foregroundColor(Theme.Colors.subtext)
                 }
@@ -51,7 +51,7 @@ struct SleepScoreView: View {
             
             // スコア評価ラベル（スコアが高い場合）
             if score >= 80 && showText && size >= 80 {
-                Text("excellent".localized)
+                Text("excellent")
                     .font(.system(size: size / 10, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.horizontal, 8)
