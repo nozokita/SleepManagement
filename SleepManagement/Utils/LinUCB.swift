@@ -6,6 +6,7 @@ enum SleepActionArm: Int, CaseIterable {
     case earlyBedtime      // 早寝アクション
     case powerNap          // パワーナップアクション
     case reinforceRoutine  // 睡眠ルーチン強化アクション
+    case expertAdvice      // 専門家アドバイスアームを追加
 
     /// ユーザー向け説明文（ローカライズキーを利用）
     var description: String {
@@ -13,6 +14,7 @@ enum SleepActionArm: Int, CaseIterable {
         case .earlyBedtime:     return "early_bedtime_action".localized
         case .powerNap:         return "power_nap_action".localized
         case .reinforceRoutine: return "reinforce_routine_action".localized
+        case .expertAdvice:     return "expert_advice_action".localized  // 専門家アドバイスの説明文キー
         }
     }
 }

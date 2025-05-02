@@ -198,7 +198,7 @@
 "recommended" = "Recommended";
 "fair" = "Fair";
 "needs_improvement" = "Needs Improvement";
-"score_points" = " points";
+"score_points" = "points";
 "no_data_available" = "No Data Available";
 "add_sleep_records" = "Add sleep records to see your data";
 "sleep_debt_explanation" = "Sleep debt is the accumulated amount of sleep time you've missed compared to your ideal sleep duration. Regular sufficient sleep helps eliminate this debt.";
@@ -334,4 +334,7 @@
 /* Info alert for Recommended Actions section */
 "action_info_title" = "About AI Recommended Action";
 "action_info_message" = "We use a LinUCB bandit algorithm to personalize suggestions based on past actions and outcomes.";
+
+/* Expert Advice action description */
+"expert_advice_action" = "Expert Advice";
 

@@ -156,16 +156,29 @@ struct HomeView: View {
             // フィードバックUIを削除しました
             // FetchedResultsに変化があれば予測を更新
             .onChange(of: sleepRecords.count) { _ in
-                // 自動フィードバック：前回予測値と新しい実績値の差分を報酬として登録
+                // 自動フィードバック：前回予測値と新しい実績値の差分を報酬として登録（専門家アドバイスに条件合致でボーナス付与）
                 let prevSec = lastPredictedDebtSec
                 // 更新＆再予測
                 updatePredictedDebt()
                 if let prev = prevSec, let newSec = predictedDebtSeconds {
                     let improved = max(prev - newSec, 0)
-                    let rewardHours = improved / 3600.0
-                    if rewardHours > 0 {
+                    let baseReward = improved / 3600.0
+                    var adjustedReward = baseReward
+                    // expertAdviceアームかつ優先度が高いアドバイス条件に合致していればボーナスを追加
+                    if baseReward > 0 && banditManager.suggestedArm == .expertAdvice, let latest = sleepRecords.first {
+                        let sleepData = SleepQualityData.fromSleepEntry(
+                            latest,
+                            sleepHistoryEntries: Array(sleepRecords),
+                            idealSleepDurationProvider: { SettingsManager.shared.idealSleepDuration }
+                        )
+                        let advices = SleepAdvice.generateAdviceFrom(sleepData: sleepData)
+                        if let top = advices.first, top.priority >= 8 {
+                            adjustedReward += 0.1  // ボーナス報酬
+                        }
+                    }
+                    if adjustedReward > 0 {
                         banditManager.recordReward(
-                            rewardHours,
+                            adjustedReward,
                             viewContext: viewContext,
                             predictedDebtSec: prev
                         )
@@ -377,7 +390,7 @@ struct HomeView: View {
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        .padding(.leading, 20)  // 左側にスペースを追加
+        .padding(.horizontal, 20)  
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
     }
