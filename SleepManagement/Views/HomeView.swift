@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreData
 import HealthKit
+import UIKit  // for UIBezierPath
 
 // SleepDashboardViewの記述を削除
 
@@ -44,6 +45,27 @@ struct HomeView: View {
     @State private var showSettings = false
     @State private var showAICoachInfo: Bool = false
     @State private var showActionInfo: Bool = false
+    
+    // 特定のコーナーだけ丸めるShape
+    struct RoundedCorner: Shape {
+        var radius: CGFloat = .infinity
+        var corners: UIRectCorner = .allCorners
+        func path(in rect: CGRect) -> Path {
+            let path = UIBezierPath(
+                roundedRect: rect,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            return Path(path.cgPath)
+        }
+    }
+    
+    // 特定コーナーの角丸を適用するView拡張
+    extension View {
+        func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+            clipShape(RoundedCorner(radius: radius, corners: corners))
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -368,7 +390,6 @@ struct HomeView: View {
                         color: Theme.Colors.secondary
                     )
                 }
-                .padding(16)
             } else {
                 // データがない場合のビュー
                 emptyStateView
@@ -398,6 +419,7 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(Theme.Colors.cardGradient)
+            .cornerRadius(Theme.Layout.cardCornerRadius, corners: [.topLeft, .topRight])
 
             Divider()
 
@@ -409,9 +431,7 @@ struct HomeView: View {
                 detailTitle: localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail"
             )
             .environmentObject(localizationManager)
-            .padding(16)
         }
-        .padding(16)
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
