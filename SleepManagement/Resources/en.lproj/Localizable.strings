@@ -342,3 +342,7 @@
 "advice.long_term_trend.title" = "Improve long-term sleep";
 "advice.long_term_trend.description" = "Review your last 30 days of sleep and start improving.";
 
+/* Future nap suggestion */
+"suggest_futureNap_title" = "Take a nap";
+"suggest_futureNap_message" = "Your sleep debt is predicted to reach %1$.1f hours in two days. Take a 20-minute nap today and tomorrow.";
+

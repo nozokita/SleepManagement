@@ -386,4 +386,8 @@
 /* 長期的傾向アドバイス */
 "advice.long_term_trend.title" = "睡眠の長期的傾向を改善しましょう";
 "advice.long_term_trend.description" = "過去30日間の平均睡眠スコアが65点未満です。ステップバイステップのガイドで改善しましょう。";
+
+/* 将来仮眠の提案 */
+"suggest_futureNap_title" = "仮眠をとりましょう";
+"suggest_futureNap_message" = "明後日に睡眠負債が%1$.1f時間に達する予測です。今日と明日は20分間の仮眠をとりましょう。";
  
