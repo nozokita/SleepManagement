@@ -122,24 +122,34 @@ class SleepManager: ObservableObject {
     // 過去N日間の睡眠負債をアンカー付き24hウインドウで計算
     func calculateTotalDebt(context: NSManagedObjectContext, days: Int = 7) -> Double {
         let calendar = Calendar.current
+        // 初回使用は最初のレコード作成日からカウント
+        let fetchReq: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
+        fetchReq.sortDescriptors = [NSSortDescriptor(keyPath: \SleepRecord.createdAt, ascending: true)]
+        fetchReq.fetchLimit = 1
+        guard let first = (try? context.fetch(fetchReq))?.first,
+              let createdAt = first.createdAt else {
+            return 0
+        }
+        let firstDay = calendar.startOfDay(for: createdAt)
+        let today = calendar.startOfDay(for: Date())
+        let diffDays = calendar.dateComponents([.day], from: firstDay, to: today).day ?? 0
+        let effectiveDays = min(diffDays + 1, days)
         var totalDebt: Double = 0
-        for dayOffset in 0..<days {
-            // 基準日（offset日前）のアンカーを計算
+        for dayOffset in 0..<effectiveDays {
             let date = calendar.date(byAdding: .day, value: -dayOffset, to: Date())!
             let windowStart = anchor(for: date, context: context)
             let windowEnd = calendar.date(byAdding: .hour, value: 24, to: windowStart)!
-            // ウインドウ内のエピソードを取得
             let request: NSFetchRequest<SleepRecord> = SleepRecord.fetchRequest()
             request.predicate = NSPredicate(format: "startAt < %@ AND endAt > %@", windowEnd as NSDate, windowStart as NSDate)
             do {
                 let records = try context.fetch(request)
-                // 合計睡眠時間（時間単位）
+                // データがない日はスキップ
+                if records.isEmpty { continue }
                 let dailySleepHours = records.reduce(0.0) { sum, record in
                     guard let start = record.startAt, let end = record.endAt else { return sum }
                     return sum + end.timeIntervalSince(start) / 3600
                 }
-                let dailyDebt = calculateDailyDebt(sleepHours: dailySleepHours)
-                totalDebt += dailyDebt
+                totalDebt += calculateDailyDebt(sleepHours: dailySleepHours)
             } catch {
                 print("睡眠負債の計算に失敗しました (offset:\(dayOffset)): \(error)")
             }
