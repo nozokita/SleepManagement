@@ -19,6 +19,13 @@ struct SleepSuggestionContext {
 
 class SuggestionProvider {
     static func generate(context: SleepSuggestionContext, arm: SleepActionArm) -> Suggestion {
+        // 専門家アドバイスアームが選択されたら、優先度順のリストからタイトルと説明を表示
+        if arm == .expertAdvice {
+            return Suggestion(
+                title: "expert_advice".localized,
+                message: "expert_advice_description".localized
+            )
+        }
         // 大きな負債 (>120分)
         if context.debtMinutes >= 120 {
             let hours = context.debtMinutes / 60

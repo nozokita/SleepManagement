@@ -237,11 +237,11 @@
 "expert_advice_description" = "Tips from experts based on your sleep data.";
 "expert_advice_disclaimer" = "This is not medical advice.";
 
-"advice.irregular_sleep_schedule.title" = "Maintain a consistent sleep schedule";
-"advice.irregular_sleep_schedule.description" = "Go to bed and wake up at the same time daily.";
+"advice.irregular_sleep_schedule.title" = "Fix your sleep schedule";
+"advice.irregular_sleep_schedule.description" = "Go to bed and wake up at the same time.";
 
-"advice.sleep_debt.title" = "Watch out for sleep debt";
-"advice.sleep_debt.description" = "You're %1$d hours short of your ideal sleep. Aim for 7-9 hours.";
+"advice.sleep_debt.title" = "Get enough sleep";
+"advice.sleep_debt.description" = "Aim for at least 6 hours of sleep per day.";
 
 "advice.ideal_sleep_duration.title" = "Adjust your sleep duration";
 "advice.ideal_sleep_duration.description" = "You're %1$d hours off from your ideal sleep.";
@@ -255,11 +255,11 @@
 "advice.frequent_wakeups.title" = "Reduce nighttime awakenings";
 "advice.frequent_wakeups.description" = "Relax in dim light when awake and return when sleepy.";
 
-"advice.low_sleep_regularity.title" = "Increase sleep regularity";
-"advice.low_sleep_regularity.description" = "Align your bedtime and wake time daily for better sleep.";
+"advice.low_sleep_regularity.title" = "Improve sleep rhythm";
+"advice.low_sleep_regularity.description" = "Keep consistent bedtime and wake time.";
 
-"advice.low_subjective_quality.title" = "Enhance sleep satisfaction";
-"advice.low_subjective_quality.description" = "Review your sleep environment and habits for more comfortable rest.";
+"advice.low_subjective_quality.title" = "Optimize your sleep environment";
+"advice.low_subjective_quality.description" = "Relax before bed for a more restful sleep.";
 
 /* AI Coach Prediction */
 "ai_coach_title" = "AI Suggestions";
@@ -337,4 +337,8 @@
 
 /* Expert Advice action description */
 "expert_advice_action" = "Expert Advice";
+
+/* Long-term trend advice */
+"advice.long_term_trend.title" = "Improve long-term sleep";
+"advice.long_term_trend.description" = "Review your last 30 days of sleep and start improving.";
 

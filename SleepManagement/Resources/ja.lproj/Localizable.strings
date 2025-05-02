@@ -281,29 +281,20 @@
 "expert_advice_description" = "専門家のアドバイス";
 "expert_advice_disclaimer" = "これは医療アドバイスではありません。";
 
-"advice.irregular_sleep_schedule.title" = "毎日の就寝・起床時間をそろえましょう";
+"advice.irregular_sleep_schedule.title" = "就寝・起床時刻を固定しましょう";
 "advice.irregular_sleep_schedule.description" = "毎日同じ時間に寝起きしましょう。";
 
-"advice.sleep_debt.title" = "慢性的な寝不足に注意";
-"advice.sleep_debt.description" = "%1$d時間の睡眠が不足しています。7〜9時間を目指しましょう。";
+"advice.sleep_debt.title" = "睡眠時間を確保しましょう";
+"advice.sleep_debt.description" = "1日6時間以上の睡眠を目指しましょう。";
 
-"advice.ideal_sleep_duration.title" = "睡眠時間を調整しましょう";
-"advice.ideal_sleep_duration.description" = "理想と%1$d時間の差があります。";
+"advice.low_sleep_regularity.title" = "睡眠リズムを整えましょう";
+"advice.low_sleep_regularity.description" = "就寝・起床の時間を一定にしましょう。";
 
-"advice.low_sleep_efficiency.title" = "睡眠効率を改善しましょう";
-"advice.low_sleep_efficiency.description" = "ベッドでは睡眠に集中し、眠れないときは起きてリラックスしましょう。";
+"advice.low_subjective_quality.title" = "寝る環境を整えましょう";
+"advice.low_subjective_quality.description" = "寝る前にリラックスして快適な睡眠を促しましょう。";
 
-"advice.long_sleep_latency.title" = "寝つきを良くする習慣を";
-"advice.long_sleep_latency.description" = "就寝前にぬるめの入浴やストレッチを試しましょう。";
-
-"advice.frequent_wakeups.title" = "夜中の目覚めを減らしましょう";
-"advice.frequent_wakeups.description" = "覚醒時は暗い部屋でリラックスし、眠気が来たら戻りましょう。";
-
-"advice.low_sleep_regularity.title" = "睡眠の規則性を高めましょう";
-"advice.low_sleep_regularity.description" = "毎日同じ時間に寝起きしてリズムを整えましょう。";
-
-"advice.low_subjective_quality.title" = "睡眠の満足度を高めましょう";
-"advice.low_subjective_quality.description" = "寝室環境や習慣を見直し、心地よい睡眠を目指しましょう。";
+"advice.long_term_trend.title" = "長期的な睡眠改善";
+"advice.long_term_trend.description" = "過去30日間の睡眠傾向を見直し、改善を始めましょう。";
 
 /* AIコーチ予測 */
 "ai_coach_title" = "AIからの提案";
@@ -390,4 +381,9 @@
 "action_info_message" = "LinUCBバンディットアルゴリズムをベースに、過去の行動と結果からパーソナライズされた提案を行っています。";
 
 /* 専門家アドバイスアームの説明 */
-"expert_advice_action" = "専門家からのアドバイス"; 
+"expert_advice_action" = "専門家からのアドバイス";
+
+/* 長期的傾向アドバイス */
+"advice.long_term_trend.title" = "睡眠の長期的傾向を改善しましょう";
+"advice.long_term_trend.description" = "過去30日間の平均睡眠スコアが65点未満です。ステップバイステップのガイドで改善しましょう。";
+ 

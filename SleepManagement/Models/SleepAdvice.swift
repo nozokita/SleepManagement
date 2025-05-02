@@ -27,14 +27,16 @@ struct SleepAdvice {
     
     /// 睡眠データからアドバイスを生成する
     /// - Parameter data: 睡眠の質データ
+    /// - Parameter past30DayAvgScore: 過去30日間の平均スコア
     /// - Returns: 優先度順にソートされたアドバイスのリスト
     static func generateAdviceFrom(
-        sleepData: SleepQualityData
+        sleepData: SleepQualityData,
+        past30DayAvgScore: Double? = nil
     ) -> [SleepAdvice] {
         var adviceList: [SleepAdvice] = []
         
-        // 条件1: 不規則な睡眠スケジュール
-        if let timeVariability = sleepData.sleepTimeVariability, timeVariability > 3600 {
+        // 条件1: 不規則な睡眠スケジュール (2時間以上)
+        if let timeVariability = sleepData.sleepTimeVariability, timeVariability > 2 * 3600 {
             adviceList.append(SleepAdvice(
                 id: "irregular_sleep_schedule",
                 title: "advice.irregular_sleep_schedule.title",
@@ -44,68 +46,18 @@ struct SleepAdvice {
             ))
         }
         
-        // 条件2: 睡眠負債の蓄積
-        if sleepData.totalSleepTime < 7 * 3600 {
-            let shortfall = (7 * 3600) - sleepData.totalSleepTime
-            let shortfallHours = Int(shortfall / 3600)
-            if shortfallHours > 0 {
-                adviceList.append(SleepAdvice(
-                    id: "sleep_debt",
-                    title: "advice.sleep_debt.title",
-                    description: String(format: NSLocalizedString("advice.sleep_debt.description", comment: ""), shortfallHours),
-                    category: .schedule,
-                    priority: 8
-                ))
-            }
-        }
-        
-        // 条件3: 適切な睡眠時間の目安
-        if abs(sleepData.totalSleepTime - sleepData.idealSleepTime) > 3600 {
-            let diff = sleepData.totalSleepTime - sleepData.idealSleepTime
-            let diffHours = Int(abs(diff) / 3600)
+        // 条件2: 睡眠負債の蓄積 (6時間未満)
+        if sleepData.totalSleepTime < 6 * 3600 {
             adviceList.append(SleepAdvice(
-                id: "ideal_sleep_duration",
-                title: "advice.ideal_sleep_duration.title",
-                description: String(format: NSLocalizedString("advice.ideal_sleep_duration.description", comment: ""), diffHours),
+                id: "sleep_debt",
+                title: "advice.sleep_debt.title",
+                description: "advice.sleep_debt.description",
                 category: .schedule,
-                priority: 7
-            ))
-        }
-        
-        // 条件4: 睡眠効率の問題
-        if let efficiency = sleepData.sleepEfficiency, efficiency < 0.85 {
-            adviceList.append(SleepAdvice(
-                id: "low_sleep_efficiency",
-                title: "advice.low_sleep_efficiency.title",
-                description: String(format: NSLocalizedString("advice.low_sleep_efficiency.description", comment: ""), Int(efficiency * 100)),
-                category: .routine,
                 priority: 8
             ))
         }
         
-        // 条件5: 入眠潜時の問題
-        if let latency = sleepData.sleepLatency, latency > 30 * 60 {
-            adviceList.append(SleepAdvice(
-                id: "long_sleep_latency",
-                title: "advice.long_sleep_latency.title",
-                description: "advice.long_sleep_latency.description",
-                category: .routine,
-                priority: 7
-            ))
-        }
-        
-        // 条件6: 睡眠中の覚醒問題
-        if let waso = sleepData.waso, waso > 30 * 60 {
-            adviceList.append(SleepAdvice(
-                id: "frequent_wakeups",
-                title: "advice.frequent_wakeups.title",
-                description: "advice.frequent_wakeups.description",
-                category: .special,
-                priority: 7
-            ))
-        }
-        
-        // 条件7: 睡眠の規則性スコア
+        // 条件7: 睡眠の規則性スコア低下 (70未満)
         if let regularityIndex = sleepData.sleepRegularityIndex, regularityIndex < 70 {
             adviceList.append(SleepAdvice(
                 id: "low_sleep_regularity",
@@ -116,13 +68,24 @@ struct SleepAdvice {
             ))
         }
         
-        // 条件8: 主観的な睡眠の質が低い
+        // 条件8: 主観的な睡眠の質が低い (2以下)
         if let subjective = sleepData.subjectiveSleepQuality, subjective <= 2 {
             adviceList.append(SleepAdvice(
                 id: "low_subjective_quality",
                 title: "advice.low_subjective_quality.title",
                 description: "advice.low_subjective_quality.description",
                 category: .special,
+                priority: 6
+            ))
+        }
+        
+        // 条件9: 長期的傾向の改善 (30日平均スコア65未満)
+        if let avg = past30DayAvgScore, avg < 65.0 {
+            adviceList.append(SleepAdvice(
+                id: "long_term_trend",
+                title: "advice.long_term_trend.title",
+                description: "advice.long_term_trend.description",
+                category: .lifestyle,
                 priority: 6
             ))
         }
