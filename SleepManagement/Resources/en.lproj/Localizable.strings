@@ -2,7 +2,7 @@
 
 
 "home_tab" = "Home";
-"stats_tab" = "Stats";
+"stats_tab" = "Sleep Analysis Report";
 "records_tab" = "Records";
 "sleep_log_tab" = "Sleep Log";
 "home_title" = "Sleep Management";

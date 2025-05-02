@@ -3,8 +3,6 @@ import CoreData
 import HealthKit
 import UIKit  // for UIBezierPath
 
-// SleepDashboardViewの記述を削除
-
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var localizationManager: LocalizationManager
@@ -45,27 +43,6 @@ struct HomeView: View {
     @State private var showSettings = false
     @State private var showAICoachInfo: Bool = false
     @State private var showActionInfo: Bool = false
-    
-    // 特定のコーナーだけ丸めるShape
-    struct RoundedCorner: Shape {
-        var radius: CGFloat = .infinity
-        var corners: UIRectCorner = .allCorners
-        func path(in rect: CGRect) -> Path {
-            let path = UIBezierPath(
-                roundedRect: rect,
-                byRoundingCorners: corners,
-                cornerRadii: CGSize(width: radius, height: radius)
-            )
-            return Path(path.cgPath)
-        }
-    }
-    
-    // 特定コーナーの角丸を適用するView拡張
-    extension View {
-        func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-            clipShape(RoundedCorner(radius: radius, corners: corners))
-        }
-    }
     
     var body: some View {
         NavigationView {
@@ -390,6 +367,8 @@ struct HomeView: View {
                         color: Theme.Colors.secondary
                     )
                 }
+                .padding(.vertical, 16)  // グリッド上下の余白を追加
+                .padding(.leading, 16)   // グリッド左側に余白を追加
             } else {
                 // データがない場合のビュー
                 emptyStateView
@@ -398,7 +377,7 @@ struct HomeView: View {
         .background(Theme.Colors.cardBackground)
         .cornerRadius(Theme.Layout.cardCornerRadius)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        .padding(.horizontal)
+        .padding(.leading, 20)  // 左側にスペースを追加
         .offset(y: animatedCards ? 0 : 50)
         .opacity(animatedCards ? 1 : 0)
     }
@@ -411,7 +390,7 @@ struct HomeView: View {
         return VStack(spacing: 0) {
             // 7日間固定集計タイトル
             HStack {
-                Text(localizationManager.currentLanguage == "ja" ? "７日間固定集計" : "7-Day Fixed")
+                Text(localizationManager.currentLanguage == "ja" ? "一週間の睡眠まとめ" : "Weekly Sleep Summary")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
                 Spacer()

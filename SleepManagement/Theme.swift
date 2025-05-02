@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit  // for UIRectCorner and UIBezierPath
 
 // アプリ全体のテーマカラーと共通スタイルを定義
 struct Theme {
@@ -200,5 +201,22 @@ extension View {
     
     func gradientBackground() -> some View {
         self.background(Theme.Colors.cardGradient)
+    }
+    
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+}
+
+// RoundedCorner shape for specific corners
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect,
+                                byRoundingCorners: corners,
+                                cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
     }
 } 

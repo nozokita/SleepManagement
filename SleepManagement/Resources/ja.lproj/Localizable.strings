@@ -10,7 +10,7 @@
 
 // Home Screen
 "home_tab" = "ホーム";
-"stats_tab" = "統計";
+"stats_tab" = "睡眠分析レポート";
 "records_tab" = "記録";
 "sleep_log_tab" = "睡眠ログ";
 "home_title" = "睡眠管理";
