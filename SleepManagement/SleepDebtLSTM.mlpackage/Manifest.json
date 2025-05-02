@@ -1,0 +1,24 @@
+{
+    "fileFormatVersion": "1.0.0",
+    "itemInfoEntries": {
+        "0BE1E8FE-541D-4AED-9A61-B6A413D7FAEF": {
+            "author": "com.apple.CoreML",
+            "description": "External Metadata Overlay",
+            "name": "Metadata.json",
+            "path": "com.apple.CoreML/Metadata.json"
+        },
+        "9A3FDE60-3B2F-44DD-82F9-67C712BD2FAC": {
+            "author": "com.apple.CoreML",
+            "description": "CoreML Model Specification",
+            "name": "SleepDebtLSTM.mlmodel",
+            "path": "com.apple.CoreML/SleepDebtLSTM.mlmodel"
+        },
+        "BB99E0FB-8E65-4B0E-A16C-476ED8F3D65A": {
+            "author": "com.apple.CoreML",
+            "description": "External FeatureDescription Overlay",
+            "name": "FeatureDescriptions.json",
+            "path": "com.apple.CoreML/FeatureDescriptions.json"
+        }
+    },
+    "rootModelIdentifier": "9A3FDE60-3B2F-44DD-82F9-67C712BD2FAC"
+}

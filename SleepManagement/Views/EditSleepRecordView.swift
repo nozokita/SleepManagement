@@ -209,32 +209,6 @@ struct EditSleepRecordView: View {
                                         Spacer()
                                     }
                                     .padding(.vertical, 8)
-                                    
-                                    // nap時は分析を非表示
-                                    if record.sleepType != SleepRecordType.nap.rawValue && previewScore > 0 {
-                                        VStack(alignment: .leading, spacing: 12) {
-                                            Text("sleep_analysis".localized)
-                                                .font(Theme.Typography.subheadingFont)
-                                                .foregroundColor(Theme.Colors.text)
-                                            
-                                            analysisRow(
-                                                icon: "moon.stars",
-                                                color: qualityColor,
-                                                title: "sleep_quality".localized,
-                                                message: qualityMessage
-                                            )
-                                            
-                                            analysisRow(
-                                                icon: "clock",
-                                                color: durationColor,
-                                                title: "duration".localized,
-                                                message: durationMessage
-                                            )
-                                        }
-                                        .padding()
-                                        .background(Color.gray.opacity(0.05))
-                                        .cornerRadius(12)
-                                    }
                                 }
                                 .padding()
                                 .background(Theme.Colors.cardBackground)

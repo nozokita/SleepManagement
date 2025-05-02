@@ -387,22 +387,29 @@ struct HomeView: View {
         let now = Date()
         let window24hStart = Calendar.current.date(byAdding: .hour, value: -24, to: now)!
         let window7dStart = Calendar.current.date(byAdding: .day, value: -7, to: now)!
-        return VStack(spacing: 32) {
-            // 過去24時間睡眠負債グラフを非表示
-
-            // 7日間固定集計
-            VStack(spacing: 8) {
+        return VStack(spacing: 0) {
+            // 7日間固定集計タイトル
+            HStack {
                 Text(localizationManager.currentLanguage == "ja" ? "７日間固定集計" : "7-Day Fixed")
                     .font(Theme.Typography.subheadingFont)
                     .foregroundColor(Theme.Colors.text)
-                SleepDebtView(
-                    totalDebt: totalDebt,
-                    windowStart: window7dStart,
-                    windowEnd: now,
-                    detailTitle: localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail"
-                )
-                .environmentObject(localizationManager)
+                Spacer()
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Theme.Colors.cardGradient)
+
+            Divider()
+
+            // 7日間固定集計内容
+            SleepDebtView(
+                totalDebt: totalDebt,
+                windowStart: window7dStart,
+                windowEnd: now,
+                detailTitle: localizationManager.currentLanguage == "ja" ? "7日間の計算過程" : "7-Day Calculation Detail"
+            )
+            .environmentObject(localizationManager)
+            .padding(16)
         }
         .padding(16)
         .background(Theme.Colors.cardBackground)
@@ -436,7 +443,7 @@ struct HomeView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 12) {
-                // 要因可視化
+                // 要因可視化とフォールバック表示
                 if let latest = sleepRecords.first {
                     let sleepData = SleepQualityData.fromSleepEntry(
                         latest,
@@ -451,7 +458,17 @@ struct HomeView: View {
                         Text(top.suggestionKey.localized)
                             .font(Theme.Typography.captionFont)
                             .foregroundColor(Theme.Colors.primary)
+                    } else {
+                        Text("no_ai_suggestion".localized)
+                            .font(Theme.Typography.bodyFont)
+                            .foregroundColor(Theme.Colors.subtext)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                } else {
+                    Text("no_ai_suggestion".localized)
+                        .font(Theme.Typography.bodyFont)
+                        .foregroundColor(Theme.Colors.subtext)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .padding(16)
@@ -543,9 +560,6 @@ struct HomeView: View {
             .background(Theme.Colors.cardGradient)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(suggestion.title)
-                    .font(Theme.Typography.subheadingFont)
-                    .foregroundColor(Theme.Colors.text)
                 Text(suggestion.message)
                     .font(Theme.Typography.bodyFont)
                     .foregroundColor(Theme.Colors.subtext)

@@ -91,6 +91,7 @@
 "ai_advice" = "AI Advice";
 "ai_analysis" = "AI Sleep Analysis & Advice";
 "ai_description" = "AI analyzes your sleep data and offers personalized advice.";
+"no_ai_suggestion" = "There are currently no suggestions from AI.";
 "coming_soon" = "Coming Soon";
 
 
@@ -286,7 +287,7 @@
 "debt_suggestion_sleep_debt" = "Aim to go to bed earlier or take short naps to repay your sleep debt.";
 
 /* Bandit suggested action */
-"suggested_action" = "AI Recommended Action";
+"suggested_action" = "Recommended Action";
 /* Feedback button */
 "feedback_button" = "Send Feedback";
 /* Feedback prompt */

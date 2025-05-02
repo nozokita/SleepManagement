@@ -103,6 +103,7 @@
 "ai_analysis" = "AIによる睡眠分析・アドバイス";
 "ai_description" = "あなたの睡眠データをAIが分析し、パーソナライズされたアドバイスを提供します。";
 "coming_soon" = "近日公開予定";
+"no_ai_suggestion" = "現在AIからの提案はありません";
 
 // Developing Features
 "developing_feature" = "この機能は現在開発中です";
@@ -331,7 +332,7 @@
 "debt_suggestion_sleep_debt" = "就寝時間を早めるか短時間の仮眠を取り入れて負債を返済しましょう。";
 
 /* Bandit 推薦アクション */
-"suggested_action" = "AIからのおすすめアクション";
+"suggested_action" = "おすすめアクション";
 /* フィードバックボタン */
 "feedback_button" = "フィードバックを送る";
 /* フィードバックプロンプト */
